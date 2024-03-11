@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widgetMapLocation"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_corners"
-    android:padding="16dp">
-
-
+    app:cardCornerRadius="16dp">
 
     <TextView
         android:id="@+id/textViewLocation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Location access for Youtube"
+        android:background="@color/background_sec"
         android:textColor="@color/title_prim"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:padding="16dp"/>
 
-</RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="74dp"
-    android:orientation="vertical"
-    android:background="@drawable/rounded_corners"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp">
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:background="@color/background_sec"
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/imageViewAppLogo"
@@ -42,7 +38,6 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_chevron_forward" />
-
     </RelativeLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>

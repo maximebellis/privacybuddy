@@ -10,6 +10,8 @@ activityCompose = "1.8.2"
 composeBom = "2024.02.02"
 mapbox = "11.2.0"
 appcompat = "1.6.1"
+cardview = "1.0.0" # Or your desired version
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,6 +30,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 mapbox = { group = "com.mapbox.maps", name = "android", version.ref = "mapbox" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

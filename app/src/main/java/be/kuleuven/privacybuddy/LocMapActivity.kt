@@ -1,7 +1,9 @@
 package be.kuleuven.privacybuddy
 
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mapbox.geojson.*
 import com.mapbox.maps.MapView

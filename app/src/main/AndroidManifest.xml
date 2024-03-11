@@ -30,6 +30,8 @@
             android:theme="@style/Theme.AppCompat" >
         </activity>
 
+
+
     </application>
 
 </manifest>
