@@ -18,16 +18,24 @@
             android:id="@+id/textViewLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Location access for Youtube"
+            android:text="Location access for all apps"
             android:background="@color/background_sec"
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
 
-        <ImageView
-            android:id="@+id/imageViewMap"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp">
+
+            <com.mapbox.maps.MapView
+                android:id="@+id/miniMapView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+        </androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

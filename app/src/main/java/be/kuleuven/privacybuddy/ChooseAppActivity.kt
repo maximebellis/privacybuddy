@@ -33,8 +33,7 @@ class ChooseAppActivity : AppCompatActivity() {
 
         // Then add all other apps in alphabetical order
         appNames.forEach { appName ->
-            val appIcon = getAppIconByName(appName)
-            linearLayout.addView(createAppView(appName, appIcon).apply {
+            linearLayout.addView(createAppView(appName).apply {
                 setOnClickListener { launchMapActivity(appName) }
             })
         }
@@ -42,12 +41,13 @@ class ChooseAppActivity : AppCompatActivity() {
 
 
 
-    private fun createAppView(appName: String, appIcon: Drawable? = null): View {
+    private fun createAppView(appName: String): View {
         val view = LayoutInflater.from(this).inflate(R.layout.component_app_choice, null, false)
         val appNameTextView: TextView = view.findViewById(R.id.textViewAppName)
         val appLogoImageView: ImageView = view.findViewById(R.id.imageViewAppLogo)
 
         appNameTextView.text = appName
+        val appIcon = getAppIconByName(appName)
 
         if (appIcon != null) {
             appLogoImageView.visibility = View.VISIBLE
@@ -93,10 +93,5 @@ class ChooseAppActivity : AppCompatActivity() {
             }
     }.getOrElse { emptyList() }
 
-    private fun getAppIconByName(appName: String): Drawable? =
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.QUERY_ALL_PACKAGES) == PackageManager.PERMISSION_GRANTED) {
-            packageManager.getInstalledApplications(PackageManager.GET_META_DATA).find {
-                packageManager.getApplicationLabel(it).toString() == appName
-            }?.loadIcon(packageManager)
-        } else null
+
 }

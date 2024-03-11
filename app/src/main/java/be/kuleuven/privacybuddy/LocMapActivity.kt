@@ -53,9 +53,9 @@ class LocMapActivity : AppCompatActivity() {
         setupMapViewForAllApps()
     }
     private fun setAppIconAndName(appName: String) {
-        val context = applicationContext
+        val appIcon = applicationContext.getAppIconByName(appName)
         findViewById<TextView>(R.id.textViewSelectedApp).text = appName
-        findViewById<ImageView>(R.id.imageViewAppLogo).setImageDrawable(getAppIconByName(appName, context))
+        findViewById<ImageView>(R.id.imageViewAppLogo).setImageDrawable(appIcon)
     }
 
     private fun setupMapView(selectedAppName: String) {
@@ -133,12 +133,6 @@ class LocMapActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAppIconByName(appName: String, context: Context): Drawable? =
-        if (ContextCompat.checkSelfPermission(context, QUERY_ALL_PACKAGES) == PackageManager.PERMISSION_GRANTED) {
-            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA).find {
-                context.packageManager.getApplicationLabel(it).toString() == appName
-            }?.loadIcon(context.packageManager)
-        } else ContextCompat.getDrawable(context, R.drawable.ic_app_icon)
 
     companion object {
         private const val APP_USAGE_SOURCE_ID = "app-usage-source"

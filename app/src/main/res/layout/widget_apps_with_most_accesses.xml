@@ -21,30 +21,30 @@
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
 
-        <!-- GoogleDrive Section -->
+        <!-- TikTok Section -->
         <ImageView
-            android:id="@+id/imageViewGoogleDrive"
+            android:id="@+id/imageViewTikTok"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_below="@id/textViewHeader"
             android:layout_marginTop="16dp" />
 
         <TextView
-            android:id="@+id/textViewGoogleDrive"
+            android:id="@+id/textViewTikTok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/imageViewGoogleDrive"
+            android:layout_alignTop="@id/imageViewTikTok"
             android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/imageViewGoogleDrive"
-            android:text="Google Drive"
+            android:layout_toEndOf="@id/imageViewTikTok"
+            android:text="TikTok"
             android:textColor="@color/title_prim"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/textViewGoogleDriveAccess"
+            android:id="@+id/textViewTikTokAccess"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewGoogleDrive"
+            android:layout_below="@id/textViewTikTok"
 
             android:gravity="end"
             android:text="88 accesses to 14 different permissions"
@@ -53,11 +53,11 @@
 
 
         <ProgressBar
-            android:id="@+id/progressBarGoogleDrive"
+            android:id="@+id/progressBarTikTok"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewGoogleDriveAccess"
+            android:layout_height="4dp"
+            android:layout_below="@id/textViewTikTokAccess"
             android:layout_marginTop="4dp"
             android:max="100"
             android:progress="88"
@@ -69,7 +69,7 @@
             android:id="@+id/imageViewGmail"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_below="@id/progressBarGoogleDrive"
+            android:layout_below="@id/progressBarTikTok"
             android:layout_marginTop="16dp" />
 
         <TextView
@@ -98,7 +98,7 @@
             android:id="@+id/progressBarGmail"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="4dp"
             android:layout_below="@id/textViewGmailAccess"
             android:layout_marginTop="4dp"
             android:max="100"
@@ -139,7 +139,7 @@
             android:id="@+id/progressBarYouTube"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="4dp"
             android:layout_below="@id/textViewYouTubeAccess"
             android:layout_marginTop="4dp"
             android:max="100"
