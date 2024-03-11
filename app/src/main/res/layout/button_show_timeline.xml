@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:text="Show timeline"
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
