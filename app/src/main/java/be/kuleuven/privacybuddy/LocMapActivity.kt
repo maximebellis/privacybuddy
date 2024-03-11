@@ -23,7 +23,7 @@ import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 
-class LocMapActivity : AppCompatActivity() {
+class LocMapActivity : BaseActivity() {
 
     private lateinit var mapView: MapView
 

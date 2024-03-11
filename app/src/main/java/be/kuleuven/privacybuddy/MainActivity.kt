@@ -15,7 +15,7 @@ import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.style.style
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var miniMapView: MapView
     private lateinit var mapboxMap: MapboxMap
