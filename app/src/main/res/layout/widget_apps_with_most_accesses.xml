@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Apps with most accesses"
+        android:textColor="@color/title_prim"
+        android:textSize="24sp" />
+
+    <!-- GoogleDrive Section -->
+    <ImageView
+        android:id="@+id/imageViewGoogleDrive"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/textViewHeader"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textViewGoogleDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imageViewGoogleDrive"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/imageViewGoogleDrive"
+        android:text="Google Drive"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewGoogleDriveAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewGoogleDrive"
+
+        android:gravity="end"
+        android:text="88 accesses to 14 different permissions"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBarGoogleDrive"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewGoogleDriveAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="88"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+
+
+    <!-- Gmail Section -->
+    <ImageView
+        android:id="@+id/imageViewGmail"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/progressBarGoogleDrive"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textViewGmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewGmail"
+        android:layout_marginStart="8dp"
+        android:layout_alignTop="@id/imageViewGmail"
+        android:text="Gmail"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewGmailAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewGmail"
+        android:layout_marginStart="8dp"
+        android:gravity="end"
+        android:text="43 accesses to 2 different permissions"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarGmail"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewGmailAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="43"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+
+    <!-- YouTube Section -->
+    <ImageView
+        android:id="@+id/imageViewAppLogo"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/progressBarGmail"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textViewYouTube"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewAppLogo"
+        android:layout_marginStart="8dp"
+        android:layout_alignTop="@id/imageViewAppLogo"
+        android:text="YouTube"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewYouTubeAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewYouTube"
+        android:layout_marginStart="8dp"
+        android:gravity="end"
+        android:text="42 accesses to 7 different permissions"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarYouTube"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewYouTubeAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="42"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+</RelativeLayout>

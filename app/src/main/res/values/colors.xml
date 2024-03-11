@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="title_prim">#F9EFE7</color>
+    <color name="text">#D3C4B4</color>
+    <color name="background_prim">#1F1B17</color>
+    <color name="background_sec">#373737</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

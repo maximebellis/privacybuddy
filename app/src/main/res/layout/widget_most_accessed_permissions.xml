@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Most accessed permissions"
+        android:textColor="@color/title_prim"
+        android:textSize="24sp" />
+
+    <!-- Microphone Section -->
+    <ImageView
+        android:id="@+id/imageViewMicrophone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewHeader"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_microphone" />
+
+    <TextView
+        android:id="@+id/textViewMicrophone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imageViewMicrophone"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/imageViewMicrophone"
+        android:text="Microphone"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewMicrophoneAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewMicrophone"
+
+        android:gravity="end"
+        android:text="88 accesses by 14 different apps"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBarMicrophone"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewMicrophoneAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="88"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+
+
+    <!-- Camera Section -->
+    <ImageView
+        android:id="@+id/imageViewCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBarMicrophone"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_camera" />
+
+    <TextView
+        android:id="@+id/textViewCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewCamera"
+        android:layout_marginStart="8dp"
+        android:layout_alignTop="@id/imageViewCamera"
+        android:text="Camera"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewCameraAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewCamera"
+        android:layout_marginStart="8dp"
+        android:gravity="end"
+        android:text="43 accesses by 2 different apps"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarCamera"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewCameraAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="43"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+
+    <!-- Location Section -->
+    <ImageView
+        android:id="@+id/imageViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBarCamera"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_location" />
+
+    <TextView
+        android:id="@+id/textViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewLocation"
+        android:layout_marginStart="8dp"
+        android:layout_alignTop="@id/imageViewLocation"
+        android:text="Location"
+        android:textColor="@color/title_prim"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewLocationAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLocation"
+        android:layout_marginStart="8dp"
+        android:gravity="end"
+        android:text="42 accesses by 7 different apps"
+        android:textColor="@color/title_prim"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarLocation"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLocationAccess"
+        android:layout_marginTop="4dp"
+        android:max="100"
+        android:progress="42"
+        android:progressDrawable="@drawable/custom_progress_bar" />
+</RelativeLayout>
