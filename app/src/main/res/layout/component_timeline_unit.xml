@@ -62,17 +62,18 @@
             android:textColor="@color/text"
             android:layout_marginStart="4dp"/>
 
+
         <TextView
             android:id="@+id/textViewAccessType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewAppName"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="-2dp"
             android:layout_toEndOf="@id/textViewHyphen"
             android:text="sanctioned"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/text"
-            android:layout_marginStart="4dp"/>
-
+            android:textColor="@color/text" />
 
         <View
             android:id="@+id/divider"

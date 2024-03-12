@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.dashboard_main)
 
         loadStaticMap()
-        setupWidgetMapLocationClickListener()
+        setupClickListener()
         setAppIcons()
     }
 
@@ -39,13 +39,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupWidgetMapLocationClickListener() {
+    private fun setupClickListener() {
         val widgetMapLocation = findViewById<CardView>(R.id.widgetMapLocation)
         widgetMapLocation.setOnClickListener {
             val intent = Intent(this, LocMapActivity::class.java)
             startActivity(intent)
         }
+
+        val widgetLocation = findViewById<CardView>(R.id.widgetLocation)
+        widgetLocation.setOnClickListener {
+            val intent = Intent(this, LocTimelineActivity::class.java)
+            startActivity(intent)
+        }
     }
+
+
 
     private fun setAppIcons() {
         mapOf(

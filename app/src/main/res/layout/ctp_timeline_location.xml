@@ -13,8 +13,6 @@
         android:padding="16dp"
         android:background="@color/background_prim">
 
-        <include layout="@layout/component_toolbar"/>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
