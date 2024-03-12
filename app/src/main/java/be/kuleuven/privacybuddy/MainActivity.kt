@@ -36,13 +36,25 @@ class MainActivity : BaseActivity() {
             center(Point.fromLngLat(4.7012, 50.8789))
             zoom(12.0)
         })
+
         val widgetMapLocation = findViewById<CardView>(R.id.widgetMapLocation)
+        val widgetLocation = findViewById<CardView>(R.id.widgetLocation)
+
         widgetMapLocation.setOnClickListener {
             val intent = Intent(this, LocMapActivity::class.java)
             startActivity(intent)
         }
+
+        widgetLocation.setOnClickListener {
+            val intent = Intent(this, LocTimelineActivity::class.java)
+            startActivity(intent)
+        }
+
+
         setAppIcons()
     }
+
+
 
     private fun setAppIcons() {
         val tikTokIcon = getAppIconByName("TikTok")
