@@ -1,57 +1,60 @@
 package be.kuleuven.privacybuddy
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import com.mapbox.geojson.Point
-import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.Style
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.style
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 
-class MainActivity : BaseActivity() {
-
-    private lateinit var miniMapView: MapView
-    private lateinit var mapboxMap: MapboxMap
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_main)
 
-        miniMapView = findViewById(R.id.miniMapView)
-        mapboxMap = miniMapView.mapboxMap
+        loadStaticMap()
+        setupWidgetMapLocationClickListener()
+        setAppIcons()
+    }
 
-        mapboxMap.loadStyle(style(Style.MAPBOX_STREETS) {
-            // Here you can add layers, sources, images, etc.
-        }) {
-            // Style has been loaded, do any additional setup here
+    private fun loadStaticMap() {
+        val imageView = findViewById<ImageView>(R.id.staticMapView)
+        imageView.post {
+            val width = imageView.width // Get the width of the ImageView
+            val height = imageView.height // Get the height of the ImageView
+
+            // Validate dimensions to avoid Glide load failures
+            if (width > 0 && height > 0) {
+                val mapboxAccessToken = getString(R.string.mapbox_access_token)
+                val staticMapUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/4.7012,50.8789,14/${width}x${height}?access_token=$mapboxAccessToken"
+
+                Glide.with(this)
+                    .load(staticMapUrl)
+                    .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)) // Utilize disk caching
+                    .into(imageView)
+            }
         }
-        miniMapView.mapboxMap.setCamera(cameraOptions {
-            center(Point.fromLngLat(4.7012, 50.8789))
-            zoom(12.0)
-        })
+    }
+
+    private fun setupWidgetMapLocationClickListener() {
         val widgetMapLocation = findViewById<CardView>(R.id.widgetMapLocation)
         widgetMapLocation.setOnClickListener {
             val intent = Intent(this, LocMapActivity::class.java)
             startActivity(intent)
         }
-        setAppIcons()
     }
 
     private fun setAppIcons() {
-        val tikTokIcon = getAppIconByName("TikTok")
-        val gmailIcon = getAppIconByName("Gmail")
-        val youtubeIcon = getAppIconByName("YouTube")
-
-        findViewById<ImageView>(R.id.imageViewTikTok).setImageDrawable(tikTokIcon)
-        findViewById<ImageView>(R.id.imageViewGmail).setImageDrawable(gmailIcon)
-        findViewById<ImageView>(R.id.imageViewAppLogo).setImageDrawable(youtubeIcon)
+        mapOf(
+            R.id.imageViewTikTok to "TikTok",
+            R.id.imageViewGmail to "Gmail",
+            R.id.imageViewAppLogo to "YouTube"
+        ).forEach { (viewId, appName) ->
+            val iconDrawable = getAppIconByName(appName)
+            findViewById<ImageView>(viewId).setImageDrawable(iconDrawable)
+        }
     }
 }
-

@@ -18,6 +18,7 @@
             android:id="@+id/textViewLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="Location access for all apps"
             android:background="@color/background_sec"
             android:textColor="@color/title_prim"
@@ -26,13 +27,14 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
             app:cardCornerRadius="16dp">
 
-            <com.mapbox.maps.MapView
-                android:id="@+id/miniMapView"
+            <ImageView
+                android:id="@+id/staticMapView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"
+                android:scaleType="centerCrop" />
+
 
         </androidx.cardview.widget.CardView>
 
