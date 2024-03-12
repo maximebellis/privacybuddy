@@ -1,16 +1,12 @@
 package be.kuleuven.privacybuddy
 
-import android.Manifest.permission.QUERY_ALL_PACKAGES
-import android.content.Context
+
+
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView

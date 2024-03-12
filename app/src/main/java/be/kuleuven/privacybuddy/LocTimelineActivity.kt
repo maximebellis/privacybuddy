@@ -1,117 +1,75 @@
 package be.kuleuven.privacybuddy
 
-import android.icu.text.SimpleDateFormat
+
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import java.util.Locale
-import com.mapbox.geojson.Feature
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mapbox.geojson.FeatureCollection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 
+
+data class LocationEvent(
+    val timestamp: String,
+    val appName: String,
+    val usageType: String,
+    val interactionType: String
+)
 
 class LocTimelineActivity : BaseActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private lateinit var recyclerView: RecyclerView // Initialize later
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ctp_timeline_location)
 
-        coroutineScope.launch {
-            val features = withContext(Dispatchers.IO) {
-                loadGeoJsonFromAssets(null) // Load data in the background
-            }
+        recyclerView = findViewById(R.id.recyclerViewTimelineLocation)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-            // Display features one by one
-            features.forEach { feature ->
-                withContext(Dispatchers.Main) { // Switch back to Main thread to update UI
-                    val view = LayoutInflater.from(this@LocTimelineActivity).inflate(R.layout.component_timeline_unit, null, false)
-                    populateViewWithFeatureData(view, feature)
-                    findViewById<LinearLayout>(R.id.linear_layout_timeline).addView(view)
-                }
+        coroutineScope.launch {
+            val selectedAppName = null // Add logic to retrieve selectedAppName if needed
+
+            try {
+                val events = loadGeoJsonFromAssets(selectedAppName)
+                displayEvents(events)
+            } catch (e: Exception) {
+                Log.e("LocTimelineActivity", "Error loading or parsing data", e)
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel() // Cancels coroutines when the activity is destroyed
+        coroutineScope.cancel()
     }
 
-    private fun populateViewWithFeatureData(view: View, feature: Feature) {
-        // Extract properties from the feature
-        val timestamp = feature.getStringProperty("timestamp")
-        val appName = feature.getStringProperty("appName")
-        val usageType = feature.getStringProperty("usageType")
-        val interactionType = feature.getStringProperty("interactionType")
-
-        // Populate the view
-        view.findViewById<TextView>(R.id.textViewTime).text = formatTimestamp(timestamp)
-        view.findViewById<TextView>(R.id.textViewAppName).text = appName
-        view.findViewById<TextView>(R.id.textViewAccuracy).text = usageType
-        view.findViewById<TextView>(R.id.textViewAccessType).text = interactionType
+    private fun displayEvents(events: List<LocationEvent>) {
+        recyclerView.adapter = LocationEventAdapter(events, this)
     }
 
-    private fun loadGeoJsonFromAssets(selectedAppName: String?): List<Feature> {
-        val features = mutableListOf<Feature>()
-        val bufferSize = 1024
-        try {
-            assets.open("dummy_location_data.geojson").use { inputStream ->
-                BufferedReader(InputStreamReader(inputStream), bufferSize).use { reader ->
-                    var line: String?
-                    val stringBuilder = StringBuilder()
-                    while (reader.readLine().also { line = it } != null) {
-                        stringBuilder.append(line)
-                    }
-                    val jsonString = stringBuilder.toString()
-                    val featureCollection = FeatureCollection.fromJson(jsonString)
-                    if (selectedAppName != null) {
-                        features.addAll(
-                            featureCollection.features()?.filter {
-                                it.getStringProperty("appName") == selectedAppName
-                            } ?: emptyList()
-                        )
-                    } else {
-                        features.addAll(featureCollection.features() ?: emptyList())
-                    }
-                }
+    // Optimized parsing and error handling
+    private suspend fun loadGeoJsonFromAssets(selectedAppName: String?): List<LocationEvent> =
+        withContext(Dispatchers.IO) {
+            try {
+                val featureCollection = parseGeoJsonFromAssets("dummy_location_data.geojson")
+                featureCollection.features()?.mapNotNull { feature ->
+                    LocationEvent(
+                        feature.getStringProperty("timestamp"),
+                        feature.getStringProperty("appName"),
+                        feature.getStringProperty("usageType"),
+                        feature.getStringProperty("interactionType")
+                    )
+                }?.filter { selectedAppName == null || it.appName == selectedAppName } ?: emptyList()
+            } catch (e: Exception) {
+                Log.e("LocTimelineActivity", "Error loading or parsing data", e)
+                emptyList() // Return empty on error
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
-        return features
-    }
 
-
-
-    // Utility function to format the timestamp or other transformations needed
-    private fun formatTimestamp(timestamp: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return try {
-            val date = inputFormat.parse(timestamp)
-            date?.let { outputFormat.format(it) } ?: "Unknown"
-        } catch (e: Exception) {
-            "Error"
+    private fun parseGeoJsonFromAssets(filename: String): FeatureCollection =
+        assets.open(filename).use {
+            FeatureCollection.fromJson(it.bufferedReader().use(BufferedReader::readText))
         }
-    }
-
-    // Make sure to add getStringProperty extension method or use another way to access properties
-    private fun Feature.getStringProperty(propertyName: String): String =
-        this.properties()?.get(propertyName)?.asString ?: ""
 }
