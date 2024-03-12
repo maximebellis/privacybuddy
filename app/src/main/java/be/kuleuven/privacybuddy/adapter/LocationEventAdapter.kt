@@ -1,4 +1,4 @@
-package be.kuleuven.privacybuddy;
+package be.kuleuven.privacybuddy.adapter;
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.LocationEvent
+import be.kuleuven.privacybuddy.R
+import be.kuleuven.privacybuddy.extension.getAppIconByName
 import java.text.SimpleDateFormat
 import java.util.Locale
 

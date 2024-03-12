@@ -1,12 +1,14 @@
 package be.kuleuven.privacybuddy
 
-
-
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
@@ -19,63 +21,51 @@ import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 
-class LocMapActivity : BaseActivity() {
+class LocMapActivity : BaseActivity(){
 
     private lateinit var mapView: MapView
+    private var selectedAppName: String? = null
+    private lateinit var appIconView: ImageView
+    private lateinit var appNameTextView: TextView
+
+    private val chooseAppLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val newAppName = result.data?.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
+                if (newAppName != selectedAppName) {
+                    selectedAppName = newAppName
+                    updateChooseAppDisplay(selectedAppName)
+                    setupMapView(selectedAppName)
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ctp_map_location)
-        setupUI()
+
+        appIconView = findViewById(R.id.imageViewAppLogo)
+        appNameTextView = findViewById(R.id.textViewSelectedApp)
+        selectedAppName = intent.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
+
+        setupChooseAppButton()
+        setupMapView(selectedAppName)
     }
 
-    private fun setupUI() {
-        // Check if a specific app name was provided, otherwise handle "All apps" case
-        val selectedAppName = intent.getStringExtra(SELECTED_APP_NAME)
-        if (selectedAppName == null) {
-            // Handle "All apps" case
-            handleAllAppsSelection()
-        } else {
-            // Handle specific app selection
-            setAppIconAndName(selectedAppName)
-            setupMapView(selectedAppName)
+    private fun updateChooseAppDisplay(appName: String?) {
+        appNameTextView.text = appName ?: "All Apps"
+        appIconView.visibility = if (appName == null) View.GONE else View.VISIBLE
+        if (appName != null) {
+            appIconView.setImageDrawable(applicationContext.getAppIconByName(appName))
         }
-        setupLocationButton()
     }
 
-    private fun handleAllAppsSelection() {
-        findViewById<TextView>(R.id.textViewSelectedApp).text = "All apps"
-        findViewById<ImageView>(R.id.imageViewAppLogo).visibility = View.GONE // Hide the app icon for "All apps"
-        setupMapViewForAllApps()
-    }
-    private fun setAppIconAndName(appName: String) {
-        val appIcon = applicationContext.getAppIconByName(appName)
-        findViewById<TextView>(R.id.textViewSelectedApp).text = appName
-        findViewById<ImageView>(R.id.imageViewAppLogo).setImageDrawable(appIcon)
-    }
 
-    private fun setupMapView(selectedAppName: String) {
+    private fun setupMapView(selectedAppName: String?) {
         mapView = findViewById(R.id.mapView)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
             val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
                 featureCollection(loadGeoJsonFromAssets(selectedAppName))
-                cluster(true)
-                clusterMaxZoom(14)
-                clusterRadius(50)
-            }
-            style.addSource(geoJsonSource)
-            addMapLayers(style)
-            centerMapOnLocation()
-        }
-    }
-
-    private fun setupMapViewForAllApps() {
-        mapView = findViewById(R.id.mapView)
-        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            // Here, adjust the logic to load and display GeoJSON data for all apps
-            // This could mean loading a broader dataset or altering your data filtering approach
-            val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
-                featureCollection(loadGeoJsonFromAssets(null)) // Adjust this method to handle null
                 cluster(true)
                 clusterMaxZoom(14)
                 clusterRadius(50)
@@ -102,19 +92,20 @@ class LocMapActivity : BaseActivity() {
         })
     }
 
-    private fun loadGeoJsonFromAssets(selectedAppName: String?): FeatureCollection =
-        assets.open("dummy_location_data.geojson").bufferedReader().use { reader ->
-            val originalFeatureCollection = FeatureCollection.fromJson(reader.readText())
+    private fun loadGeoJsonFromAssets(selectedAppName: String?): FeatureCollection {
+        return try {
+            val originalFeatureCollection = FeatureCollection.fromJson(assets.open("dummy_location_data.geojson").bufferedReader().readText())
             if (selectedAppName != null) {
-                // Filter for a specific app
-                originalFeatureCollection.features()?.filter {
-                    it.getStringProperty("appName") == selectedAppName
-                }?.let { FeatureCollection.fromFeatures(it) }
+                originalFeatureCollection.features()?.filter { it.getStringProperty("appName") == selectedAppName }
+                    ?.let { FeatureCollection.fromFeatures(it) } ?: FeatureCollection.fromFeatures(emptyList())
             } else {
-                // Return all features for "All apps"
                 originalFeatureCollection
-            } ?: FeatureCollection.fromFeatures(emptyList())
+            }
+        } catch (e: Exception) {
+            // Handle error if file reading fails
+            FeatureCollection.fromFeatures(emptyList())
         }
+    }
 
     private fun centerMapOnLocation() {
         mapView.mapboxMap.setCamera(cameraOptions {
@@ -123,9 +114,10 @@ class LocMapActivity : BaseActivity() {
         })
     }
 
-    private fun setupLocationButton() {
+    private fun setupChooseAppButton() {
+        updateChooseAppDisplay(selectedAppName)
         findViewById<View>(R.id.buttonChooseApp).setOnClickListener {
-            startActivity(Intent(this, ChooseAppActivity::class.java))
+            chooseAppLauncher.launch(Intent(this, ChooseAppActivity::class.java))
         }
     }
 
@@ -134,6 +126,5 @@ class LocMapActivity : BaseActivity() {
         private const val APP_USAGE_SOURCE_ID = "app-usage-source"
         private const val CLUSTERS_LAYER_ID = "clusters"
         private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
-        const val SELECTED_APP_NAME = "SELECTED_APP_NAME"
     }
 }

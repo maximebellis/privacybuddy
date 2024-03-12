@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:fontFamily="sans-serif-medium"
             android:text="Choose app to show"
             android:textColor="@color/title_prim"
             android:textSize="32sp" />

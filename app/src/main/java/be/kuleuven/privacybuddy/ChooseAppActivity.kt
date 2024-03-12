@@ -1,9 +1,7 @@
 package be.kuleuven.privacybuddy
 
-import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +9,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import be.kuleuven.privacybuddy.extension.getAppIconByName
 import org.json.JSONObject
 
+
 class ChooseAppActivity : BaseActivity() {
+
+    companion object {
+        const val SELECTED_APP_NAME = "selected_app_name"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +28,7 @@ class ChooseAppActivity : BaseActivity() {
 
         // Add "All Apps" option first
         linearLayout.addView(createAppView("All Apps").apply {
-            setOnClickListener { launchMapActivity(null) } // null indicates "All Apps"
+            setOnClickListener { finishWithResult(null) } // Return to previous activity with "All Apps"
         })
 
         // Retrieve and sort app names alphabetically
@@ -34,12 +37,10 @@ class ChooseAppActivity : BaseActivity() {
         // Then add all other apps in alphabetical order
         appNames.forEach { appName ->
             linearLayout.addView(createAppView(appName).apply {
-                setOnClickListener { launchMapActivity(appName) }
+                setOnClickListener { finishWithResult(appName)  }
             })
         }
     }
-
-
 
     private fun createAppView(appName: String): View {
         val view = LayoutInflater.from(this).inflate(R.layout.component_app_choice, null, false)
@@ -74,13 +75,12 @@ class ChooseAppActivity : BaseActivity() {
         return view
     }
 
-
-    private fun launchMapActivity(appName: String?) {
-        val intent = Intent(this, LocMapActivity::class.java).apply {
-            // If appName is null, it means "All apps" was selected
-            appName?.let { putExtra(LocMapActivity.SELECTED_APP_NAME, it) }
+    private fun finishWithResult(selectedAppName: String?) {
+        val intent = Intent().apply {
+            putExtra(SELECTED_APP_NAME, selectedAppName)
         }
-        startActivity(intent)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private fun getUniqueAppNamesFromGeoJson(geoJsonFileName: String): List<String> = runCatching {
@@ -92,6 +92,4 @@ class ChooseAppActivity : BaseActivity() {
                 }.distinct()
             }
     }.getOrElse { emptyList() }
-
-
 }

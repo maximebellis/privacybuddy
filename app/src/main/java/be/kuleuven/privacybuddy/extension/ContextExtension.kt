@@ -1,4 +1,4 @@
-package be.kuleuven.privacybuddy
+package be.kuleuven.privacybuddy.extension
 
 import android.content.Context
 import android.content.pm.PackageManager
