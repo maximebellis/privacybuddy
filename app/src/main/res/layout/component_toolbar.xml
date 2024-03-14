@@ -1,42 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.appcompat.widget.Toolbar
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/background_prim"
-    android:elevation="4dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
-
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="4dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_arrow_back"
-        />
-
-    <ImageButton
-        android:id="@+id/optionsButton"
-        android:padding="4dp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_more_vert"
-        app:tint="@color/title_prim"/>
+    android:background="?attr/colorPrimary"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
 
 
-    <ImageButton
-        android:id="@+id/refreshButton"
-        android:padding="4dp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_refresh"
-        app:tint="@color/title_prim" />
-</androidx.appcompat.widget.Toolbar>
+

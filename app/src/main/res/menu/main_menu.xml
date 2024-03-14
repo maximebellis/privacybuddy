@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_back"
+        android:icon="@drawable/ic_chevron_back"
+        android:title="TODO"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_refresh"
+        android:title="TODO"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_timespan"
+        android:icon="@drawable/ic_more_vert"
+        android:title="TODO"
+        app:showAsAction="ifRoom"/>
+
+
+</menu>

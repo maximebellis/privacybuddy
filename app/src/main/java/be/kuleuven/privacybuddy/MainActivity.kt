@@ -3,14 +3,13 @@ package be.kuleuven.privacybuddy
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         setupClickListener()
         setAppIcons()
     }
+
 
     private fun loadStaticMap() {
         val imageView = findViewById<ImageView>(R.id.staticMapView)
