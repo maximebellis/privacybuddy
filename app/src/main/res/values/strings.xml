@@ -6,6 +6,8 @@
     <string name="timeline_text">Timeline of when apps used your location in the past 21 days, click any specific access to get more info.</string>
     <string name="timeline_title">Location usage for</string>
 
+    <string name="choose_page_text">Apps you do not see here, do not have any location accesses in the time period shown now</string>
+
     <!-- Location Accuracy Descriptions -->
     <string name="precise_location">Precise: This means the app accessed the exact location of the device with high accuracy, usually within a few meters, utilizing GPS or other high-precision location services.</string>
     <string name="approximate">Approximate: This means the app accessed the general area of the device. The accuracy can range from several hundred meters to several kilometers, based on Wi-Fi networks, cell towers, and other less precise location sources.</string>

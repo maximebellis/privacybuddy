@@ -21,11 +21,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:fontFamily="sans-serif-medium"
             android:text="Choose app to show"
             android:textColor="@color/title_prim"
             android:textSize="32sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="start"
+            android:text="@string/choose_page_text"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>
