@@ -51,6 +51,7 @@ class LocTimelineActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ctp_timeline_location)
+        setupToolbar()
 
         recyclerView = findViewById(R.id.recyclerViewTimelineLocation)
         recyclerView.layoutManager = LinearLayoutManager(this)

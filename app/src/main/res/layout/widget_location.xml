@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:text="Location"
                 android:textColor="@color/title_prim"
-                android:textSize="16sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/textViewLocationUsage"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="Used by 1 app"
                 android:textColor="@color/title_prim"
-                android:textSize="14sp"/>
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <ImageView

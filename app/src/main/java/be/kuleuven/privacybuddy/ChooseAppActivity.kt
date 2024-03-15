@@ -23,6 +23,7 @@ class ChooseAppActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ctp_choose_app)
+        setupToolbar()
 
         val linearLayout = findViewById<LinearLayout>(R.id.linearLayoutApps)
 

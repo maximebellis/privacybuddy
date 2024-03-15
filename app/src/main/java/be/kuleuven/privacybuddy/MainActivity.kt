@@ -7,10 +7,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.widget.NestedScrollView
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.appbar.MaterialToolbar
 import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
@@ -21,6 +23,9 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_main)
+        setupToolbar()
+
+        setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
 
         loadStaticMap()
         setupClickListener()

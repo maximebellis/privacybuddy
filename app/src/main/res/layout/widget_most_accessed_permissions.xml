@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewHeader"
             android:layout_marginTop="16dp"
+            app:tint="@color/title_prim"
             android:src="@drawable/ic_microphone" />
 
         <TextView
@@ -73,6 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBarMicrophone"
             android:layout_marginTop="16dp"
+            app:tint="@color/title_prim"
             android:src="@drawable/ic_camera" />
 
         <TextView
@@ -106,6 +108,7 @@
             android:layout_marginTop="4dp"
             android:max="100"
             android:progress="43"
+            app:tint="@color/title_prim"
             android:progressDrawable="@drawable/custom_progress_bar" />
 
         <!-- Location Section -->
@@ -115,6 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBarCamera"
             android:layout_marginTop="16dp"
+            app:tint="@color/title_prim"
             android:src="@drawable/ic_location" />
 
         <TextView

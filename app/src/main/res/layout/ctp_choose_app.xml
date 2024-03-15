@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/CTPMapLocation"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:background="@color/background_prim">
 
+    <include layout="@layout/component_toolbar" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutApps"
+    <ScrollView
+        android:id="@+id/CTPMapLocation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/background_prim">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/linearLayoutApps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="Choose app to show"
-            android:textColor="@color/title_prim"
-            android:textSize="32sp" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="start"
-            android:text="@string/choose_page_text"
-            android:textColor="@color/text"
-            android:textSize="16sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Choose app to show"
+                android:textColor="@color/title_prim"
+                android:textSize="32sp" />
 
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="start"
+                android:text="@string/choose_page_text"
+                android:textColor="@color/text"
+                android:textSize="16sp" />
+
+            <!-- More content can be added here -->
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
