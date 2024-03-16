@@ -19,4 +19,5 @@
     <string name="subliminal">Subliminal: This is when the phone accesses your location while you are not actively using the phone, and it is in sleep mode. An example includes the weather app automatically updating its forecast while you are not interacting with your phone.</string>
     <string name="title_activity_loc_timeline">LocTimelineActivity</string>
     <string name="dashboard_title">Privacy dashboard</string>
+    <string name="choose_app_title">Choose app to show</string>
 </resources>

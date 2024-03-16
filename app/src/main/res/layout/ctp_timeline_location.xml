@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:background="@color/background_prim">
 
     <include layout="@layout/component_toolbar" />
@@ -12,11 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/timelineTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -27,7 +25,6 @@
             android:textColor="@color/title_prim"
             android:textSize="36sp"
             tools:ignore="RtlCompat" />
-
 
         <include layout="@layout/button_app_choice"
             android:id="@+id/buttonChooseApp"
@@ -49,9 +46,16 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTimelineLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" />
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1" />
+
+
 
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
+</LinearLayout>

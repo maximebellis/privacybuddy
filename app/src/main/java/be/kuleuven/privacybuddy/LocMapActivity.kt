@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.cardview.widget.CardView
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -119,6 +120,13 @@ class LocMapActivity : BaseActivity(){
         updateChooseAppDisplay(selectedAppName)
         findViewById<View>(R.id.buttonChooseApp).setOnClickListener {
             chooseAppLauncher.launch(Intent(this, ChooseAppActivity::class.java))
+        }
+
+        val buttonShowTimeline = findViewById<CardView>(R.id.buttonShowTimeline)
+        buttonShowTimeline.setOnClickListener {
+            val intent = Intent(this, LocTimelineActivity::class.java)
+            intent.putExtra(ChooseAppActivity.SELECTED_APP_NAME, selectedAppName)
+            startActivity(intent)
         }
     }
 

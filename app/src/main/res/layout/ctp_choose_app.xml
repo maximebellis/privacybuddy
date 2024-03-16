@@ -7,8 +7,8 @@
 
     <include layout="@layout/component_toolbar" />
 
-    <ScrollView
-        android:id="@+id/CTPMapLocation"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -22,12 +22,13 @@
             android:padding="16dp">
 
             <TextView
+                android:id="@+id/chooseAppTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="Choose app to show"
+                android:text="@string/choose_app_title"
                 android:textColor="@color/title_prim"
                 android:textSize="32sp" />
 
@@ -40,8 +41,8 @@
                 android:textColor="@color/text"
                 android:textSize="16sp" />
 
-            <!-- More content can be added here -->
+            <!-- Add any additional views here -->
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

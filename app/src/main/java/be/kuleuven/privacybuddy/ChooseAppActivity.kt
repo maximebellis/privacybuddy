@@ -24,6 +24,7 @@ class ChooseAppActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ctp_choose_app)
         setupToolbar()
+        setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.chooseAppTitleTextView, getString(R.string.choose_app_title))
 
         val linearLayout = findViewById<LinearLayout>(R.id.linearLayoutApps)
 
