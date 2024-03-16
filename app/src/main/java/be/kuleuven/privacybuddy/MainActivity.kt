@@ -2,82 +2,76 @@ package be.kuleuven.privacybuddy
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.mapbox.geojson.FeatureCollection
-import java.io.BufferedReader
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class MainActivity : BaseActivity() {
+
+    private lateinit var locationEventAdapter: LocationEventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_main)
         setupToolbar()
-
-        setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
-
-        loadStaticMap()
-        setupClickListener()
-        setAppIcons()
+        initUI()
     }
 
+    private fun initUI() {
+        setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
+        loadStaticMap()
+        setupWidgetClickListeners()
+        setAppIcons()
+        setupLocationEventsRecyclerView()
+    }
 
-    private fun formatTimestamp(timestamp: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return outputFormat.format(inputFormat.parse(timestamp)!!)
+    private fun setupLocationEventsRecyclerView() {
+        findViewById<RecyclerView>(R.id.latestEventsRecyclerView).apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = LocationEventAdapter(this@MainActivity).also {
+                locationEventAdapter = it
+            }
+        }
+        updateWidgetEvents()
+    }
+
+    private fun updateWidgetEvents() {
+        LocationDataUtils.loadGeoJsonFromAssets(null, applicationContext, "dummy_location_data.geojson").let {
+            val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
+            locationEventAdapter.submitList(lastThreeItems)
+        }
     }
 
     private fun loadStaticMap() {
         val imageView = findViewById<ImageView>(R.id.staticMapView)
         imageView.post {
-            val width = imageView.width // Get the width of the ImageView
-            val height = imageView.height // Get the height of the ImageView
-
-            // Validate dimensions to avoid Glide load failures
-            if (width > 0 && height > 0) {
-                val mapboxAccessToken = getString(R.string.mapbox_access_token)
-                val staticMapUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/4.7012,50.8789,14/${width}x${height}?access_token=$mapboxAccessToken"
-
-                Glide.with(this)
-                    .load(staticMapUrl)
-                    .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)) // Utilize disk caching
-                    .into(imageView)
-            }
+            val mapboxAccessToken = getString(R.string.mapbox_access_token)
+            val staticMapUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/4.7012,50.8789,14/${imageView.width}x${imageView.height}?access_token=$mapboxAccessToken"
+            Glide.with(this)
+                .load(staticMapUrl)
+                .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(imageView)
         }
     }
 
-    private fun setupClickListener() {
-        val widgetMapLocation = findViewById<CardView>(R.id.widgetMapLocation)
-        widgetMapLocation.setOnClickListener {
-            val intent = Intent(this, LocMapActivity::class.java)
-            startActivity(intent)
-        }
-
-        val widgetLocation = findViewById<CardView>(R.id.widgetLocation)
-        widgetLocation.setOnClickListener {
-            val intent = Intent(this, LocTimelineActivity::class.java)
-            startActivity(intent)
-        }
-
-        val widgetLocationTimeline = findViewById<LinearLayout>(R.id.widgetLocationTimelineWithin)
-        widgetLocationTimeline.setOnClickListener {
-            // Replace CtpTimelineLocationActivity with the actual Activity class you want to launch
-            val intent = Intent(this, LocTimelineActivity::class.java)
-            startActivity(intent)
-        }
+    private fun setupWidgetClickListeners() {
+        setClickListener(R.id.widgetMapLocation, LocMapActivity::class.java)
+        setClickListener(R.id.widgetLocation, LocTimelineActivity::class.java)
+        setClickListener(R.id.widgetLocationTimeline, LocTimelineActivity::class.java)
     }
 
-
+    private fun <T> setClickListener(viewId: Int, activityClass: Class<T>) where T : BaseActivity {
+        findViewById<CardView>(viewId).setOnClickListener {
+            startActivity(Intent(this, activityClass))
+        }
+    }
 
     private fun setAppIcons() {
         mapOf(
@@ -85,11 +79,7 @@ class MainActivity : BaseActivity() {
             R.id.imageViewGmail to "Gmail",
             R.id.imageViewAppLogo to "YouTube"
         ).forEach { (viewId, appName) ->
-            val iconDrawable = getAppIconByName(appName)
-            findViewById<ImageView>(viewId).setImageDrawable(iconDrawable)
+            findViewById<ImageView>(viewId).setImageDrawable(getAppIconByName(appName))
         }
     }
-
-
-
 }

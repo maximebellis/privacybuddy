@@ -22,7 +22,17 @@
             android:text="Location access timeline"
             android:background="@color/background_sec"
             android:textColor="@color/title_prim"
+            android:clickable="false"
+            android:focusable="false"
             android:textSize="24sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/latestEventsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"/>
+
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

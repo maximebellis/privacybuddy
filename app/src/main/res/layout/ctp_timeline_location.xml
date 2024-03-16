@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,12 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="sans-serif-medium"
-            android:gravity="center"
             android:text="@string/timeline_title"
             android:textAlignment="textStart"
             android:textColor="@color/title_prim"
-            android:textSize="36sp"
-            tools:ignore="RtlCompat" />
+            android:textSize="36sp" />
 
         <include layout="@layout/button_app_choice"
             android:id="@+id/buttonChooseApp"
@@ -38,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:gravity="start"
             android:text="@string/timeline_text"
             android:textColor="@color/text"
@@ -46,9 +44,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTimelineLocation"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
+
 
 
 

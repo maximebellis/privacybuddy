@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import be.kuleuven.privacybuddy.LocationEvent
 import be.kuleuven.privacybuddy.R
+import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -22,7 +23,7 @@ import java.util.*
 
 sealed interface TimelineItem {
     data class DateLabel(val date: Date) : TimelineItem
-    data class EventItem(val event: LocationEvent) : TimelineItem
+    data class EventItem(val event: LocationData) : TimelineItem
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
@@ -37,6 +38,7 @@ sealed interface TimelineItem {
 
 class LocationEventAdapter(private val context: Context) :
     ListAdapter<TimelineItem, LocationEventAdapter.TimelineViewHolder>(TimelineItem.DIFF_CALLBACK) {
+
 
     companion object {
         private const val TYPE_DATE_LABEL = 0

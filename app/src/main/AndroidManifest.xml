@@ -45,8 +45,7 @@
 
         <activity
             android:name=".LocTimelineActivity"
-            android:exported="false"
-            android:label="@string/title_activity_loc_timeline"
+            android:exported="true"
             android:theme="@style/Theme.PrivacyBuddy" >
         </activity>
 
