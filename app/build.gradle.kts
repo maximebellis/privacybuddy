@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.glide)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.viewpager2)
 
     implementation(libs.androidx.recyclerview)
     implementation(libs.kotlinx.coroutines.android)
