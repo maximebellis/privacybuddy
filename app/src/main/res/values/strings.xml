@@ -8,6 +8,8 @@
 
     <string name="choose_page_text">Apps you do not see here, do not have any location accesses in the time period shown now</string>
 
+    <string name="welcome_text">Welcome to PrivacyBuddy. This app is a prototype designed to test a built-in OS service created by Tristan Pelgrims and Maxime Bellis for their thesis.\n\nWe present to you three different weekly itineraries. Please read them carefully and select the one that resonates most with you. Once you\'ve made your selection, the app will load simulated data based on your chosen itinerary.\n\nWe invite you to explore the app as if you are reviewing your own data from the past week.</string>
+
     <!-- Location Accuracy Descriptions -->
     <string name="precise_location">Precise: This means the app accessed the exact location of the device with high accuracy, usually within a few meters, utilizing GPS or other high-precision location services.</string>
     <string name="approximate">Approximate: This means the app accessed the general area of the device. The accuracy can range from several hundred meters to several kilometers, based on Wi-Fi networks, cell towers, and other less precise location sources.</string>
