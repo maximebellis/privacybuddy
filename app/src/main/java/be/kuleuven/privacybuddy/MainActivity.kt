@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.AppOpsUtility
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.bumptech.glide.Glide
@@ -26,6 +27,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.dashboard_main)
         setupToolbar()
         initUI()
+        AppOpsUtility.setupLocationAccessListener(this)
     }
 
     private fun initUI() {
