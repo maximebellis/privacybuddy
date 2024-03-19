@@ -48,7 +48,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateWidgetEvents() {
-        loadGeoJsonFromAssets(null, applicationContext, days = 1).let {
+        loadGeoJsonFromAssets(null, applicationContext,  days = daysFilter).let {
             val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
             locationEventAdapter.submitList(lastThreeItems)
         }
@@ -90,7 +90,7 @@ class MainActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         daysFilter = days
-        updateDashboardText()
+        initUI()
     }
 
     private fun updateDashboardText() {
