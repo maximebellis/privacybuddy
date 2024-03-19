@@ -37,11 +37,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp" />
 
+        <TextView
+            android:id="@+id/textViewMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/dashboard_text"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="25dp"
             app:cardCornerRadius="16dp">
 
             <com.mapbox.maps.MapView

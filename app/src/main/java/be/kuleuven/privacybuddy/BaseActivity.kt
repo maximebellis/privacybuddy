@@ -12,7 +12,13 @@ import androidx.core.widget.NestedScrollView
 import com.google.android.material.appbar.MaterialToolbar
 
 
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
+
+    object AppSettings {
+        var daysFilter: Int = 1
+    }
+
+    abstract fun filterData(days: Int)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +52,7 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        menuInflater.inflate(R.menu.timespan_menu, menu)
         return true
     }
 
@@ -59,10 +66,19 @@ open class BaseActivity : AppCompatActivity() {
                 Toast.makeText(this, "Refresh clicked", Toast.LENGTH_SHORT).show()
                 true
             }
-            R.id.action_timespan -> {
-                Toast.makeText(this, "More clicked", Toast.LENGTH_SHORT).show()
+            R.id.action_one_day -> {
+                filterData(1)
                 true
             }
+            R.id.action_seven_days -> {
+                filterData(7)
+                true
+            }
+            R.id.action_twenty_one_days -> {
+                filterData(21)
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

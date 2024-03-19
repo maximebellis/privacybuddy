@@ -3,7 +3,9 @@
     <string name="location_icon">Location Icon</string>
     <string name="microphone_icon">Microphone Icon</string>
     <string name="camera_icon">Camera Icon</string>
-    <string name="timeline_text">Timeline of when apps used your location in the past 21 days, click any specific access to get more info.</string>
+    <string name="timeline_text">Timeline of when apps used your location in the past %1$d days, click any specific access to get more info.</string>
+    <string name="timeline_text_single_day">Timeline of when apps used your location in the past 24 hours, click any specific access to get more info.</string>
+
     <string name="timeline_title">Location usage for</string>
 
     <string name="choose_page_text">Apps you do not see here, do not have any location accesses in the time period shown now</string>
@@ -22,4 +24,6 @@
     <string name="title_activity_loc_timeline">LocTimelineActivity</string>
     <string name="dashboard_title">Privacy dashboard</string>
     <string name="choose_app_title">Choose app to show</string>
+    <string name="dashboard_text">Showing accesses in last %1$d days</string>
+    <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
 </resources>

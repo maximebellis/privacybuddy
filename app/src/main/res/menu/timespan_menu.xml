@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_one_day"
+        android:title="1 day"/>
+    <item android:id="@+id/action_seven_days"
+        android:title="7 days"/>
+    <item android:id="@+id/action_twenty_one_days"
+        android:title="21 days"/>
+</menu>

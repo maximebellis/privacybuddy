@@ -1,24 +1,19 @@
 package be.kuleuven.privacybuddy.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.R
 import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
+import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
 import java.util.*
 
 sealed interface TimelineItem {
@@ -93,29 +88,10 @@ class LocationEventAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: TimelineViewHolder, position: Int) = holder.bind(getItem(position))
 
 
-    private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-    private fun formatDateLabel(date: Date): String {
-        val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-        return when {
-            localDate.isEqual(LocalDate.now()) -> "Today"
-            localDate.isEqual(LocalDate.now().minusDays(1)) -> "Yesterday"
-            else -> localDate.format(dateFormatter)
-        }
-    }
 
 
 
 
-    private fun formatTimestamp(timestamp: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return try {
-            val date = inputFormat.parse(timestamp)
-            outputFormat.format(date)
-        } catch (e: Exception) {
-            "Invalid Time"
-        }
-    }
 
 
 }

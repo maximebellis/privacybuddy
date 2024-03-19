@@ -24,6 +24,10 @@ class SimulationActivity : BaseActivity() {
             "Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1"
             , "Description 2", "Description 3")
 
+    override fun filterData(days: Int) {
+        TODO("Not yet implemented")
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

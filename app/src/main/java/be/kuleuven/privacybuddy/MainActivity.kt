@@ -1,14 +1,18 @@
 package be.kuleuven.privacybuddy
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
+import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -30,6 +34,7 @@ class MainActivity : BaseActivity() {
         setupWidgetClickListeners()
         setAppIcons()
         setupLocationEventsRecyclerView()
+        updateDashboardText()
     }
 
     private fun setupLocationEventsRecyclerView() {
@@ -43,7 +48,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateWidgetEvents() {
-        LocationDataUtils.loadGeoJsonFromAssets(null, applicationContext, "dummy_location_data.geojson").let {
+        loadGeoJsonFromAssets(null, applicationContext, days = 1).let {
             val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
             locationEventAdapter.submitList(lastThreeItems)
         }
@@ -81,5 +86,20 @@ class MainActivity : BaseActivity() {
         ).forEach { (viewId, appName) ->
             findViewById<ImageView>(viewId).setImageDrawable(getAppIconByName(appName))
         }
+    }
+
+    override fun filterData(days: Int) {
+        daysFilter = days
+        updateDashboardText()
+    }
+
+    private fun updateDashboardText() {
+        val dashboardText = if (daysFilter > 1) {
+            getString(R.string.dashboard_text, daysFilter)
+        } else {
+            getString(R.string.dashboard_text_single_day)
+        }
+
+        findViewById<TextView>(R.id.pageSubTitleTextView).text = dashboardText
     }
 }

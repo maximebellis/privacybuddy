@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -20,7 +21,12 @@ import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.getSourceAs
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class LocMapActivity : BaseActivity(){
 
@@ -67,7 +73,7 @@ class LocMapActivity : BaseActivity(){
         mapView = findViewById(R.id.mapView)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
             val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
-                featureCollection(loadGeoJsonFromAssets(selectedAppName))
+                featureCollection(loadGeoJsonFromAssets(selectedAppName, daysFilter))
                 cluster(true)
                 clusterMaxZoom(14)
                 clusterRadius(50)
@@ -75,6 +81,7 @@ class LocMapActivity : BaseActivity(){
             style.addSource(geoJsonSource)
             addMapLayers(style)
             centerMapOnLocation()
+            updateMapText()
         }
     }
 
@@ -94,15 +101,27 @@ class LocMapActivity : BaseActivity(){
         })
     }
 
-    private fun loadGeoJsonFromAssets(selectedAppName: String?): FeatureCollection {
+    private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
         return try {
-            val originalFeatureCollection = FeatureCollection.fromJson(assets.open("dummy_location_data.geojson").bufferedReader().readText())
-            if (selectedAppName != null) {
-                originalFeatureCollection.features()?.filter { it.getStringProperty("appName") == selectedAppName }
-                    ?.let { FeatureCollection.fromFeatures(it) } ?: FeatureCollection.fromFeatures(emptyList())
-            } else {
-                originalFeatureCollection
+            val assetsJson = assets.open("dummy_location_data.geojson").bufferedReader().use { it.readText() }
+            val originalFeatureCollection = FeatureCollection.fromJson(assetsJson)
+
+            // Define a formatter matching your timestamp format
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+            // Calculate the cutoff LocalDateTime
+            val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
+
+            val filteredFeatures = originalFeatureCollection.features()?.filter { feature ->
+                val timestampStr = feature.getStringProperty("timestamp")
+                val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
+
+                // Check if the feature's app name matches (if specified) and the date is within the desired range
+                (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
+                        featureDateTime.isAfter(cutoffDateTime)
             }
+
+            FeatureCollection.fromFeatures(filteredFeatures ?: emptyList())
         } catch (e: Exception) {
             // Handle error if file reading fails
             FeatureCollection.fromFeatures(emptyList())
@@ -129,6 +148,22 @@ class LocMapActivity : BaseActivity(){
             startActivity(intent)
         }
     }
+
+    override fun filterData(days: Int) {
+        daysFilter = days
+        setupMapView(selectedAppName)
+    }
+
+    private fun updateMapText() {
+        val mapText = if (daysFilter > 1) {
+            getString(R.string.dashboard_text, daysFilter)
+        } else {
+            getString(R.string.dashboard_text_single_day)
+        }
+
+        findViewById<TextView>(R.id.textViewMap).text = mapText
+    }
+
 
 
     companion object {

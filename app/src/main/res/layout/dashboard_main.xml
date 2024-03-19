@@ -38,7 +38,7 @@
                 android:layout_marginBottom="16dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
-                android:text="Showing accesses in last 21 days"
+                android:text="@string/dashboard_text"
                 android:textColor="@color/text"
                 android:textSize="14sp" />
 

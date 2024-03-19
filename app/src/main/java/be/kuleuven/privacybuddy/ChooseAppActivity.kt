@@ -1,16 +1,21 @@
 package be.kuleuven.privacybuddy
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import org.json.JSONObject
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class ChooseAppActivity : BaseActivity() {
@@ -34,13 +39,39 @@ class ChooseAppActivity : BaseActivity() {
         })
 
         // Retrieve and sort app names alphabetically
-        val appNames = getUniqueAppNamesFromGeoJson("dummy_location_data.geojson").sorted()
+        val appNames = getUniqueAppNamesFromGeoJson(daysFilter).sorted()
 
         // Then add all other apps in alphabetical order
         appNames.forEach { appName ->
             linearLayout.addView(createAppView(appName).apply {
                 setOnClickListener { finishWithResult(appName)  }
             })
+        }
+    }
+
+    private fun getUniqueAppNamesFromGeoJson(
+        days: Int
+    ): List<String> {
+        val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        return runCatching {
+            assets.open("dummy_location_data.geojson").bufferedReader().use { reader ->
+                val json = reader.readText()
+                val features = JSONObject(json).getJSONArray("features")
+
+                (0 until features.length()).mapNotNull { index ->
+                    val feature = features.getJSONObject(index)
+                    val properties = feature.getJSONObject("properties")
+                    val timestampStr = properties.getString("timestamp")
+                    val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
+
+                    if (featureDateTime.isAfter(cutoffDateTime)) properties.getString("appName") else null
+                }.distinct()
+            }
+        }.getOrElse {
+            Log.e("GeoJsonUtils", "Error getting unique app names from GeoJson", it)
+            emptyList()
         }
     }
 
@@ -85,13 +116,8 @@ class ChooseAppActivity : BaseActivity() {
         finish()
     }
 
-    private fun getUniqueAppNamesFromGeoJson(geoJsonFileName: String): List<String> = runCatching {
-        assets.open(geoJsonFileName).bufferedReader().use { it.readText() }
-            .let { JSONObject(it).getJSONArray("features") }
-            .let { features ->
-                (0 until features.length()).mapNotNull { index ->
-                    features.getJSONObject(index).getJSONObject("properties").getString("appName")
-                }.distinct()
-            }
-    }.getOrElse { emptyList() }
+    override fun filterData(days: Int) {
+        daysFilter = days
+        recreate()
+    }
 }

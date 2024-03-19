@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
@@ -57,6 +58,7 @@ class LocTimelineActivity : BaseActivity() {
         setupChooseAppButton()
         updateChooseAppDisplay(selectedAppName)
         refreshEvents()
+
     }
 
     override fun onResume() {
@@ -71,7 +73,7 @@ class LocTimelineActivity : BaseActivity() {
 
     private fun refreshEvents() = coroutineScope.launch {
         val events = withContext(Dispatchers.IO) {
-            LocationDataUtils.loadGeoJsonFromAssets(selectedAppName, this@LocTimelineActivity)
+            LocationDataUtils.loadGeoJsonFromAssets(selectedAppName, this@LocTimelineActivity, days = daysFilter)
         }
         val groupedEvents = withContext(Dispatchers.Default) {
             prepareTimelineItems(events)
@@ -79,6 +81,7 @@ class LocTimelineActivity : BaseActivity() {
         withContext(Dispatchers.Main) {
             adapter.submitList(groupedEvents) // Use submitList to update data
         }
+        updateTimelineText()
     }
 
     private fun setupChooseAppButton() {
@@ -94,6 +97,22 @@ class LocTimelineActivity : BaseActivity() {
             appIconView.setImageDrawable(applicationContext.getAppIconByName(appName))
         }
     }
+
+    override fun filterData(days: Int) {
+        daysFilter = days // Update the days filter
+        refreshEvents() // Refresh the events list with the new filter
+    }
+
+    private fun updateTimelineText() {
+        val timelineText = if (daysFilter > 1) {
+            getString(R.string.timeline_text, daysFilter)
+        } else {
+            getString(R.string.timeline_text_single_day)
+        }
+
+        findViewById<TextView>(R.id.textViewTimeline).text = timelineText
+    }
+
 
 }
 
