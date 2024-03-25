@@ -1,7 +1,6 @@
 package be.kuleuven.privacybuddy
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -56,7 +55,7 @@ class ChooseAppActivity : BaseActivity() {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         return runCatching {
-            assets.open("dummy_location_data.geojson").bufferedReader().use { reader ->
+            assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { reader ->
                 val json = reader.readText()
                 val features = JSONObject(json).getJSONArray("features")
 

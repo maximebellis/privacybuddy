@@ -22,11 +22,17 @@ class MainActivity : BaseActivity() {
 
     private lateinit var locationEventAdapter: LocationEventAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_main)
         setupToolbar()
+
+        setupLocationEventsRecyclerView()
         initUI()
+
+
+
         AppOpsUtility.setupLocationAccessListener(this)
     }
 
@@ -35,9 +41,16 @@ class MainActivity : BaseActivity() {
         loadStaticMap()
         setupWidgetClickListeners()
         setAppIcons()
-        setupLocationEventsRecyclerView()
         updateDashboardText()
     }
+
+    private fun updateWidgetEvents() {
+        loadGeoJsonFromAssets(AppState.selectedGeoJsonFile, applicationContext, days = daysFilter).let {
+            val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
+            locationEventAdapter.submitList(lastThreeItems)
+        }
+    }
+
 
     private fun setupLocationEventsRecyclerView() {
         findViewById<RecyclerView>(R.id.latestEventsRecyclerView).apply {
@@ -49,12 +62,6 @@ class MainActivity : BaseActivity() {
         updateWidgetEvents()
     }
 
-    private fun updateWidgetEvents() {
-        loadGeoJsonFromAssets(null, applicationContext,  days = daysFilter).let {
-            val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
-            locationEventAdapter.submitList(lastThreeItems)
-        }
-    }
 
     private fun loadStaticMap() {
         val imageView = findViewById<ImageView>(R.id.staticMapView)

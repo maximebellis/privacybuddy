@@ -21,10 +21,7 @@ import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
-import com.mapbox.maps.extension.style.sources.getSourceAs
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -103,7 +100,7 @@ class LocMapActivity : BaseActivity(){
 
     private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
         return try {
-            val assetsJson = assets.open("dummy_location_data.geojson").bufferedReader().use { it.readText() }
+            val assetsJson = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
             val originalFeatureCollection = FeatureCollection.fromJson(assetsJson)
 
             // Define a formatter matching your timestamp format

@@ -6,9 +6,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.viewpager2.widget.ViewPager2
-import be.kuleuven.privacybuddy.BaseActivity
-import be.kuleuven.privacybuddy.R
-
 
 
 class SimulationActivity : BaseActivity() {
@@ -37,9 +34,19 @@ class SimulationActivity : BaseActivity() {
 
 
         buttonChoose.setOnClickListener {
+            val selectedPageIndex = viewPager.currentItem
+            AppState.selectedGeoJsonFile = when (selectedPageIndex) {
+                0 -> "dummy_location_1.geojson"
+                1 -> "dummy_location_2.geojson"
+                2 -> "dummy_location_3.geojson"
+                else -> "dummy_location_3.geojson"
+            }
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+
 
         viewPager = findViewById(R.id.viewPager_choices)
         buttonPrevious = findViewById(R.id.button_previous)

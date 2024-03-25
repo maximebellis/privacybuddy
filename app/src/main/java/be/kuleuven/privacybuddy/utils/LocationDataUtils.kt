@@ -2,13 +2,13 @@ package be.kuleuven.privacybuddy.utils
 
 import android.content.Context
 import android.util.Log
+import be.kuleuven.privacybuddy.AppState
 import be.kuleuven.privacybuddy.adapter.TimelineItem
 import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 
@@ -26,7 +26,7 @@ object LocationDataUtils {
                         events.map { TimelineItem.EventItem(it) }
             }
     }
-    fun loadGeoJsonFromAssets(selectedAppName: String?, context: Context, filename: String = "dummy_location_data.geojson", days: Int): List<LocationData> {
+    fun loadGeoJsonFromAssets(selectedAppName: String?, context: Context, filename: String = AppState.selectedGeoJsonFile, days: Int): List<LocationData> {
         return try {
             val featureCollection = parseGeoJsonFromAssets(context, filename)
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
