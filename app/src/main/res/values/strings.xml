@@ -21,9 +21,17 @@
     <string name="foreground">Foreground: This occurs when the app accesses your location while you are using the app, but without you allowing it at that specific time. For example, Google Chrome using your exact location for searches while you are actively using the browser.</string>
     <string name="background">Background: This indicates that the location was accessed without specific permission for this instance and while you were not actively using the app, but still doing something on the phone. An example is the weather app automatically updating its information while you are using your phone for other tasks.</string>
     <string name="subliminal">Subliminal: This is when the phone accesses your location while you are not actively using the phone, and it is in sleep mode. An example includes the weather app automatically updating its forecast while you are not interacting with your phone.</string>
-    <string name="title_activity_loc_timeline">LocTimelineActivity</string>
+
+
+    <!-- Titles -->
     <string name="dashboard_title">Privacy dashboard</string>
     <string name="choose_app_title">Choose app to show</string>
+
+
+    <string name="title_activity_loc_timeline">LocTimelineActivity</string>
+
+
+
     <string name="dashboard_text">Showing accesses in last %1$d days</string>
     <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
 </resources>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -62,6 +63,8 @@ class LocationEventAdapter(private val context: Context) :
         private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewAppLogo)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
+
+        private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
             (item as? TimelineItem.EventItem)?.let { eventItem ->
                 timeView.text = formatTimestamp(eventItem.event.timestamp)
@@ -70,9 +73,50 @@ class LocationEventAdapter(private val context: Context) :
                 interactionTypeView.text = eventItem.event.interactionType
                 appLogoView.setImageDrawable(context.getAppIconByName(eventItem.event.appName))
                 verticalLineView.visibility = if (bindingAdapterPosition == itemCount - 1) View.INVISIBLE else View.VISIBLE
+
+                infoIconView.setOnClickListener { view ->
+                    showInfoPopup(view, eventItem.event) // Pass the view and the current event item
+                }
             }
         }
     }
+
+    private fun showInfoPopup(view: View, event: LocationData) {
+        val inflater = LayoutInflater.from(view.context)
+        val popupView = inflater.inflate(R.layout.popup_info, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true // Make it focusable
+        )
+
+        val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
+
+        // Directly retrieve and concatenate the string descriptions
+        val usageTypeDescription = when (event.usageType) {
+            "precise" -> context.getString(R.string.precise_location)
+            "approximate" -> context.getString(R.string.approximate)
+            else -> ""
+        }
+        val interactionTypeDescription = when (event.interactionType) {
+            "sanctioned" -> context.getString(R.string.sanctioned)
+            "foreground" -> context.getString(R.string.foreground)
+            "background" -> context.getString(R.string.background)
+            "subliminal" -> context.getString(R.string.subliminal)
+            else -> ""
+        }
+
+        // Combine descriptions with a newline for separation, if both are present
+        textViewPopupContent.text = listOf(usageTypeDescription, interactionTypeDescription)
+            .filter { it.isNotEmpty() }
+            .joinToString("\n\n")
+
+        popupWindow.showAsDropDown(view)
+    }
+
+
+
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is TimelineItem.DateLabel -> TYPE_DATE_LABEL

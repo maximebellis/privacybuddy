@@ -3,13 +3,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@drawable/popup_background"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvInfo"
+        android:id="@+id/textViewPopupContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="text here"
-        android:textColor="@color/text" />
+        android:text="Info content goes here"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/background_prim" />
 
 </LinearLayout>

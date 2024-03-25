@@ -27,12 +27,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_main)
         setupToolbar()
-
         setupLocationEventsRecyclerView()
         initUI()
-
-
-
         AppOpsUtility.setupLocationAccessListener(this)
     }
 

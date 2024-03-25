@@ -15,7 +15,7 @@ import com.google.android.material.appbar.MaterialToolbar
 abstract class BaseActivity : AppCompatActivity() {
 
     object AppSettings {
-        var daysFilter: Int = 1
+        var daysFilter: Int = 21
     }
 
     abstract fun filterData(days: Int)
