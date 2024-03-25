@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [4.7138, 50.8823]}, "properties": {"appName": "Facebook", "usageType": "approximate", "interactionType": "foreground", "timestamp": "2024-03-17 10:01:00"}}]}

@@ -36,14 +36,14 @@
         <include
             layout="@layout/simulation_viewpager"
             android:layout_width="wrap_content"
-            android:layout_height="317dp" />
+            android:layout_height="352dp" />
 
         <Button
             android:id="@+id/button_choose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@color/title_prim"
+            android:background="@drawable/button_misc"
             android:paddingHorizontal="16dp"
             android:paddingVertical="8dp"
             android:text="CHOOSE"
