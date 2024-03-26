@@ -25,7 +25,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dashboard_main)
+        setContentView(R.layout.page_dashboard_main)
         setupToolbar()
         setupLocationEventsRecyclerView()
         initUI()

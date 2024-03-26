@@ -46,7 +46,7 @@ class LocMapActivity : BaseActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.ctp_map_location)
+        setContentView(R.layout.page_map_location)
         setupToolbar()
 
         appIconView = findViewById(R.id.imageViewAppLogo)

@@ -28,7 +28,7 @@ class SimulationActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.simulation_page)
+        setContentView(R.layout.page_simulation)
 
         val buttonChoose: Button = findViewById(R.id.button_choose)
 

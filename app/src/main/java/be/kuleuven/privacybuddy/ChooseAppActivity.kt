@@ -26,7 +26,7 @@ class ChooseAppActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.ctp_choose_app)
+        setContentView(R.layout.page_choose_app_menu)
         setupToolbar()
         setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.chooseAppTitleTextView, getString(R.string.choose_app_title))
 
