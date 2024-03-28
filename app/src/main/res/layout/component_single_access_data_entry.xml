@@ -1,0 +1,50 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Data Name -->
+    <TextView
+        android:id="@+id/textViewDataName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Latitude:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/text"
+        android:textSize="24sp" />
+
+    <!-- Data Value -->
+    <TextView
+        android:id="@+id/textViewDataValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/textViewDataName"
+        android:layout_marginStart="16dp"
+        android:text="59.871"
+        android:textSize="24sp"
+        android:textColor="@color/text" />
+
+    <!-- Vertical Line -->
+    <View
+        android:id="@+id/verticalLineView"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:background="@color/text"
+        android:layout_toEndOf="@id/textViewDataValue"
+        android:layout_marginStart="16dp"
+        android:layout_centerVertical="true"/>
+
+    <!-- Info Button -->
+    <ImageView
+        android:id="@+id/imageViewInfo"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_toEndOf="@id/verticalLineView"
+        android:src="@drawable/ic_info"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginStart="16dp"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

@@ -155,9 +155,6 @@ class MainActivity : BaseActivity() {
         })
     }
 
-
-
-
     companion object {
         const val APP_USAGE_SOURCE_ID = "app-usage-source"
         private const val CLUSTERS_LAYER_ID = "clusters"

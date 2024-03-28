@@ -34,7 +34,7 @@
 
 
         <include
-            layout="@layout/simulation_viewpager"
+            layout="@layout/component_simulation_viewpager"
             android:layout_width="wrap_content"
             android:layout_height="352dp" />
 
