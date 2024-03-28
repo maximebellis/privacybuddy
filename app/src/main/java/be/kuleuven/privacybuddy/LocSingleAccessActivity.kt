@@ -4,15 +4,40 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
-import java.io.InputStreamReader
 import be.kuleuven.privacybuddy.data.LocationData
+import com.mapbox.maps.MapView
 import java.util.Locale
+import android.content.Intent
+import android.widget.ImageView
+import android.widget.ProgressBar
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
+import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
+import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.AppOpsUtility
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
+import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
+import com.mapbox.maps.Style
+import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.circleLayer
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.plugin.gestures.GesturesPlugin
+import com.mapbox.maps.plugin.gestures.gestures
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class LocSingleAccessActivity : BaseActivity() {
+
+    private lateinit var mapView: MapView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +46,7 @@ class LocSingleAccessActivity : BaseActivity() {
 
         val appNameTextView: TextView = findViewById(R.id.dataEntryApp)
         val timestampTextView: TextView = findViewById(R.id.dataEntryTime)
+        val appLogoImageView: ImageView = findViewById(R.id.appLogoImageView)
 
         // Retrieve the JSON string from the intent
         val eventJsonString = intent.getStringExtra("jsonData") ?: return
@@ -32,6 +58,8 @@ class LocSingleAccessActivity : BaseActivity() {
         // Populate the UI with the data
         locationData?.let {
             appNameTextView.text = it.appName
+            val appIconDrawable = getAppIconByName(it.appName)
+            appLogoImageView.setImageDrawable(appIconDrawable)
             timestampTextView.text = it.timestamp
 
             it.accuracy?.let { accuracy ->
@@ -61,8 +89,34 @@ class LocSingleAccessActivity : BaseActivity() {
             } ?: run {
                 hideDataEntry(R.id.dataEntryAltitude)
             }
+
+        }
+
+        mapView = findViewById(R.id.mapView)
+        initializeMap(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0)
+
+
+    }
+
+    private fun initializeMap(latitude: Double, longitude: Double) {
+        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
+            mapView.getMapboxMap().setCamera(
+                cameraOptions {
+                    center(Point.fromLngLat(longitude, latitude))
+                    zoom(14.0)
+                }
+            )
+        }
+
+        mapView.gestures.apply {
+            pitchEnabled = false
+            rotateEnabled = false
+            scrollEnabled = false
         }
     }
+
+
+
 
     fun formatNumber(value: Double): String {
         return "%.7g".format(Locale.US, value)

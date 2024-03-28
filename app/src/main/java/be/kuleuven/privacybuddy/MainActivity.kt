@@ -100,11 +100,6 @@ class MainActivity : BaseActivity() {
         mapView.gestures.rotateDecelerationEnabled  = false
         mapView.gestures.increasePinchToZoomThresholdWhenRotating = false
         mapView.gestures.pinchToZoomDecelerationEnabled = false
-
-
-
-
-
     }
 
     private fun addMapLayers(style: Style) {
@@ -163,7 +158,6 @@ class MainActivity : BaseActivity() {
         private const val CLUSTERS_LAYER_ID = "clusters"
         private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
     }
-
 
     private fun setupWidgetClickListeners() {
         setClickListener(R.id.widgetMapLocation, LocMapActivity::class.java)
@@ -255,14 +249,6 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
-    fun updateAppSection(imageView: ImageView, textViewAccess: TextView, progressBar: ProgressBar, appAccessInfo: AppAccessInfo, maxAccess: Int) {
-        imageView.setImageDrawable(getAppIconByName(appAccessInfo.appName))
-        textViewAccess.text = "${appAccessInfo.accessCount} accesses"
-        progressBar.max = maxAccess
-        progressBar.progress = appAccessInfo.accessCount
-    }
-
 
     data class AppAccessInfo(val appName: String, val accessCount: Int)
 }
