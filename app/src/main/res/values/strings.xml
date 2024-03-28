@@ -30,6 +30,14 @@
 
     <string name="title_activity_loc_timeline">LocTimelineActivity</string>
 
+    <!-- Specific access page explanations -->
+    <string name="info_latitude">Latitude is the north-south position on the Earth\'s surface.</string>
+    <string name="info_longitude">Longitude is the east-west position on the Earth\'s surface.</string>
+    <string name="info_accuracy">Accuracy, measured in meters, indicates the radius within which your actual location is likely to be. An accuracy of %1$d meters means your location is known within a %1$d-meter radius. Lower values are more precise. This level of accuracy means your location could be identified to within a %2$s.</string>
+    <string name="info_speed">Speed is measured in meters per second (m/s) and represents the velocity at which the device is moving.</string>
+    <string name="info_bearing">Bearing, measured in degrees, indicates the direction of travel. It represents an angle between 0 and 360 degrees, measured clockwise from true north.</string>
+    <string name="info_altitude">Altitude refers to the height above the Earths surface, measured in meters. It indicates how high the location is from sea level.</string>
+
 
 
     <string name="dashboard_text">Showing accesses in last %1$d days</string>

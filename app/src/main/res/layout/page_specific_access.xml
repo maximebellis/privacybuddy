@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="At"
+                android:text="at"
                 android:textColor="@color/title_prim"
                 android:textSize="32sp" />
 
@@ -81,92 +81,94 @@
         </LinearLayout>
 
 
+        <!--
 
-
-        <include layout="@layout/button_show_timeline"
-        android:id="@+id/buttonShowTimeline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
-
-    <include layout="@layout/button_show_map"
-        android:id="@+id/buttonShowMap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-medium"
-        android:layout_below="@id/toolbar"
-        android:text="Accessed location"
-        android:textColor="@color/title_prim"
-        android:textSize="32sp"
-        tools:ignore="RtlCompat" />
-
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:cardCornerRadius="16dp"
-            android:layout_marginTop="20dp">
-
-            <com.mapbox.maps.MapView
-                android:id="@+id/mapView"
+                <include layout="@layout/button_show_timeline"
+                android:id="@+id/buttonShowTimeline"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </androidx.cardview.widget.CardView>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
+
+            <include layout="@layout/button_show_map"
+                android:id="@+id/buttonShowMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
+        -->
 
 
-        <TextView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_below="@id/toolbar"
+                android:text="Accessed location"
+                android:textColor="@color/title_prim"
+                android:textSize="32sp"
+                tools:ignore="RtlCompat" />
+
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_below="@id/toolbar"
-                    android:text="Location data sent"
-                    android:textColor="@color/title_prim"
-                    android:textSize="32sp"
-                    tools:ignore="RtlCompat" />
+                    android:layout_height="200dp"
+                    app:cardCornerRadius="16dp"
+                    android:layout_marginTop="20dp">
 
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntryLatitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntryLongitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntryAltitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntryAccuracy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntrySpeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include layout="@layout/component_single_access_data_entry"
-        android:id="@+id/dataEntryBearing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+                    <com.mapbox.maps.MapView
+                        android:id="@+id/mapView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </androidx.cardview.widget.CardView>
 
 
+                <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_below="@id/toolbar"
+                            android:text="Location data sent"
+                            android:textColor="@color/title_prim"
+                            android:textSize="32sp"
+                            tools:ignore="RtlCompat" />
 
-</LinearLayout>
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntryLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-</LinearLayout>
-</ScrollView>
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntryLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntryAltitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntryAccuracy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntrySpeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include layout="@layout/component_single_access_data_entry"
+                android:id="@+id/dataEntryBearing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+
+        </LinearLayout>
+
+        </LinearLayout>
+        </ScrollView>
 
 
 

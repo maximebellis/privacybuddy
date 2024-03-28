@@ -9,7 +9,12 @@ import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.maps.MapView
 import java.util.Locale
 import android.content.Intent
+import android.content.res.Resources
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +49,7 @@ class LocSingleAccessActivity : BaseActivity() {
         setContentView(R.layout.page_specific_access)
         setupToolbar()
 
+
         val appNameTextView: TextView = findViewById(R.id.dataEntryApp)
         val timestampTextView: TextView = findViewById(R.id.dataEntryTime)
         val appLogoImageView: ImageView = findViewById(R.id.appLogoImageView)
@@ -54,6 +60,7 @@ class LocSingleAccessActivity : BaseActivity() {
 
         // Parse the JSON string into a LocationData object
         val locationData = Gson().fromJson(eventJsonString, LocationData::class.java)
+        locationData.accuracy?.let { setupInfoButtons(it) }
 
         // Populate the UI with the data
         locationData?.let {
@@ -139,5 +146,81 @@ class LocSingleAccessActivity : BaseActivity() {
         AppSettings.daysFilter = days
         //this page does not need to reload anything for this
     }
+
+    private fun setupInfoButtons(accuracy: Double) {
+        val infoButtonLatitude = findViewById<View>(R.id.dataEntryLatitude).findViewById<ImageView>(R.id.imageViewInfo)
+        val infoButtonLongitude = findViewById<View>(R.id.dataEntryLongitude).findViewById<ImageView>(R.id.imageViewInfo)
+        val infoButtonAccuracy = findViewById<View>(R.id.dataEntryAccuracy).findViewById<ImageView>(R.id.imageViewInfo)
+        val infoButtonSpeed = findViewById<View>(R.id.dataEntrySpeed).findViewById<ImageView>(R.id.imageViewInfo)
+        val infoButtonBearing = findViewById<View>(R.id.dataEntryBearing).findViewById<ImageView>(R.id.imageViewInfo)
+        val infoButtonAltitude = findViewById<View>(R.id.dataEntryAltitude).findViewById<ImageView>(R.id.imageViewInfo)
+
+        infoButtonLatitude.setOnClickListener { view ->
+            showInfoPopup(view, getString(R.string.info_latitude))
+        }
+        infoButtonLongitude.setOnClickListener { view ->
+            showInfoPopup(view, getString(R.string.info_longitude))
+        }
+        val accuracyDescription = getAccuracyDescription(accuracy)
+        infoButtonAccuracy.setOnClickListener { showInfoPopup(it, getString(R.string.info_accuracy, accuracy.toInt(), accuracyDescription)) }
+        infoButtonSpeed.setOnClickListener { view ->
+            showInfoPopup(view, getString(R.string.info_speed))
+        }
+        infoButtonBearing.setOnClickListener { view ->
+            showInfoPopup(view, getString(R.string.info_bearing))
+        }
+        infoButtonAltitude.setOnClickListener { view ->
+            showInfoPopup(view, getString(R.string.info_altitude))
+        }
+    }
+
+    private fun getAccuracyDescription(accuracy: Double): String {
+        return when {
+            accuracy <= 5 -> "a very precise location, such as which part of a room you are in."
+            accuracy <= 10 -> "a precise location, such as the specific area of a small building."
+            accuracy <= 50 -> "a general area, such as the building you are in."
+            else -> "a broad area, making it difficult to determine your exact location."
+        }
+    }
+
+
+    private fun showInfoPopup(anchor: View, text: String) {
+        val inflater = LayoutInflater.from(anchor.context)
+        val popupView = inflater.inflate(R.layout.popup_info, null)
+        val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
+        textViewPopupContent.text = text
+
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        // Measure content view
+        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val popupWidth = popupView.measuredWidth
+        val popupHeight = popupView.measuredHeight
+
+        // Determine anchor location on screen
+        val location = IntArray(2)
+        anchor.getLocationOnScreen(location)
+        val anchorLeft = location[0]
+        val anchorTop = location[1]
+
+        // Get screen size
+        val displayMetrics = Resources.getSystem().displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        // Calculate x and y position of the popup
+        val xOff = if (anchorLeft + popupWidth > screenWidth) screenWidth - popupWidth else anchorLeft
+        val yOff = if (anchorTop + popupHeight > screenHeight) screenHeight - popupHeight else anchorTop
+
+        // Show the popup
+        popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, xOff, yOff)
+    }
+
+
 
 }
