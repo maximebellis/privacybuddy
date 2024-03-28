@@ -164,7 +164,7 @@ class LocMapActivity : BaseActivity(){
 
 
     companion object {
-        private const val APP_USAGE_SOURCE_ID = "app-usage-source"
+        const val APP_USAGE_SOURCE_ID = "app-usage-source"
         private const val CLUSTERS_LAYER_ID = "clusters"
         private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
     }

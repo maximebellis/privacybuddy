@@ -29,11 +29,15 @@
             android:layout_height="match_parent"
             app:cardCornerRadius="16dp">
 
-            <ImageView
-                android:id="@+id/staticMapView"
+            <com.mapbox.maps.MapView
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="centerCrop" />
+                app:mapbox_cameraBearing="0.0"
+                app:mapbox_cameraPitch="0.0"
+                app:mapbox_cameraTargetLat="39.5"
+                app:mapbox_cameraTargetLng="-98.0"
+                app:mapbox_cameraZoom="2.0" />
 
 
         </androidx.cardview.widget.CardView>

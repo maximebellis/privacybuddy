@@ -63,7 +63,8 @@ abstract class BaseActivity : AppCompatActivity() {
                 true
             }
             R.id.action_refresh -> {
-                Toast.makeText(this, "Refresh clicked", Toast.LENGTH_SHORT).show()
+
+                startActivity(intent)
                 true
             }
             R.id.action_one_day -> {
