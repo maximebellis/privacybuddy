@@ -1,6 +1,7 @@
 package be.kuleuven.privacybuddy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -8,87 +9,81 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.io.InputStreamReader
+import be.kuleuven.privacybuddy.data.LocationData
+import java.util.Locale
 
 class LocSingleAccessActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_specific_access)
+        setupToolbar()
 
-        val appName = intent.getStringExtra("appName") ?: return
-        val timestamp = intent.getStringExtra("timestamp") ?: return
+        val appNameTextView: TextView = findViewById(R.id.dataEntryApp)
+        val timestampTextView: TextView = findViewById(R.id.dataEntryTime)
 
-        val feature = loadMatchingFeatureFromGeoJson(appName, timestamp)
+        // Retrieve the JSON string from the intent
+        val eventJsonString = intent.getStringExtra("jsonData") ?: return
+        Log.d("LocSingleAccessActivity", "Received JSON: $eventJsonString")
 
-        feature?.let {
-            //setDataEntry(R.id.dataEntryAppName, "App Name", it.properties.appName)
-            //setDataEntry(R.id.dataEntryUsageType, "Usage Type", it.properties.usageType)
-            //setDataEntry(R.id.dataEntryInteractionType, "Interaction Type", it.properties.interactionType)
-            //setDataEntry(R.id.dataEntryTimestamp, "Timestamp", it.properties.timestamp)
-            setDataEntry(R.id.dataEntryAccuracy, "Accuracy", it.properties.accuracy.toString())
-            setDataEntry(R.id.dataEntrySpeed, "Speed", it.properties.speed.toString())
-            setDataEntry(R.id.dataEntryBearing, "Bearing", it.properties.bearing.toString())
-            //setDataEntry(R.id.dataEntryScreenState, "Screen State", it.properties.screenState)
+        // Parse the JSON string into a LocationData object
+        val locationData = Gson().fromJson(eventJsonString, LocationData::class.java)
 
-            // Assuming the coordinates are [longitude, latitude]
-            setDataEntry(R.id.dataEntryLatitude, "Latitude", it.geometry.coordinates[1].toString())
-            setDataEntry(R.id.dataEntryLongitude, "Longitude", it.geometry.coordinates[0].toString())
-            // If altitude is needed and available
-            if (it.geometry.coordinates.size > 2) {
-                setDataEntry(R.id.dataEntryAltitude, "Altitude", it.geometry.coordinates[2].toString())
+        // Populate the UI with the data
+        locationData?.let {
+            appNameTextView.text = it.appName
+            timestampTextView.text = it.timestamp
+
+            it.accuracy?.let { accuracy ->
+                setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(accuracy))
+            } ?: run {
+                hideDataEntry(R.id.dataEntryAccuracy)
+            }
+
+            it.speed?.let { speed ->
+                setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(speed))
+            } ?: run {
+                hideDataEntry(R.id.dataEntrySpeed)
+            }
+
+            it.bearing?.let { bearing ->
+                setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(bearing))
+            } ?: run {
+                hideDataEntry(R.id.dataEntryBearing)
+            }
+
+            // Latitude and Longitude are always expected to be present but check for nullability to be safe
+            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(it.latitude ?: 0.0))
+            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(it.longitude ?: 0.0))
+
+            it.altitude?.let { altitude ->
+                setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(altitude))
+            } ?: run {
+                hideDataEntry(R.id.dataEntryAltitude)
             }
         }
     }
 
-    private fun loadMatchingFeatureFromGeoJson(appName: String?, timestamp: String?): Feature? {
-        appName ?: return null
-        timestamp ?: return null
-
-        val geoJsonString = assets.open(AppState.selectedGeoJsonFile).use { inputStream ->
-            InputStreamReader(inputStream).readText()
-        }
-
-        val gson = Gson()
-        val geoJsonType = object : TypeToken<GeoJson>() {}.type
-        val geoJson: GeoJson = gson.fromJson(geoJsonString, geoJsonType)
-
-        return geoJson.features.find { feature ->
-            feature.properties.appName == appName && feature.properties.timestamp == timestamp
-        }
+    fun formatNumber(value: Double): String {
+        return "%.7g".format(Locale.US, value)
     }
 
     private fun setDataEntry(viewId: Int, dataName: String, dataValue: String) {
         val dataEntryView = findViewById<View>(viewId)
-        dataEntryView.findViewById<TextView>(R.id.textViewDataName).text = dataName
-        dataEntryView.findViewById<TextView>(R.id.textViewDataValue).text = dataValue
+        val nameTextView = dataEntryView.findViewById<TextView>(R.id.textViewDataName)
+        val valueTextView = dataEntryView.findViewById<TextView>(R.id.textViewDataValue)
+        nameTextView.text = dataName
+        valueTextView.text = dataValue
+    }
+
+    private fun hideDataEntry(viewId: Int) {
+        val dataEntryView = findViewById<View>(viewId)
+        dataEntryView.visibility = View.GONE
     }
 
     override fun filterData(days: Int) {
+        AppSettings.daysFilter = days
+        //this page does not need to reload anything for this
     }
 
-    data class GeoJson(
-        val type: String,
-        val features: List<Feature>
-    )
-
-    data class Feature(
-        val type: String,
-        val geometry: Geometry,
-        val properties: LocationData
-    )
-
-    data class Geometry(
-        val type: String,
-        val coordinates: List<Double>
-    )
-    data class LocationData(
-        @SerializedName("appName") val appName: String,
-        @SerializedName("usageType") val usageType: String,
-        @SerializedName("interactionType") val interactionType: String,
-        @SerializedName("timestamp") val timestamp: String,
-        @SerializedName("accuracy") val accuracy: Double,
-        @SerializedName("speed") val speed: Double,
-        @SerializedName("bearing") val bearing: Double,
-        @SerializedName("screenState") val screenState: String
-    )
 }

@@ -18,6 +18,7 @@ import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mapbox.geojson.GeoJson
 import java.io.File
 import java.util.*
@@ -69,9 +70,10 @@ class LocationEventAdapter(private val context: Context) :
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
         private fun convertEventToJsonString(event: LocationData): String {
-            val gson = Gson()
+            val gson = GsonBuilder().serializeNulls().create() // Configured to serialize null values
             return gson.toJson(event)
         }
+
 
         private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
@@ -90,6 +92,7 @@ class LocationEventAdapter(private val context: Context) :
                     }
                     context.startActivity(intent)
                 }
+
                 infoIconView.setOnClickListener { view ->
                     showInfoPopup(view, eventItem.event)
                 }

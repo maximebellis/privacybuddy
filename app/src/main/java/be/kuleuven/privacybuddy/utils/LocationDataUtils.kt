@@ -9,6 +9,7 @@ import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -38,23 +39,37 @@ object LocationDataUtils {
 
             featureCollection.features()?.mapNotNull { feature ->
                 val timestamp = feature.getStringProperty("timestamp")
-                dateFormat.parse(timestamp)?.takeIf {
-                    it.after(cutoffDate) && (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName)
-                }?.let { date ->
+                val date = dateFormat.parse(timestamp)
+
+                if (date != null && date.after(cutoffDate) && (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName)) {
+                    // Check if the feature's geometry is a Point
+                    val point = feature.geometry() as? com.mapbox.geojson.Point
+                    val coordinates = point?.coordinates()
+
                     LocationData(
-                        timestamp,
-                        date,
-                        feature.getStringProperty("appName"),
-                        feature.getStringProperty("usageType"),
-                        feature.getStringProperty("interactionType")
+                        timestamp = timestamp,
+                        date = date,
+                        appName = feature.getStringProperty("appName"),
+                        usageType = feature.getStringProperty("usageType"),
+                        interactionType = feature.getStringProperty("interactionType"),
+                        accuracy = feature.getNumberProperty("accuracy")?.toDouble(),
+                        speed = feature.getNumberProperty("speed")?.toDouble(),
+                        bearing = feature.getNumberProperty("bearing")?.toDouble(),
+                        screenState = feature.getStringProperty("screenState"),
+                        latitude = point?.latitude(),
+                        longitude = point?.longitude(),
+                        altitude = if (coordinates?.size == 3) coordinates[2] else null
                     )
+                } else {
+                    null
                 }
             } ?: emptyList()
         } catch (e: Exception) {
-            Log.e("LocationDataUtils", "Error loading or parsing data", e)
+            Log.e("LocationDataUtils", "Error loading or parsing GeoJSON data", e)
             emptyList()
         }
     }
+
 
     private fun parseGeoJsonFromAssets(context: Context, filename: String): FeatureCollection =
         context.assets.open(filename).use {
