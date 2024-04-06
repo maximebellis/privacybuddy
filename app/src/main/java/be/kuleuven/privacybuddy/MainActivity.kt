@@ -3,6 +3,8 @@ package be.kuleuven.privacybuddy
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -75,32 +77,61 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupMapView(selectedAppName: String?) {
-        mapView = findViewById(R.id.mapView)
-        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            val geoJsonSource = geoJsonSource(LocMapActivity.APP_USAGE_SOURCE_ID) {
-                featureCollection(loadGeoJsonFromAssets(selectedAppName, daysFilter))
-                cluster(true)
-                clusterMaxZoom(14)
-                clusterRadius(50)
-            }
-            style.addSource(geoJsonSource)
-            addMapLayers(style)
-            centerMapOnLocation()
+    mapView = findViewById(R.id.mapView)
+    setupMapStyle(selectedAppName)
+    disableMapGestures()
+    setupMapClickListeners()
+}
+
+private fun setupMapStyle(selectedAppName: String?) {
+    mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+        val geoJsonSource = geoJsonSource(LocMapActivity.APP_USAGE_SOURCE_ID) {
+            featureCollection(loadGeoJsonFromAssets(selectedAppName, daysFilter))
+            cluster(true)
+            clusterMaxZoom(14)
+            clusterRadius(50)
         }
-        mapView.gestures.pitchEnabled = false
-        mapView.gestures.scrollEnabled = false
-        mapView.gestures.rotateEnabled = false
-        mapView.gestures.doubleTapToZoomInEnabled = false
-        mapView.gestures.doubleTouchToZoomOutEnabled = false
-        mapView.gestures.quickZoomEnabled = false
-        mapView.gestures.pinchToZoomEnabled = false
-        mapView.gestures.simultaneousRotateAndPinchToZoomEnabled = false
-        mapView.gestures.pinchScrollEnabled = false
-        mapView.gestures.scrollDecelerationEnabled = false
-        mapView.gestures.rotateDecelerationEnabled  = false
-        mapView.gestures.increasePinchToZoomThresholdWhenRotating = false
-        mapView.gestures.pinchToZoomDecelerationEnabled = false
+        style.addSource(geoJsonSource)
+        addMapLayers(style)
+        centerMapOnLocation()
     }
+}
+
+private fun disableMapGestures() {
+    mapView.gestures.apply {
+        pitchEnabled = false
+        scrollEnabled = false
+        rotateEnabled = false
+        doubleTapToZoomInEnabled = false
+        doubleTouchToZoomOutEnabled = false
+        quickZoomEnabled = false
+        pinchToZoomEnabled = false
+        simultaneousRotateAndPinchToZoomEnabled = false
+        pinchScrollEnabled = false
+        scrollDecelerationEnabled = false
+        rotateDecelerationEnabled  = false
+        increasePinchToZoomThresholdWhenRotating = false
+        pinchToZoomDecelerationEnabled = false
+    }
+}
+
+private fun setupMapClickListeners() {
+    mapView.setOnClickListener {
+        startActivity(Intent(this, LocMapActivity::class.java))
+    }
+
+    val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            startActivity(Intent(this@MainActivity, LocMapActivity::class.java))
+            mapView.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+            return true
+        }
+    })
+
+    mapView.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+}
+
+
 
     private fun addMapLayers(style: Style) {
         style.addLayer(circleLayer(CLUSTERS_LAYER_ID, APP_USAGE_SOURCE_ID) {
