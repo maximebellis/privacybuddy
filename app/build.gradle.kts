@@ -27,6 +27,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -66,6 +67,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.paging)
 
     implementation(libs.androidx.recyclerview)
     implementation(libs.kotlinx.coroutines.android)

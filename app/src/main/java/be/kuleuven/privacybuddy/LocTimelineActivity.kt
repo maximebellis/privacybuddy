@@ -15,6 +15,7 @@ import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.prepareTimelineItems
 import kotlinx.coroutines.*
+import android.provider.Settings
 
 
 
@@ -58,6 +59,12 @@ class LocTimelineActivity : BaseActivity() {
         setupChooseAppButton()
         updateChooseAppDisplay(selectedAppName)
         refreshEvents()
+
+        val managePermissionsButton: TextView = findViewById(R.id.managePermissionsButton)
+        managePermissionsButton.setOnClickListener {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
 
     }
 

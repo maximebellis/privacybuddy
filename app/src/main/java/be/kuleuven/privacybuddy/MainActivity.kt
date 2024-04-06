@@ -29,7 +29,6 @@ import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
-import com.mapbox.maps.plugin.gestures.GesturesPlugin
 import com.mapbox.maps.plugin.gestures.gestures
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -51,7 +50,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initUI() {
-        setupToolbarWithScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
+        setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
         setupWidgetClickListeners()
         setAppIcons()
         setupMapView(null)

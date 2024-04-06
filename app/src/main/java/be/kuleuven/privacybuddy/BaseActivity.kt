@@ -3,12 +3,17 @@ package be.kuleuven.privacybuddy
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowInsets
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 
 
@@ -18,11 +23,15 @@ abstract class BaseActivity : AppCompatActivity() {
         var daysFilter: Int = 21
     }
 
+
     abstract fun filterData(days: Int)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.background_prim)
 
     }
+
+
 
     protected fun setupToolbar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -34,20 +43,14 @@ abstract class BaseActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.background_prim)
     }
 
-    protected fun setupToolbarWithScrollListener(scrollableViewId: Int, titleViewId: Int, toolbarTitle: String) {
+    protected fun setupToolbarWithNestedScrollListener(scrollableViewId: Int, titleViewId: Int, toolbarTitle: String) {
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
         val titleView: TextView = findViewById(titleViewId)
         val nestedScrollView: NestedScrollView = findViewById(scrollableViewId)
 
-        nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
-            if (scrollY >= titleView.bottom) {
-                toolbar.title = toolbarTitle
-            } else {
-                toolbar.title = ""
-            }
-        })
+        nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            toolbar.title = if (scrollY >= titleView.bottom) toolbarTitle else ""
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

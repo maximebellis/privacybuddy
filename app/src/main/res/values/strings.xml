@@ -3,8 +3,8 @@
     <string name="location_icon">Location Icon</string>
     <string name="microphone_icon">Microphone Icon</string>
     <string name="camera_icon">Camera Icon</string>
-    <string name="timeline_text">Timeline of when apps used your location in the past %1$d days, click any specific access to get more info.</string>
-    <string name="timeline_text_single_day">Timeline of when apps used your location in the past 24 hours, click any specific access to get more info.</string>
+    <string name="timeline_text">Timeline of when apps used your location in the past %1$d days</string>
+    <string name="timeline_text_single_day">Timeline of when apps used your location in the past 24 hours</string>
 
     <string name="timeline_title">Location usage for</string>
 
