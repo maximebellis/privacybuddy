@@ -1,6 +1,7 @@
 package be.kuleuven.privacybuddy.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.LocSingleAccessActivity
 import be.kuleuven.privacybuddy.R
 import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.mapbox.geojson.GeoJson
+import java.io.File
 import java.util.*
 
 sealed interface TimelineItem {
@@ -63,6 +69,11 @@ class LocationEventAdapter(private val context: Context) :
         private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewAppLogo)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
+        private fun convertEventToJsonString(event: LocationData): String {
+            val gson = GsonBuilder().serializeNulls().create() // Configured to serialize null values
+            return gson.toJson(event)
+        }
+
 
         private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
@@ -74,8 +85,16 @@ class LocationEventAdapter(private val context: Context) :
                 appLogoView.setImageDrawable(context.getAppIconByName(eventItem.event.appName))
                 verticalLineView.visibility = if (bindingAdapterPosition == itemCount - 1) View.INVISIBLE else View.VISIBLE
 
+                itemView.setOnClickListener {
+                    val eventJsonString = convertEventToJsonString(eventItem.event)
+                    val intent = Intent(context, LocSingleAccessActivity::class.java).apply {
+                        putExtra("jsonData", eventJsonString)
+                    }
+                    context.startActivity(intent)
+                }
+
                 infoIconView.setOnClickListener { view ->
-                    showInfoPopup(view, eventItem.event) // Pass the view and the current event item
+                    showInfoPopup(view, eventItem.event)
                 }
             }
         }
@@ -88,12 +107,11 @@ class LocationEventAdapter(private val context: Context) :
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            true // Make it focusable
+            true
         )
 
         val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
 
-        // Directly retrieve and concatenate the string descriptions
         val usageTypeDescription = when (event.usageType) {
             "precise" -> context.getString(R.string.precise_location)
             "approximate" -> context.getString(R.string.approximate)
@@ -107,7 +125,7 @@ class LocationEventAdapter(private val context: Context) :
             else -> ""
         }
 
-        // Combine descriptions with a newline for separation, if both are present
+
         textViewPopupContent.text = listOf(usageTypeDescription, interactionTypeDescription)
             .filter { it.isNotEmpty() }
             .joinToString("\n\n")
@@ -125,7 +143,7 @@ class LocationEventAdapter(private val context: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineViewHolder = when (viewType) {
         TYPE_DATE_LABEL -> DateLabelViewHolder(LayoutInflater.from(context).inflate(R.layout.component_date_label, parent, false))
-        TYPE_EVENT -> EventViewHolder(LayoutInflater.from(context).inflate(R.layout.component_timeline_unit, parent, false))
+        TYPE_EVENT -> EventViewHolder(LayoutInflater.from(context).inflate(R.layout.component_timeline_entry, parent, false))
         else -> throw IllegalArgumentException("Invalid View Type")
     }
 

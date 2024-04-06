@@ -3,7 +3,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import be.kuleuven.privacybuddy.R
 
 class SimulationChoicesAdapter(private val titles: List<String>, private val descriptions: List<String>) :
@@ -15,7 +14,7 @@ class SimulationChoicesAdapter(private val titles: List<String>, private val des
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoiceViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.simulation_viewpager_choice, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.component_simulation_viewpager_choice, parent, false)
         return ChoiceViewHolder(view)
     }
 

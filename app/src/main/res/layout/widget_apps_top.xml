@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Apps with most accesses"
+            android:text="Top 3 apps location accesses"
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
 
@@ -47,7 +47,7 @@
             android:layout_below="@id/textViewTikTok"
 
             android:gravity="end"
-            android:text="88 accesses to 14 different permissions"
+            android:text="88 accesses"
             android:textColor="@color/title_prim"
             android:textSize="12sp" />
 
@@ -90,7 +90,7 @@
             android:layout_below="@id/textViewGmail"
             android:layout_marginStart="8dp"
             android:gravity="end"
-            android:text="43 accesses to 2 different permissions"
+            android:text="43 accesses"
             android:textColor="@color/title_prim"
             android:textSize="12sp" />
 
@@ -131,7 +131,7 @@
             android:layout_below="@id/textViewYouTube"
             android:layout_marginStart="8dp"
             android:gravity="end"
-            android:text="42 accesses to 7 different permissions"
+            android:text="42 accesses"
             android:textColor="@color/title_prim"
             android:textSize="12sp" />
 

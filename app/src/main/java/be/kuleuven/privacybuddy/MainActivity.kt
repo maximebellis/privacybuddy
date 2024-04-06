@@ -3,7 +3,9 @@ package be.kuleuven.privacybuddy
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +45,7 @@ class MainActivity : BaseActivity() {
         setupLocationEventsRecyclerView()
         initUI()
         AppOpsUtility.setupLocationAccessListener(this)
+        updateTopAccessedAppsWidget()
     }
 
     private fun initUI() {
@@ -97,11 +100,6 @@ class MainActivity : BaseActivity() {
         mapView.gestures.rotateDecelerationEnabled  = false
         mapView.gestures.increasePinchToZoomThresholdWhenRotating = false
         mapView.gestures.pinchToZoomDecelerationEnabled = false
-
-
-
-
-
     }
 
     private fun addMapLayers(style: Style) {
@@ -155,15 +153,11 @@ class MainActivity : BaseActivity() {
         })
     }
 
-
-
-
     companion object {
         const val APP_USAGE_SOURCE_ID = "app-usage-source"
         private const val CLUSTERS_LAYER_ID = "clusters"
         private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
     }
-
 
     private fun setupWidgetClickListeners() {
         setClickListener(R.id.widgetMapLocation, LocMapActivity::class.java)
@@ -201,4 +195,60 @@ class MainActivity : BaseActivity() {
 
         findViewById<TextView>(R.id.pageSubTitleTextView).text = dashboardText
     }
+
+    fun getTopAccessedAppsFromGeoJson(): List<AppAccessInfo> {
+        // Load and parse your GeoJSON file
+        val geoJsonString = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
+        val featureCollection = FeatureCollection.fromJson(geoJsonString)
+
+        // Analyze the GeoJSON to count accesses per app
+        val accessCounts = mutableMapOf<String, Int>()
+        featureCollection.features()?.forEach { feature ->
+            val appName = feature.getStringProperty("appName")
+            accessCounts[appName] = accessCounts.getOrDefault(appName, 0) + 1
+        }
+
+        // Sort and take the top N apps, for example, top 3
+        return accessCounts.entries.sortedByDescending { it.value }.take(3).map {
+            AppAccessInfo(it.key, it.value)
+        }
+    }
+
+    fun updateTopAccessedAppsWidget() {
+        val topApps = getTopAccessedAppsFromGeoJson()
+
+        // Reset or hide data for slots beyond the number of top apps
+        val widgetSlots = listOf(
+            Triple(R.id.imageViewTikTok, R.id.textViewTikTokAccess, R.id.progressBarTikTok),
+            Triple(R.id.imageViewGmail, R.id.textViewGmailAccess, R.id.progressBarGmail),
+            Triple(R.id.imageViewAppLogo, R.id.textViewYouTubeAccess, R.id.progressBarYouTube)
+        )
+
+        // Hide all slots initially
+        widgetSlots.forEach { slot ->
+            findViewById<ImageView>(slot.first).visibility = View.INVISIBLE
+            findViewById<TextView>(slot.second).text = "0 accesses" // Reset to "0 accesses"
+            findViewById<ProgressBar>(slot.third).progress = 0
+        }
+
+        // Calculate maximum number of accesses to normalize progress bars
+        val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1 // Avoid division by zero
+
+        topApps.forEachIndexed { index, appAccessInfo ->
+            if (index < widgetSlots.size) {
+                val (imageViewId, textViewAccessId, progressBarId) = widgetSlots[index]
+                val imageView = findViewById<ImageView>(imageViewId)
+                val textViewAccess = findViewById<TextView>(textViewAccessId)
+                val progressBar = findViewById<ProgressBar>(progressBarId)
+
+                imageView.visibility = View.VISIBLE
+                imageView.setImageDrawable(getAppIconByName(appAccessInfo.appName))
+                textViewAccess.text = "${appAccessInfo.accessCount} accesses"
+                progressBar.max = maxAccessCount
+                progressBar.progress = appAccessInfo.accessCount
+            }
+        }
+    }
+
+    data class AppAccessInfo(val appName: String, val accessCount: Int)
 }

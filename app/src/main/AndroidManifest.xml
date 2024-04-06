@@ -68,6 +68,13 @@
         </activity>
 
         <activity
+            android:name=".LocSingleAccessActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PrivacyBuddy">
+
+        </activity>
+
+        <activity
             android:name=".LocTimelineActivity"
             android:exported="true"
             android:theme="@style/Theme.PrivacyBuddy" >
