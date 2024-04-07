@@ -8,37 +8,24 @@ import com.google.gson.Gson
 import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.maps.MapView
 import java.util.Locale
-import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
-import android.widget.ProgressBar
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
-import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
-import be.kuleuven.privacybuddy.utils.AppOpsUtility
-import be.kuleuven.privacybuddy.utils.LocationDataUtils
-import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
-import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.circleLayer
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
-import com.mapbox.maps.plugin.gestures.GesturesPlugin
-import com.mapbox.maps.plugin.gestures.gestures
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+
 
 class LocSingleAccessActivity : BaseActivity() {
 
@@ -48,85 +35,65 @@ class LocSingleAccessActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_specific_access)
         setupToolbar()
+        setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.locationAccessByTextView, getString(R.string.location_access_by))
 
+        val locationData = intent.getStringExtra("jsonData")?.let {
+            Log.d("LocSingleAccessActivity", "Received JSON: $it")
+            Gson().fromJson(it, LocationData::class.java)
+        } ?: return
 
-        val appNameTextView: TextView = findViewById(R.id.dataEntryApp)
-        val timestampTextView: TextView = findViewById(R.id.dataEntryTime)
-        val appLogoImageView: ImageView = findViewById(R.id.appLogoImageView)
-
-        // Retrieve the JSON string from the intent
-        val eventJsonString = intent.getStringExtra("jsonData") ?: return
-        Log.d("LocSingleAccessActivity", "Received JSON: $eventJsonString")
-
-        // Parse the JSON string into a LocationData object
-        val locationData = Gson().fromJson(eventJsonString, LocationData::class.java)
         locationData.accuracy?.let { setupInfoButtons(it) }
 
-        // Populate the UI with the data
-        locationData?.let {
-            appNameTextView.text = it.appName
-            val appIconDrawable = getAppIconByName(it.appName)
-            appLogoImageView.setImageDrawable(appIconDrawable)
-            timestampTextView.text = it.timestamp
+        with(locationData) {
+            findViewById<TextView>(R.id.dataEntryApp).text = appName
+            findViewById<ImageView>(R.id.appLogoImageView).setImageDrawable(getAppIconByName(appName))
+            findViewById<TextView>(R.id.dataEntryTime).text = timestamp
 
-            it.accuracy?.let { accuracy ->
-                setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(accuracy))
-            } ?: run {
-                hideDataEntry(R.id.dataEntryAccuracy)
-            }
-
-            it.speed?.let { speed ->
-                setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(speed))
-            } ?: run {
-                hideDataEntry(R.id.dataEntrySpeed)
-            }
-
-            it.bearing?.let { bearing ->
-                setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(bearing))
-            } ?: run {
-                hideDataEntry(R.id.dataEntryBearing)
-            }
-
-            // Latitude and Longitude are always expected to be present but check for nullability to be safe
-            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(it.latitude ?: 0.0))
-            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(it.longitude ?: 0.0))
-
-            it.altitude?.let { altitude ->
-                setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(altitude))
-            } ?: run {
-                hideDataEntry(R.id.dataEntryAltitude)
-            }
-
+            setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(accuracy))
+            setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(speed))
+            setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(bearing))
+            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(latitude ?: 0.0))
+            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(longitude ?: 0.0))
+            setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(altitude))
         }
 
         mapView = findViewById(R.id.mapView)
         initializeMap(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0)
-
-
     }
 
     private fun initializeMap(latitude: Double, longitude: Double) {
-        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
-            mapView.getMapboxMap().setCamera(
-                cameraOptions {
-                    center(Point.fromLngLat(longitude, latitude))
-                    zoom(14.0)
-                }
-            )
-        }
+    mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+        mapView.mapboxMap.setCamera(
+            cameraOptions {
+                center(Point.fromLngLat(longitude, latitude))
+                zoom(14.0)
+            }
+        )
 
-        mapView.gestures.apply {
-            pitchEnabled = false
-            rotateEnabled = false
-            scrollEnabled = false
-        }
+        val resizedBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_red_marker)
+            .let { originalBitmap ->
+                val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height.toFloat()
+                Bitmap.createScaledBitmap(originalBitmap, 75, Math.round(75 / aspectRatio), false)
+            }
+
+        style.addImage("red", resizedBitmap)
+
+        mapView.annotations.createPointAnnotationManager().create(
+            PointAnnotationOptions()
+                .withIconImage("red")
+                .withIconAnchor(IconAnchor.BOTTOM)
+                .withPoint(Point.fromLngLat(longitude, latitude))
+        )
     }
 
+    disableMapGestures(mapView)
+}
 
 
 
-    fun formatNumber(value: Double): String {
-        return "%.7g".format(Locale.US, value)
+
+    private fun formatNumber(value: Double?): String {
+        return if (value != null) "%.7g".format(Locale.US, value) else "N/A"
     }
 
     private fun setDataEntry(viewId: Int, dataName: String, dataValue: String) {
@@ -143,7 +110,7 @@ class LocSingleAccessActivity : BaseActivity() {
     }
 
     override fun filterData(days: Int) {
-        AppSettings.daysFilter = days
+        daysFilter = days
         //this page does not need to reload anything for this
     }
 

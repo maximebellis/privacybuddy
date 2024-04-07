@@ -11,19 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
-import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.circleLayer
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class LocMapActivity : BaseActivity(){
 
@@ -39,7 +27,7 @@ class LocMapActivity : BaseActivity(){
                 if (newAppName != selectedAppName) {
                     selectedAppName = newAppName
                     updateChooseAppDisplay(selectedAppName)
-                    setupMapView(selectedAppName)
+                    setupMapView(mapView, selectedAppName)
                 }
             }
         }
@@ -48,13 +36,15 @@ class LocMapActivity : BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_map_location)
         setupToolbar()
+        updateMapText()
 
-        appIconView = findViewById(R.id.imageViewAppLogo)
+        mapView =   findViewById(R.id.mapView)
+        appIconView = findViewById(R.id.imageViewMostLocationAccessesApp3)
         appNameTextView = findViewById(R.id.textViewSelectedApp)
         selectedAppName = intent.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
 
         setupChooseAppButton()
-        setupMapView(selectedAppName)
+        setupMapView(mapView, selectedAppName)
     }
 
     private fun updateChooseAppDisplay(appName: String?) {
@@ -63,77 +53,6 @@ class LocMapActivity : BaseActivity(){
         if (appName != null) {
             appIconView.setImageDrawable(applicationContext.getAppIconByName(appName))
         }
-    }
-
-
-    private fun setupMapView(selectedAppName: String?) {
-        mapView = findViewById(R.id.mapView)
-        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
-                featureCollection(loadGeoJsonFromAssets(selectedAppName, daysFilter))
-                cluster(true)
-                clusterMaxZoom(14)
-                clusterRadius(50)
-            }
-            style.addSource(geoJsonSource)
-            addMapLayers(style)
-            centerMapOnLocation()
-            updateMapText()
-        }
-    }
-
-    private fun addMapLayers(style: Style) {
-        style.addLayer(circleLayer(CLUSTERS_LAYER_ID, APP_USAGE_SOURCE_ID) {
-            circleColor("#2c4b6e")
-            circleRadius(15.0)
-        })
-
-        style.addLayer(symbolLayer(CLUSTER_COUNT_LAYER_ID, APP_USAGE_SOURCE_ID) {
-            textField("{point_count_abbreviated}")
-            textSize(12.0)
-            textColor("#ffffff")
-            textIgnorePlacement(true)
-            textAllowOverlap(true)
-            textAnchor(TextAnchor.CENTER)
-        })
-    }
-
-    private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
-        return try {
-            val assetsJson = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
-            val originalFeatureCollection = FeatureCollection.fromJson(assetsJson)
-
-            // Define a formatter matching your timestamp format
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-            // Calculate the cutoff LocalDateTime
-            val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
-
-            val filteredFeatures = originalFeatureCollection.features()?.map { feature ->
-                val timestampStr = feature.getStringProperty("timestamp")
-                val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
-
-                // Check if the feature's app name matches (if specified) and the date is within the desired range
-                if ((selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
-                    featureDateTime.isAfter(cutoffDateTime)) {
-                    // Ensure that each feature has a point_count property
-                    feature.addNumberProperty("point_count_abbreviated", 1)
-                }
-                feature
-            }
-
-            FeatureCollection.fromFeatures(filteredFeatures ?: emptyList())
-        } catch (e: Exception) {
-            // Handle error if file reading fails
-            FeatureCollection.fromFeatures(emptyList())
-        }
-    }
-
-    private fun centerMapOnLocation() {
-        mapView.mapboxMap.setCamera(cameraOptions {
-            center(Point.fromLngLat(4.7012, 50.8789))
-            zoom(12.0)
-        })
     }
 
     private fun setupChooseAppButton() {
@@ -152,7 +71,8 @@ class LocMapActivity : BaseActivity(){
 
     override fun filterData(days: Int) {
         daysFilter = days
-        setupMapView(selectedAppName)
+        updateMapText()
+        setupMapView(mapView, selectedAppName)
     }
 
     private fun updateMapText() {
@@ -166,10 +86,4 @@ class LocMapActivity : BaseActivity(){
     }
 
 
-
-    companion object {
-        const val APP_USAGE_SOURCE_ID = "app-usage-source"
-        private const val CLUSTERS_LAYER_ID = "clusters"
-        private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
-    }
 }

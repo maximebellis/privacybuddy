@@ -22,7 +22,7 @@
             android:layout_marginEnd="8dp" />
 
         <ImageView
-            android:id="@+id/imageViewAppLogo"
+            android:id="@+id/imageViewMostLocationAccessesApp3"
             android:layout_toEndOf="@id/textViewTime"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/imageViewAppLogo"
+            android:layout_toEndOf="@id/imageViewMostLocationAccessesApp3"
             android:textColor="@color/title_prim"
             android:text="YouTube"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -48,7 +48,7 @@
             android:layout_below="@id/textViewAppName"
             android:layout_marginStart="16dp"
             android:layout_marginTop="-2dp"
-            android:layout_toEndOf="@+id/imageViewAppLogo"
+            android:layout_toEndOf="@+id/imageViewMostLocationAccessesApp3"
             android:text="precise"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/text" />

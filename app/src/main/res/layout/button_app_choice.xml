@@ -14,7 +14,7 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/imageViewAppLogo"
+            android:id="@+id/imageViewMostLocationAccessesApp3"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_centerVertical="true" />
@@ -24,7 +24,7 @@
             android:id="@+id/textViewSelectedApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/imageViewAppLogo"
+            android:layout_toEndOf="@id/imageViewMostLocationAccessesApp3"
             android:layout_marginStart="12dp"
             android:layout_centerVertical="true"
             android:textColor="@color/title_prim"

@@ -17,10 +17,7 @@ import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mapbox.geojson.GeoJson
-import java.io.File
 import java.util.*
 
 sealed interface TimelineItem {
@@ -66,7 +63,7 @@ class LocationEventAdapter(private val context: Context) :
         private val appNameView: TextView = itemView.findViewById(R.id.textViewAppName)
         private val usageTypeView: TextView = itemView.findViewById(R.id.textViewAccuracy)
         private val interactionTypeView: TextView = itemView.findViewById(R.id.textViewAccessType)
-        private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewAppLogo)
+        private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewMostLocationAccessesApp3)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
         private fun convertEventToJsonString(event: LocationData): String {

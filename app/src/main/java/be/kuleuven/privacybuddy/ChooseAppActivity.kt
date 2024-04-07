@@ -77,7 +77,7 @@ class ChooseAppActivity : BaseActivity() {
     private fun createAppView(appName: String): View {
         val view = LayoutInflater.from(this).inflate(R.layout.component_app_choice, null, false)
         val appNameTextView: TextView = view.findViewById(R.id.textViewAppName)
-        val appLogoImageView: ImageView = view.findViewById(R.id.imageViewAppLogo)
+        val appLogoImageView: ImageView = view.findViewById(R.id.imageViewMostLocationAccessesApp3)
 
         appNameTextView.text = appName
         val appIcon = getAppIconByName(appName)
@@ -87,7 +87,7 @@ class ChooseAppActivity : BaseActivity() {
             appLogoImageView.setImageDrawable(appIcon)
             // Since the icon is visible, ensure text is aligned to start of icon or its original position
             (appNameTextView.layoutParams as RelativeLayout.LayoutParams).apply {
-                addRule(RelativeLayout.START_OF, R.id.imageViewAppLogo)
+                addRule(RelativeLayout.START_OF, R.id.imageViewMostLocationAccessesApp3)
                 addRule(RelativeLayout.ALIGN_PARENT_END, 0) // Remove end alignment
             }
         } else {

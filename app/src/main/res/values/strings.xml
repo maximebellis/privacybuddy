@@ -42,4 +42,5 @@
 
     <string name="dashboard_text">Showing accesses in last %1$d days</string>
     <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
+    <string name="location_access_by">Location access by</string>
 </resources>

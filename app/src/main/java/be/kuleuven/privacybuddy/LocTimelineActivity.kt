@@ -51,7 +51,7 @@ class LocTimelineActivity : BaseActivity() {
         adapter = LocationEventAdapter(this) // Initialize the adapter
         recyclerView.adapter = adapter // Set the adapter
 
-        appIconView = findViewById(R.id.imageViewAppLogo)
+        appIconView = findViewById(R.id.imageViewMostLocationAccessesApp3)
         appNameTextView = findViewById(R.id.textViewSelectedApp)
 
 
@@ -111,13 +111,8 @@ class LocTimelineActivity : BaseActivity() {
     }
 
     private fun updateTimelineText() {
-        val timelineText = if (daysFilter > 1) {
-            getString(R.string.timeline_text, daysFilter)
-        } else {
-            getString(R.string.timeline_text_single_day)
-        }
-
-        findViewById<TextView>(R.id.textViewTimeline).text = timelineText
+        val timelineTextId = if (daysFilter > 1) R.string.timeline_text else R.string.timeline_text_single_day
+        findViewById<TextView>(R.id.textViewTimeline).text = getString(timelineTextId, daysFilter)
     }
 
 

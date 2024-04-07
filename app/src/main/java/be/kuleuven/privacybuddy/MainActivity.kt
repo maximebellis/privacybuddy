@@ -19,19 +19,8 @@ import be.kuleuven.privacybuddy.utils.AppOpsUtility
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.circleLayer
-import com.mapbox.maps.extension.style.layers.generated.symbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.gestures.gestures
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class MainActivity : BaseActivity() {
 
@@ -52,8 +41,7 @@ class MainActivity : BaseActivity() {
     private fun initUI() {
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
         setupWidgetClickListeners()
-        setAppIcons()
-        setupMapView(null)
+        setupMapWidget(null)
         updateDashboardText()
     }
 
@@ -75,139 +63,35 @@ class MainActivity : BaseActivity() {
         updateWidgetEvents()
     }
 
-    private fun setupMapView(selectedAppName: String?) {
-    mapView = findViewById(R.id.mapView)
-    setupMapStyle(selectedAppName)
-    disableMapGestures()
-    setupMapClickListeners()
-}
-
-private fun setupMapStyle(selectedAppName: String?) {
-    mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-        val geoJsonSource = geoJsonSource(LocMapActivity.APP_USAGE_SOURCE_ID) {
-            featureCollection(loadGeoJsonFromAssets(selectedAppName, daysFilter))
-            cluster(true)
-            clusterMaxZoom(14)
-            clusterRadius(50)
-        }
-        style.addSource(geoJsonSource)
-        addMapLayers(style)
-        centerMapOnLocation()
-    }
-}
-
-private fun disableMapGestures() {
-    mapView.gestures.apply {
-        pitchEnabled = false
-        scrollEnabled = false
-        rotateEnabled = false
-        doubleTapToZoomInEnabled = false
-        doubleTouchToZoomOutEnabled = false
-        quickZoomEnabled = false
-        pinchToZoomEnabled = false
-        simultaneousRotateAndPinchToZoomEnabled = false
-        pinchScrollEnabled = false
-        scrollDecelerationEnabled = false
-        rotateDecelerationEnabled  = false
-        increasePinchToZoomThresholdWhenRotating = false
-        pinchToZoomDecelerationEnabled = false
-    }
-}
-
-private fun setupMapClickListeners() {
-    mapView.setOnClickListener {
-        startActivity(Intent(this, LocMapActivity::class.java))
+    private fun setupMapWidget(selectedAppName: String?) {
+        mapView = findViewById(R.id.mapView)
+        setupMapView(mapView, selectedAppName)
+        disableMapGestures(mapView)
+        setupMapClickListeners()
     }
 
-    val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            startActivity(Intent(this@MainActivity, LocMapActivity::class.java))
-            mapView.playSoundEffect(android.view.SoundEffectConstants.CLICK)
-            return true
-        }
-    })
-
-    mapView.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
-}
-
-
-
-    private fun addMapLayers(style: Style) {
-        style.addLayer(circleLayer(CLUSTERS_LAYER_ID, APP_USAGE_SOURCE_ID) {
-            circleColor("#2c4b6e")
-            circleRadius(15.0)
-        })
-
-        style.addLayer(symbolLayer(CLUSTER_COUNT_LAYER_ID, APP_USAGE_SOURCE_ID) {
-            textField("{point_count_abbreviated}")
-            textSize(12.0)
-            textColor("#ffffff")
-            textIgnorePlacement(true)
-            textAllowOverlap(true)
-            textAnchor(TextAnchor.CENTER)
-        })
-
-    }
-
-    private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
-        return try {
-            val assetsJson = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
-            val originalFeatureCollection = FeatureCollection.fromJson(assetsJson)
-
-            // Define a formatter matching your timestamp format
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-            // Calculate the cutoff LocalDateTime
-            val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
-
-            val filteredFeatures = originalFeatureCollection.features()?.filter { feature ->
-                val timestampStr = feature.getStringProperty("timestamp")
-                val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
-
-                // Check if the feature's app name matches (if specified) and the date is within the desired range
-                (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
-                        featureDateTime.isAfter(cutoffDateTime)
+    private fun setupMapClickListeners() {
+        val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                startActivity(Intent(this@MainActivity, LocMapActivity::class.java))
+                mapView.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+                return true
             }
-
-            FeatureCollection.fromFeatures(filteredFeatures ?: emptyList())
-        } catch (e: Exception) {
-            // Handle error if file reading fails
-            FeatureCollection.fromFeatures(emptyList())
-        }
-    }
-
-    private fun centerMapOnLocation() {
-        mapView.mapboxMap.setCamera(cameraOptions {
-            center(Point.fromLngLat(4.7012, 50.8789))
-            zoom(12.0)
         })
+
+        mapView.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
     }
 
-    companion object {
-        const val APP_USAGE_SOURCE_ID = "app-usage-source"
-        private const val CLUSTERS_LAYER_ID = "clusters"
-        private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
-    }
 
     private fun setupWidgetClickListeners() {
-        setClickListener(R.id.widgetMapLocation, LocMapActivity::class.java)
-        setClickListener(R.id.widgetLocation, LocTimelineActivity::class.java)
-        setClickListener(R.id.widgetLocationTimeline, LocTimelineActivity::class.java)
-    }
-
-    private fun <T> setClickListener(viewId: Int, activityClass: Class<T>) where T : BaseActivity {
-        findViewById<CardView>(viewId).setOnClickListener {
-            startActivity(Intent(this, activityClass))
-        }
-    }
-
-    private fun setAppIcons() {
-        mapOf(
-            R.id.imageViewTikTok to "TikTok",
-            R.id.imageViewGmail to "Gmail",
-            R.id.imageViewAppLogo to "YouTube"
-        ).forEach { (viewId, appName) ->
-            findViewById<ImageView>(viewId).setImageDrawable(getAppIconByName(appName))
+        listOf(
+            R.id.widgetMapLocation to LocMapActivity::class.java,
+            R.id.widgetLocation to LocTimelineActivity::class.java,
+            R.id.widgetLocationTimeline to LocTimelineActivity::class.java
+        ).forEach { (viewId, activityClass) ->
+            findViewById<CardView>(viewId).setOnClickListener {
+                startActivity(Intent(this, activityClass))
+            }
         }
     }
 
@@ -216,66 +100,58 @@ private fun setupMapClickListeners() {
         initUI()
     }
 
-    private fun updateDashboardText() {
-        val dashboardText = if (daysFilter > 1) {
-            getString(R.string.dashboard_text, daysFilter)
-        } else {
-            getString(R.string.dashboard_text_single_day)
-        }
-
-        findViewById<TextView>(R.id.pageSubTitleTextView).text = dashboardText
-    }
-
-    fun getTopAccessedAppsFromGeoJson(): List<AppAccessInfo> {
-        // Load and parse your GeoJSON file
+    private fun getAllAccessedAppsFromGeoJson(): List<AppAccessInfo> {
         val geoJsonString = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
-
-        // Analyze the GeoJSON to count accesses per app
-        val accessCounts = mutableMapOf<String, Int>()
-        featureCollection.features()?.forEach { feature ->
-            val appName = feature.getStringProperty("appName")
-            accessCounts[appName] = accessCounts.getOrDefault(appName, 0) + 1
-        }
-
-        // Sort and take the top N apps, for example, top 3
-        return accessCounts.entries.sortedByDescending { it.value }.take(3).map {
-            AppAccessInfo(it.key, it.value)
-        }
+        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
+        return accessCounts.entries.map { AppAccessInfo(it.key, it.value) }
     }
 
-    fun updateTopAccessedAppsWidget() {
-        val topApps = getTopAccessedAppsFromGeoJson()
+    private fun updateDashboardText() {
+        val allApps = getAllAccessedAppsFromGeoJson()
+        val distinctAppsCount = allApps.map { it.appName }.distinct().size
 
-        // Reset or hide data for slots beyond the number of top apps
+        val dashboardTextId = if (daysFilter > 1) R.string.dashboard_text else R.string.dashboard_text_single_day
+        findViewById<TextView>(R.id.pageSubTitleTextView).text = getString(dashboardTextId, daysFilter)
+
+        findViewById<TextView>(R.id.textViewLocationUsage).text = "Used by $distinctAppsCount app${if (distinctAppsCount > 1) "s" else ""}"
+    }
+
+    private fun getTopAccessedAppsFromGeoJson(): List<AppAccessInfo> {
+        val geoJsonString = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
+        val featureCollection = FeatureCollection.fromJson(geoJsonString)
+        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
+        return accessCounts.entries.sortedByDescending { it.value }.take(3).map { AppAccessInfo(it.key, it.value) }
+    }
+
+    private fun updateTopAccessedAppsWidget() {
+        val topApps = getTopAccessedAppsFromGeoJson()
+        val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1
         val widgetSlots = listOf(
-            Triple(R.id.imageViewTikTok, R.id.textViewTikTokAccess, R.id.progressBarTikTok),
-            Triple(R.id.imageViewGmail, R.id.textViewGmailAccess, R.id.progressBarGmail),
-            Triple(R.id.imageViewAppLogo, R.id.textViewYouTubeAccess, R.id.progressBarYouTube)
+            listOf(R.id.imageViewMostLocationAcessesApp1, R.id.textViewMostLocationAcessesDataApp1, R.id.progressBarMostLocationAcessesApp1, R.id.textViewMostLocationAccessesApp1),
+            listOf(R.id.imageViewostLocationAccessesApp2, R.id.textViewostLocationAccessesDataApp2, R.id.progressBarMostLocationAccessesApp2, R.id.textViewMostLocationAccessesApp2),
+            listOf(R.id.imageViewMostLocationAccessesApp3, R.id.textViewMostLocationAccessesDataApp3, R.id.progressBarMostLocationAccessesApp3, R.id.textViewMostLocationAccessesApp3)
         )
 
-        // Hide all slots initially
-        widgetSlots.forEach { slot ->
-            findViewById<ImageView>(slot.first).visibility = View.INVISIBLE
-            findViewById<TextView>(slot.second).text = "0 accesses" // Reset to "0 accesses"
-            findViewById<ProgressBar>(slot.third).progress = 0
-        }
+        widgetSlots.forEachIndexed { index, (imageViewId, textViewAccessId, progressBarId, textViewAppNameId) ->
+            val imageView = findViewById<ImageView>(imageViewId)
+            val textViewAccess = findViewById<TextView>(textViewAccessId)
+            val progressBar = findViewById<ProgressBar>(progressBarId)
+            val textViewAppName = findViewById<TextView>(textViewAppNameId)
 
-        // Calculate maximum number of accesses to normalize progress bars
-        val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1 // Avoid division by zero
-
-        topApps.forEachIndexed { index, appAccessInfo ->
-            if (index < widgetSlots.size) {
-                val (imageViewId, textViewAccessId, progressBarId) = widgetSlots[index]
-                val imageView = findViewById<ImageView>(imageViewId)
-                val textViewAccess = findViewById<TextView>(textViewAccessId)
-                val progressBar = findViewById<ProgressBar>(progressBarId)
-
+            if (index < topApps.size) {
+                val appAccessInfo = topApps[index]
                 imageView.visibility = View.VISIBLE
                 imageView.setImageDrawable(getAppIconByName(appAccessInfo.appName))
                 textViewAccess.text = "${appAccessInfo.accessCount} accesses"
                 progressBar.max = maxAccessCount
                 progressBar.progress = appAccessInfo.accessCount
+                textViewAppName.text = appAccessInfo.appName
+            } else {
+                imageView.visibility = View.INVISIBLE
+                textViewAccess.text = "0 accesses"
+                progressBar.progress = 0
+                textViewAppName.text = ""
             }
         }
     }
