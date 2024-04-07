@@ -109,13 +109,17 @@ class LocMapActivity : BaseActivity(){
             // Calculate the cutoff LocalDateTime
             val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
 
-            val filteredFeatures = originalFeatureCollection.features()?.filter { feature ->
+            val filteredFeatures = originalFeatureCollection.features()?.map { feature ->
                 val timestampStr = feature.getStringProperty("timestamp")
                 val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
 
                 // Check if the feature's app name matches (if specified) and the date is within the desired range
-                (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
-                        featureDateTime.isAfter(cutoffDateTime)
+                if ((selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
+                    featureDateTime.isAfter(cutoffDateTime)) {
+                    // Ensure that each feature has a point_count property
+                    feature.addNumberProperty("point_count_abbreviated", 1)
+                }
+                feature
             }
 
             FeatureCollection.fromFeatures(filteredFeatures ?: emptyList())
