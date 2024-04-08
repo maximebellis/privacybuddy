@@ -13,8 +13,8 @@
 
     <ImageButton
         android:id="@+id/button_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="104dp"
         android:src="@drawable/ic_chevron_back"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="invisible"
@@ -23,12 +23,12 @@
 
     <ImageButton
         android:id="@+id/button_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_chevron_forward"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_width="45dp"
+        android:layout_height="104dp"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_chevron_forward" />
 
 
 

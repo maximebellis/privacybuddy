@@ -44,15 +44,12 @@ class MainActivity : BaseActivity() {
         setupMapWidget(null)
         updateDashboardText()
     }
-
     private fun updateWidgetEvents() {
         loadGeoJsonFromAssets(null, applicationContext, days = daysFilter).let {
             val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
             locationEventAdapter.submitList(lastThreeItems)
         }
     }
-
-
     private fun setupLocationEventsRecyclerView() {
         findViewById<RecyclerView>(R.id.latestEventsRecyclerView).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -86,7 +83,7 @@ class MainActivity : BaseActivity() {
     private fun setupWidgetClickListeners() {
         listOf(
             R.id.widgetMapLocation to LocMapActivity::class.java,
-            R.id.widgetLocation to LocTimelineActivity::class.java,
+            //R.id.widgetLocation to LocTimelineActivity::class.java,
             R.id.widgetLocationTimeline to LocTimelineActivity::class.java
         ).forEach { (viewId, activityClass) ->
             findViewById<CardView>(viewId).setOnClickListener {
@@ -114,7 +111,7 @@ class MainActivity : BaseActivity() {
         val dashboardTextId = if (daysFilter > 1) R.string.dashboard_text else R.string.dashboard_text_single_day
         findViewById<TextView>(R.id.pageSubTitleTextView).text = getString(dashboardTextId, daysFilter)
 
-        findViewById<TextView>(R.id.textViewLocationUsage).text = "Used by $distinctAppsCount app${if (distinctAppsCount > 1) "s" else ""}"
+        //findViewById<TextView>(R.id.textViewLocationUsage).text = "Used by $distinctAppsCount app${if (distinctAppsCount > 1) "s" else ""}"
     }
 
     private fun getTopAccessedAppsFromGeoJson(): List<AppAccessInfo> {
