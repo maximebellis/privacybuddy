@@ -39,13 +39,25 @@
            android:layout_height="wrap_content"
            android:layout_marginTop="20dp" />
 
+<<<<<<< HEAD
+        <TextView
+            android:id="@+id/textViewMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/dashboard_text"
+            android:textColor="@color/text"
+            android:textSize="15sp" />
+=======
         -->
        <TextView
            android:id="@+id/textViewMap"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_gravity="center"
-
            android:layout_marginBottom="10dp"
            android:gravity="center"
            android:text="@string/dashboard_text"

@@ -41,6 +41,7 @@
                 android:textColor="@color/text"
                 android:textSize="16sp" />
 
+
             <include layout="@layout/widget_map_location"
                 android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"

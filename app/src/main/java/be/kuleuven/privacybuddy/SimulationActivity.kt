@@ -1,5 +1,5 @@
 package be.kuleuven.privacybuddy
-import SimulationChoicesAdapter
+import be.kuleuven.privacybuddy.adapter.SimulationChoicesAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -83,11 +83,11 @@ class SimulationActivity : BaseActivity() {
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
         buttonPrevious.setOnClickListener {
-            viewPager.currentItem = viewPager.currentItem - 1
+            viewPager.currentItem -= 1
         }
 
         buttonNext.setOnClickListener {
-            viewPager.currentItem = viewPager.currentItem + 1
+            viewPager.currentItem += 1
         }
     }
 

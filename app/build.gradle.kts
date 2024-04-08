@@ -15,6 +15,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // added
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -27,6 +29,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // added
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -52,33 +55,24 @@ android {
 
 dependencies {
 
-    implementation(libs.mapbox)
-    implementation(libs.androidx.cardview)
+
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
-    implementation(libs.glide)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.viewpager2)
-    implementation(libs.androidx.paging)
-
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
-    implementation(libs.androidx.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+
+    // added
+    implementation(libs.mapbox)
+    implementation(libs.mapbox.sdk.services)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.activity.compose)
+
+
+
+
 }

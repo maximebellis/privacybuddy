@@ -3,17 +3,11 @@ package be.kuleuven.privacybuddy
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowInsets
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -65,7 +59,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    protected fun centerMapOnLocation(mapView: MapView) {
+    private fun centerMapOnLocation(mapView: MapView) {
         mapView.mapboxMap.setCamera(cameraOptions {
             center(Point.fromLngLat(4.7012, 50.8789))
             zoom(12.0)

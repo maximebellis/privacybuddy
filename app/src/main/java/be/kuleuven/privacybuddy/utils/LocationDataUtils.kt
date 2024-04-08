@@ -9,10 +9,7 @@ import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-
-
 
 
 object LocationDataUtils {
