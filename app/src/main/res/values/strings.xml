@@ -43,4 +43,12 @@
     <string name="dashboard_text">Showing accesses in last %1$d days</string>
     <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
     <string name="location_access_by">Location access by</string>
+
+    <!-- Simulation page descriptions -->
+    <string name="description_1">Datastream 1, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured.</string>
+    <string name="description_2">Datastream 2, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured.</string>
+    <string name="description_3">Datastream 3, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured.</string>>
+    <string name="description_simu_data_tutor">You are a tutor of 22 years old based in Leuven. You don\'t really care about privacy and are very active on social media. You have a car and also tutor in the municipalities around Leuven, but most sessions happen in Leuven itself. You study Law, go to classes and enjoy the Leuven nightlife a bit, but you always go to sleep on time and turn on airplane mode. \n\n This is simulated data! Do not make any conclusions based on the amount of accesses or the apps doing them.</string>
+
+
 </resources>
