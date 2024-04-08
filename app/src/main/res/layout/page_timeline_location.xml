@@ -28,7 +28,7 @@
                 android:text="@string/timeline_title"
                 android:textAlignment="textStart"
                 android:textColor="@color/title_prim"
-                android:textSize="36sp" />
+                android:textSize="32sp" />
 
             <include layout="@layout/button_app_choice"
                 android:id="@+id/buttonChooseApp"

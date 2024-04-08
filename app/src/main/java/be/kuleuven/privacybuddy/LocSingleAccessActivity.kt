@@ -1,30 +1,36 @@
 package be.kuleuven.privacybuddy
 
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.TextView
-import com.google.gson.Gson
-import be.kuleuven.privacybuddy.data.LocationData
-import com.mapbox.maps.MapView
-import java.util.Locale
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.TextView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
+import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
+import com.google.gson.Gson
+import com.mapbox.api.geocoding.v5.GeocodingCriteria
+import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import java.util.Locale
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class LocSingleAccessActivity : BaseActivity() {
@@ -59,7 +65,35 @@ class LocSingleAccessActivity : BaseActivity() {
 
         mapView = findViewById(R.id.mapView)
         initializeMap(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0)
+
+
+        val textViewAddress = findViewById<TextView>(R.id.textViewAdress)
+        val mapboxGeocoding = MapboxGeocoding.builder()
+            .accessToken(this.getString(R.string.mapbox_access_token))
+            .query(Point.fromLngLat(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0))
+            .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+            .build()
+
+        mapboxGeocoding.enqueueCall(object : Callback<GeocodingResponse> {
+            override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+                if (response.body() != null && response.body()!!.features().isNotEmpty()) {
+                    val placeName = response.body()!!.features()[0].placeName()
+                    textViewAddress.text = placeName
+                } else {
+                    textViewAddress.text = "No address found"
+                    // Log the response body for debugging
+                    Log.d("MapboxGeocoding", "Response body: ${response.body()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
+                // Log the error for debugging
+                Log.e("MapboxGeocoding", "Error: ", t)
+            }
+        })
     }
+
+
 
     private fun initializeMap(latitude: Double, longitude: Double) {
     mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->

@@ -1,5 +1,5 @@
 package be.kuleuven.privacybuddy
-import SimulationChoicesAdapter
+import be.kuleuven.privacybuddy.adapter.SimulationChoicesAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,7 +17,7 @@ class SimulationActivity : BaseActivity() {
     private lateinit var adapter: SimulationChoicesAdapter
 
     val titles = listOf("The Chef", "The Student", "The Engineer")
-    val descriptions = listOf("Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1" +
+    private val descriptions = listOf("Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1" +
             "Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1 Description 1"
             , "Description 2", "Description 3")
 
@@ -59,11 +59,11 @@ class SimulationActivity : BaseActivity() {
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
         buttonPrevious.setOnClickListener {
-            viewPager.currentItem = viewPager.currentItem - 1
+            viewPager.currentItem -= 1
         }
 
         buttonNext.setOnClickListener {
-            viewPager.currentItem = viewPager.currentItem + 1
+            viewPager.currentItem += 1
         }
     }
 

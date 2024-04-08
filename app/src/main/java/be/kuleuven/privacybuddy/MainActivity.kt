@@ -20,7 +20,6 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapView
-import com.mapbox.maps.plugin.gestures.gestures
 
 class MainActivity : BaseActivity() {
 
