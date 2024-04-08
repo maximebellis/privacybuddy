@@ -61,12 +61,15 @@ class LocMapActivity : BaseActivity(){
             chooseAppLauncher.launch(Intent(this, ChooseAppActivity::class.java))
         }
 
+/*
         val buttonShowTimeline = findViewById<CardView>(R.id.buttonShowTimeline)
         buttonShowTimeline.setOnClickListener {
             val intent = Intent(this, LocTimelineActivity::class.java)
             intent.putExtra(ChooseAppActivity.SELECTED_APP_NAME, selectedAppName)
             startActivity(intent)
         }
+ */
+
     }
 
     override fun filterData(days: Int) {

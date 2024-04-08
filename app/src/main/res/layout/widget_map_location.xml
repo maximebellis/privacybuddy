@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Location access for all apps"
+            android:text="Location access by all apps"
             android:background="@color/background_sec"
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
