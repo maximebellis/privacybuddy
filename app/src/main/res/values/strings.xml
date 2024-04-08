@@ -3,7 +3,7 @@
     <string name="location_icon">Location Icon</string>
     <string name="microphone_icon">Microphone Icon</string>
     <string name="camera_icon">Camera Icon</string>
-    <string name="timeline_text">Timeline of when apps used your location in the past %1$d days</string>
+    <string name="timeline_text">Timeline of when apps used your location in the past %1$d days \n\nClick on an access to get more information</string>
     <string name="timeline_text_single_day">Timeline of when apps used your location in the past 24 hours</string>
 
     <string name="timeline_title">Location usage for</string>
@@ -13,14 +13,14 @@
     <string name="welcome_text">Welcome to PrivacyBuddy. This app is a prototype designed to test a built-in OS service created by Tristan Pelgrims and Maxime Bellis for their thesis.\n\nWe present to you three different weekly itineraries. Please read them carefully and select the one that resonates most with you. Once you\'ve made your selection, the app will load simulated data based on your chosen itinerary.\n\nWe invite you to explore the app as if you are reviewing your own data from the past week.</string>
 
     <!-- Location Accuracy Descriptions -->
-    <string name="precise_location">Precise: This means the app accessed the exact location of the device with high accuracy, usually within a few meters, utilizing GPS or other high-precision location services.</string>
+    <string name="precise_location"><![CDATA[<b>Precise:</b> This means the app accessed the exact location of the device with high accuracy, using GPS or other high-precision location services.]]></string>
     <string name="approximate">Approximate: This means the app accessed the general area of the device. The accuracy can range from several hundred meters to several kilometers, based on Wi-Fi networks, cell towers, and other less precise location sources.</string>
 
     <!-- Access Type Descriptions -->
-    <string name="sanctioned">Sanctioned: This means the user has specifically allowed and requested this specific location access. Examples include sharing your location on Facebook with a friend, which can occur in the background but is still sanctioned by the user, or initiating a route in Google Maps.</string>
-    <string name="foreground">Foreground: This occurs when the app accesses your location while you are using the app, but without you allowing it at that specific time. For example, Google Chrome using your exact location for searches while you are actively using the browser.</string>
-    <string name="background">Background: This indicates that the location was accessed without specific permission for this instance and while you were not actively using the app, but still doing something on the phone. An example is the weather app automatically updating its information while you are using your phone for other tasks.</string>
-    <string name="subliminal">Subliminal: This is when the phone accesses your location while you are not actively using the phone, and it is in sleep mode. An example includes the weather app automatically updating its forecast while you are not interacting with your phone.</string>
+    <string name="sanctioned"><b>Sanctioned:</b> This means the user has specifically allowed and requested this specific location access. Examples include sharing your location on Facebook with a friend, which can occur in the background but is still sanctioned by the user, or initiating a route in Google Maps.</string>
+    <string name="foreground"><b>Foreground:</b> This occurs when the app accesses your location while you are using the app, but without you allowing it at that specific time. For example, Google Chrome using your exact location for searches while you are actively using the browser.</string>
+    <string name="background"><b>Background:</b> This indicates that the location was accessed without specific permission for this instance and while you were not actively using the app, but still doing something on the phone. An example is the weather app automatically updating its information while you are using your phone for other tasks.</string>
+    <string name="subliminal"><b>Subliminal:</b> This is when the phone accesses your location while you are not actively using the phone, and it is in sleep mode. An example includes the weather app automatically updating its forecast while you are not interacting with your phone.</string>
 
 
     <!-- Titles -->

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="10dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -29,14 +29,17 @@
             android:id="@+id/buttonChooseApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"/>
 
-        <include layout="@layout/button_show_timeline"
-            android:id="@+id/buttonShowTimeline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" />
+        <!--
+       <include layout="@layout/button_show_timeline"
+           android:id="@+id/buttonShowTimeline"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp" />
 
+<<<<<<< HEAD
         <TextView
             android:id="@+id/textViewMap"
             android:layout_width="match_parent"
@@ -48,26 +51,38 @@
             android:text="@string/dashboard_text"
             android:textColor="@color/text"
             android:textSize="15sp" />
+=======
+        -->
+       <TextView
+           android:id="@+id/textViewMap"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_gravity="center"
+           android:layout_marginBottom="10dp"
+           android:gravity="center"
+           android:text="@string/dashboard_text"
+           android:textColor="@color/text"
+           android:textSize="16sp" />
 
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="16dp">
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           app:cardCornerRadius="16dp">
 
-            <com.mapbox.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:mapbox_cameraBearing="0.0"
-                app:mapbox_cameraPitch="0.0"
-                app:mapbox_cameraTargetLat="39.5"
-                app:mapbox_cameraTargetLng="-98.0"
-                app:mapbox_cameraZoom="2.0" />
+           <com.mapbox.maps.MapView
+               android:id="@+id/mapView"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               app:mapbox_cameraBearing="0.0"
+               app:mapbox_cameraPitch="0.0"
+               app:mapbox_cameraTargetLat="39.5"
+               app:mapbox_cameraTargetLng="-98.0"
+               app:mapbox_cameraZoom="2.0" />
 
-        </androidx.cardview.widget.CardView>
+       </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+   </LinearLayout>
 
 
 

@@ -19,6 +19,7 @@ import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
 import com.google.gson.GsonBuilder
 import java.util.*
+import androidx.core.text.HtmlCompat
 
 sealed interface TimelineItem {
     data class DateLabel(val date: Date) : TimelineItem
@@ -110,7 +111,7 @@ class LocationEventAdapter(private val context: Context) :
         val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
 
         val usageTypeDescription = when (event.usageType) {
-            "precise" -> context.getString(R.string.precise_location)
+            "precise" -> HtmlCompat.fromHtml(view.context.getString(R.string.precise_location), HtmlCompat.FROM_HTML_MODE_LEGACY)
             "approximate" -> context.getString(R.string.approximate)
             else -> ""
         }
@@ -129,8 +130,6 @@ class LocationEventAdapter(private val context: Context) :
 
         popupWindow.showAsDropDown(view)
     }
-
-
 
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
