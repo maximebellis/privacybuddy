@@ -66,7 +66,7 @@
                            android:layout_height="wrap_content" />
 
 
-                       <include layout="@layout/widget_apps_top"
+                       <include layout="@layout/widget_top_apps"
                            android:layout_marginBottom="16dp"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content" />

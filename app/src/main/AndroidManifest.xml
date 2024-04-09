@@ -59,6 +59,13 @@
 
         </activity>
 
+        <activity
+            android:name=".LocTopAppsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PrivacyBuddy">
+
+        </activity>
+
 
         <activity
             android:name=".ChooseAppActivity"

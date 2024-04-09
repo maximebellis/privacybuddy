@@ -3,13 +3,16 @@ package be.kuleuven.privacybuddy.utils
 import android.content.Context
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
+import be.kuleuven.privacybuddy.MainActivity
 import be.kuleuven.privacybuddy.adapter.TimelineItem
+import be.kuleuven.privacybuddy.data.AppAccessInfo
 import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 
 object LocationDataUtils {
@@ -93,6 +96,28 @@ object LocationDataUtils {
         }
         return result
     }
+
+    fun getTopAccessedAppsFromGeoJson(context: Context): List<AppAccessInfo> {
+        AppState.topAccessedAppsCache?.let {
+            // Return the cached list if it exists
+            return it
+        }
+
+        // Logic to fetch data from GeoJSON
+        val geoJsonString = context.assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
+        val featureCollection = FeatureCollection.fromJson(geoJsonString)
+        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
+
+        // Sort the list by accessCount in descending order before caching and returning
+        val topApps = accessCounts.entries
+            .map { AppAccessInfo(it.key, it.value) }
+            .sortedByDescending { it.accessCount }
+
+        // Cache the sorted list in AppState before returning
+        AppState.topAccessedAppsCache = topApps
+        return topApps
+    }
+
 
 }
 

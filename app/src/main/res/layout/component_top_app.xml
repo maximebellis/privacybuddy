@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/imageViewAppIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <!-- Use RelativeLayout for the text views and progress bar -->
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/textViewAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="App Name"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="@color/title_prim" />
+
+        <TextView
+            android:id="@+id/textViewAppAccesses"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="0 accesses"
+            android:textAppearance="?attr/textAppearanceListItemSmall"
+            android:textColor="@color/title_prim" />
+
+        <ProgressBar
+            android:id="@+id/progressBarAppUsage"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="25"
+            android:layout_below="@id/textViewAppName"
+            android:layout_marginTop="8dp"
+            android:progressDrawable="@drawable/custom_progress_bar" />
+    </RelativeLayout>
+
+</LinearLayout>

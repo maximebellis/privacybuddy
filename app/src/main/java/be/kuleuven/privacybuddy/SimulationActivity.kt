@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.viewpager2.widget.ViewPager2
+import be.kuleuven.privacybuddy.AppState.clearTopAccessedAppsCache
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 
 
 class SimulationActivity : BaseActivity() {
@@ -45,7 +47,7 @@ class SimulationActivity : BaseActivity() {
             "dummydata 1 around Leuven",
             "dummydata 2 around Leuven",
             "Simulated data made with chatgpt for a student/tutor",
-                    getString(R.string.description_4),
+            getString(R.string.description_4),
             getString(R.string.description_5),
             getString(R.string.description_6),
             getString(R.string.description_7),
@@ -65,6 +67,9 @@ class SimulationActivity : BaseActivity() {
                 5 -> "simu_data_tutor.geojson"
                 else -> "dummy_location_1.geojson"
             }
+
+            clearTopAccessedAppsCache()
+            AppState.topAccessedAppsCache = LocationDataUtils.getTopAccessedAppsFromGeoJson(this)
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)

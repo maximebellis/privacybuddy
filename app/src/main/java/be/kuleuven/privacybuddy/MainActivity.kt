@@ -20,6 +20,7 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapView
+import be.kuleuven.privacybuddy.data.AppAccessInfo
 
 class MainActivity : BaseActivity() {
 
@@ -29,7 +30,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.page_dashboard_main)
+        setContentView(R.layout.page_main_dashboard)
         setupToolbar()
         setupLocationEventsRecyclerView()
         initUI()
@@ -83,7 +84,9 @@ class MainActivity : BaseActivity() {
         listOf(
             R.id.widgetMapLocation to LocMapActivity::class.java,
             //R.id.widgetLocation to LocTimelineActivity::class.java,
-            R.id.widgetLocationTimeline to LocTimelineActivity::class.java
+            R.id.widgetLocationTimeline to LocTimelineActivity::class.java,
+            R.id.widgetTopApps to LocTopAppsActivity::class.java
+
         ).forEach { (viewId, activityClass) ->
             findViewById<CardView>(viewId).setOnClickListener {
                 startActivity(Intent(this, activityClass))
@@ -113,15 +116,8 @@ class MainActivity : BaseActivity() {
         //findViewById<TextView>(R.id.textViewLocationUsage).text = "Used by $distinctAppsCount app${if (distinctAppsCount > 1) "s" else ""}"
     }
 
-    private fun getTopAccessedAppsFromGeoJson(): List<AppAccessInfo> {
-        val geoJsonString = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
-        val featureCollection = FeatureCollection.fromJson(geoJsonString)
-        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
-        return accessCounts.entries.sortedByDescending { it.value }.take(3).map { AppAccessInfo(it.key, it.value) }
-    }
-
     private fun updateTopAccessedAppsWidget() {
-        val topApps = getTopAccessedAppsFromGeoJson()
+        val topApps = AppState.topAccessedAppsCache ?: emptyList<AppAccessInfo>()
         val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1
         val widgetSlots = listOf(
             listOf(R.id.imageViewMostLocationAcessesApp1, R.id.textViewMostLocationAcessesDataApp1, R.id.progressBarMostLocationAcessesApp1, R.id.textViewMostLocationAccessesApp1),
@@ -152,5 +148,4 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    data class AppAccessInfo(val appName: String, val accessCount: Int)
 }
