@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="App Name"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="14dp"
             android:textColor="@color/title_prim" />
 
         <TextView
@@ -32,14 +32,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="0 accesses"
-            android:textAppearance="?attr/textAppearanceListItemSmall"
+            android:textSize="14dp"
             android:textColor="@color/title_prim" />
 
         <ProgressBar
             android:id="@+id/progressBarAppUsage"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="10dp"
             android:max="100"
             android:progress="25"
             android:layout_below="@id/textViewAppName"

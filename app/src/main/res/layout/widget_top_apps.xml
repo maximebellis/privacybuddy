@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Widget layout simplified to act as a container -->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:id="@+id/widgetTopApps"
     android:layout_height="wrap_content"
     app:cardCornerRadius="16dp">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_sec"
-    android:padding="16dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_sec"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/textViewHeader"
@@ -22,129 +21,14 @@
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
 
-        <!-- TikTok Section -->
-        <ImageView
-            android:id="@+id/imageViewMostLocationAcessesApp1"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_below="@id/textViewHeader"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:id="@+id/textViewMostLocationAccessesApp1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/imageViewMostLocationAcessesApp1"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/imageViewMostLocationAcessesApp1"
-            android:text="TikTok"
-            android:textColor="@color/title_prim"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textViewMostLocationAcessesDataApp1"
+        <LinearLayout
+            android:id="@+id/containerAppViews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewMostLocationAccessesApp1"
+            android:layout_below="@+id/textViewHeader"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
+        </LinearLayout>
 
-            android:gravity="end"
-            android:text="88 accesses"
-            android:textColor="@color/title_prim"
-            android:textSize="12sp" />
-
-
-        <ProgressBar
-            android:id="@+id/progressBarMostLocationAcessesApp1"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_below="@id/textViewMostLocationAcessesDataApp1"
-            android:layout_marginTop="4dp"
-            android:max="100"
-            android:progress="88"
-            android:progressDrawable="@drawable/custom_progress_bar" />
-
-
-        <!-- Gmail Section -->
-        <ImageView
-            android:id="@+id/imageViewostLocationAccessesApp2"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_below="@id/progressBarMostLocationAcessesApp1"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:id="@+id/textViewMostLocationAccessesApp2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/imageViewostLocationAccessesApp2"
-            android:layout_marginStart="8dp"
-            android:layout_alignTop="@id/imageViewostLocationAccessesApp2"
-            android:text="Gmail"
-            android:textColor="@color/title_prim"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textViewostLocationAccessesDataApp2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewMostLocationAccessesApp2"
-            android:layout_marginStart="8dp"
-            android:gravity="end"
-            android:text="43 accesses"
-            android:textColor="@color/title_prim"
-            android:textSize="12sp" />
-
-        <ProgressBar
-            android:id="@+id/progressBarMostLocationAccessesApp2"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_below="@id/textViewostLocationAccessesDataApp2"
-            android:layout_marginTop="4dp"
-            android:max="100"
-            android:progress="43"
-            android:progressDrawable="@drawable/custom_progress_bar" />
-
-        <!-- YouTube Section -->
-        <ImageView
-            android:id="@+id/imageViewMostLocationAccessesApp3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_below="@id/progressBarMostLocationAccessesApp2"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:id="@+id/textViewMostLocationAccessesApp3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/imageViewMostLocationAccessesApp3"
-            android:layout_marginStart="8dp"
-            android:layout_alignTop="@id/imageViewMostLocationAccessesApp3"
-            android:text="YouTube"
-            android:textColor="@color/title_prim"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textViewMostLocationAccessesDataApp3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewMostLocationAccessesApp3"
-            android:layout_marginStart="8dp"
-            android:gravity="end"
-            android:text="42 accesses"
-            android:textColor="@color/title_prim"
-            android:textSize="12sp" />
-
-        <ProgressBar
-            android:id="@+id/progressBarMostLocationAccessesApp3"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_below="@id/textViewMostLocationAccessesDataApp3"
-            android:layout_marginTop="4dp"
-            android:max="100"
-            android:progress="42"
-            android:progressDrawable="@drawable/custom_progress_bar" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

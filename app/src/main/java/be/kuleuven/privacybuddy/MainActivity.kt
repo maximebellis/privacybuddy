@@ -4,9 +4,11 @@ package be.kuleuven.privacybuddy
 import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -117,35 +119,32 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateTopAccessedAppsWidget() {
-        val topApps = AppState.topAccessedAppsCache ?: emptyList<AppAccessInfo>()
+        val container = findViewById<LinearLayout>(R.id.containerAppViews)
+        // Ensure topApps is sorted if necessary and take the top 3
+        val topApps = AppState.topAccessedAppsCache?.sortedByDescending { it.accessCount }?.take(3) ?: emptyList()
+        container.removeAllViews() // Clear existing views
+
+        // Find the max access count among the top 3 apps for proper scaling of the progress bars
         val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1
-        val widgetSlots = listOf(
-            listOf(R.id.imageViewMostLocationAcessesApp1, R.id.textViewMostLocationAcessesDataApp1, R.id.progressBarMostLocationAcessesApp1, R.id.textViewMostLocationAccessesApp1),
-            listOf(R.id.imageViewostLocationAccessesApp2, R.id.textViewostLocationAccessesDataApp2, R.id.progressBarMostLocationAccessesApp2, R.id.textViewMostLocationAccessesApp2),
-            listOf(R.id.imageViewMostLocationAccessesApp3, R.id.textViewMostLocationAccessesDataApp3, R.id.progressBarMostLocationAccessesApp3, R.id.textViewMostLocationAccessesApp3)
-        )
 
-        widgetSlots.forEachIndexed { index, (imageViewId, textViewAccessId, progressBarId, textViewAppNameId) ->
-            val imageView = findViewById<ImageView>(imageViewId)
-            val textViewAccess = findViewById<TextView>(textViewAccessId)
-            val progressBar = findViewById<ProgressBar>(progressBarId)
-            val textViewAppName = findViewById<TextView>(textViewAppNameId)
+        topApps.forEach { appInfo ->
+            val appView = LayoutInflater.from(this).inflate(R.layout.component_top_app, container, false)
 
-            if (index < topApps.size) {
-                val appAccessInfo = topApps[index]
-                imageView.visibility = View.VISIBLE
-                imageView.setImageDrawable(getAppIconByName(appAccessInfo.appName))
-                textViewAccess.text = "${appAccessInfo.accessCount} accesses"
-                progressBar.max = maxAccessCount
-                progressBar.progress = appAccessInfo.accessCount
-                textViewAppName.text = appAccessInfo.appName
-            } else {
-                imageView.visibility = View.INVISIBLE
-                textViewAccess.text = "0 accesses"
-                progressBar.progress = 0
-                textViewAppName.text = ""
-            }
+            // Configure the view elements
+            appView.findViewById<TextView>(R.id.textViewAppName).text = appInfo.appName
+            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "${appInfo.accessCount} accesses"
+            val progressBar = appView.findViewById<ProgressBar>(R.id.progressBarAppUsage)
+            progressBar.max = maxAccessCount // Use the same max for all progress bars
+            progressBar.progress = appInfo.accessCount
+
+            // Set the app icon
+            val appIcon = this.getAppIconByName(appInfo.appName) // Ensure getAppIconByName is accessible
+            appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
+
+            // Add the configured view to the container
+            container.addView(appView)
         }
     }
+
 
 }
