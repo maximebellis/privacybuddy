@@ -16,9 +16,17 @@ class SimulationActivity : BaseActivity() {
 
     private lateinit var adapter: SimulationChoicesAdapter
 
-
-    val titles = listOf("Datastream 1", "Datastream 2", "Datastream 3", "Dummy data 1", "Dummy data 2", "Student/tutor simudata")
-
+    val titles = listOf("Datastream 1",
+        "Datastream 2",
+        "Datastream 3",
+        "Dummy data 1",
+        "Dummy data 2",
+        "Student/tutor simudata",
+        "Dummy data 4",
+        "Dummy data 5",
+        "Dummy data 6",
+        "Dummy data 7",
+        )
 
 
     override fun filterData(days: Int) {
@@ -36,7 +44,11 @@ class SimulationActivity : BaseActivity() {
             getString(R.string.description_3),
             "dummydata 1 around Leuven",
             "dummydata 2 around Leuven",
-            "Simulated data made with chatgpt for a student/tutor"
+            "Simulated data made with chatgpt for a student/tutor",
+                    getString(R.string.description_4),
+            getString(R.string.description_5),
+            getString(R.string.description_6),
+            getString(R.string.description_7),
         )
 
         val buttonChoose: Button = findViewById(R.id.button_choose)

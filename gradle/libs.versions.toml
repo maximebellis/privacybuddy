@@ -30,8 +30,9 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 mapbox = { group = "com.mapbox.maps", name = "android", version.ref = "mapbox" }
-mapbox-sdk-services = { module = "com.mapbox.mapboxsdk:mapbox-sdk-services", version.ref = "mapboxSdkServices" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+mapbox-sdk-services = { module = "com.mapbox.mapboxsdk:mapbox-sdk-services", version.ref = "mapboxSdkServices" }
+
 
 
 
