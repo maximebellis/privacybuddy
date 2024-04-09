@@ -1,6 +1,8 @@
 package be.kuleuven.privacybuddy
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -16,10 +18,14 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.prepareTimelineItems
 import kotlinx.coroutines.*
 import android.provider.Settings
-
+import android.view.LayoutInflater
+import android.widget.ProgressBar
 
 
 class LocTimelineActivity : BaseActivity() {
+
+    private lateinit var progressBar: ProgressBar
+    private lateinit var textViewTimeline: TextView
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private lateinit var recyclerView: RecyclerView
@@ -45,6 +51,12 @@ class LocTimelineActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_timeline_location)
         setupToolbar()
+
+        progressBar = findViewById(R.id.progressBar)
+
+
+        textViewTimeline = findViewById(R.id.textViewTimeline)
+
 
         recyclerView = findViewById(R.id.recyclerViewTimelineLocation)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -79,6 +91,11 @@ class LocTimelineActivity : BaseActivity() {
     }
 
     private fun refreshEvents() = coroutineScope.launch {
+        // Show the ProgressBar
+        progressBar.visibility = View.VISIBLE
+        textViewTimeline.visibility = View.GONE
+        recyclerView.visibility = View.GONE
+
         val events = withContext(Dispatchers.IO) {
             LocationDataUtils.loadGeoJsonFromAssets(selectedAppName, this@LocTimelineActivity, days = daysFilter)
         }
@@ -87,9 +104,16 @@ class LocTimelineActivity : BaseActivity() {
         }
         withContext(Dispatchers.Main) {
             adapter.submitList(groupedEvents) // Use submitList to update data
+
+            // Hide the ProgressBar
+            progressBar.visibility = View.GONE
+            textViewTimeline.visibility = View.VISIBLE
+            recyclerView.visibility = View.VISIBLE
+
         }
         updateTimelineText()
     }
+
 
     private fun setupChooseAppButton() {
         findViewById<View>(R.id.buttonChooseApp).setOnClickListener {
