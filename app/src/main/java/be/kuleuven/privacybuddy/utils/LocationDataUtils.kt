@@ -3,7 +3,6 @@ package be.kuleuven.privacybuddy.utils
 import android.content.Context
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
-import be.kuleuven.privacybuddy.MainActivity
 import be.kuleuven.privacybuddy.adapter.TimelineItem
 import be.kuleuven.privacybuddy.data.AppAccessInfo
 import be.kuleuven.privacybuddy.data.LocationData

@@ -17,7 +17,6 @@ import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
-import com.google.gson.GsonBuilder
 import java.util.*
 import androidx.core.text.HtmlCompat
 
@@ -67,12 +66,6 @@ class LocationEventAdapter(private val context: Context) :
         private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewMostLocationAccessesApp3)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
-        private fun convertEventToJsonString(event: LocationData): String {
-            val gson = GsonBuilder().serializeNulls().create() // Configured to serialize null values
-            return gson.toJson(event)
-        }
-
-
         private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
             (item as? TimelineItem.EventItem)?.let { eventItem ->
@@ -84,9 +77,8 @@ class LocationEventAdapter(private val context: Context) :
                 verticalLineView.visibility = if (bindingAdapterPosition == itemCount - 1) View.INVISIBLE else View.VISIBLE
 
                 itemView.setOnClickListener {
-                    val eventJsonString = convertEventToJsonString(eventItem.event)
                     val intent = Intent(context, LocSingleAccessActivity::class.java).apply {
-                        putExtra("jsonData", eventJsonString)
+                        putExtra("locationData", eventItem.event)
                     }
                     context.startActivity(intent)
                 }

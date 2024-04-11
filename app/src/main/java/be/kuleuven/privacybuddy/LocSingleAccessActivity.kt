@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +14,6 @@ import android.widget.TextView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.data.LocationData
 import be.kuleuven.privacybuddy.extension.getAppIconByName
-import com.google.gson.Gson
-import com.mapbox.api.geocoding.v5.GeocodingCriteria
-import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
@@ -27,10 +23,7 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import java.util.Locale
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 
 
 class LocSingleAccessActivity : BaseActivity() {
@@ -43,54 +36,27 @@ class LocSingleAccessActivity : BaseActivity() {
         setupToolbar()
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.locationAccessByTextView, getString(R.string.location_access_by))
 
-        val locationData = intent.getStringExtra("jsonData")?.let {
-            Log.d("LocSingleAccessActivity", "Received JSON: $it")
-            Gson().fromJson(it, LocationData::class.java)
-        } ?: return
+        val locationData: LocationData? = intent.extras?.getParcelable("locationData")
 
-        locationData.accuracy?.let { setupInfoButtons(it) }
+        locationData?.accuracy?.let { setupInfoButtons(it) }
+        locationData?.let {
+            findViewById<TextView>(R.id.dataEntryApp).text = it.appName
+            findViewById<ImageView>(R.id.appLogoImageView).setImageDrawable(getAppIconByName(it.appName))
+            findViewById<TextView>(R.id.dataEntryTime).text = it.timestamp
 
-        with(locationData) {
-            findViewById<TextView>(R.id.dataEntryApp).text = appName
-            findViewById<ImageView>(R.id.appLogoImageView).setImageDrawable(getAppIconByName(appName))
-            findViewById<TextView>(R.id.dataEntryTime).text = timestamp
-
-            setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(accuracy))
-            setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(speed))
-            setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(bearing))
-            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(latitude ?: 0.0))
-            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(longitude ?: 0.0))
-            setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(altitude))
+            setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(it.accuracy))
+            setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(it.speed))
+            setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(it.bearing))
+            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(it.latitude ?: 0.0))
+            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(it.longitude ?: 0.0))
+            setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(it.altitude))
         }
 
         mapView = findViewById(R.id.mapView)
-        initializeMap(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0)
-
+        initializeMap(locationData?.latitude ?: 0.0, locationData?.longitude ?: 0.0)
 
         val textViewAddress = findViewById<TextView>(R.id.textViewAdress)
-        val mapboxGeocoding = MapboxGeocoding.builder()
-            .accessToken(this.getString(R.string.mapbox_access_token))
-            .query(Point.fromLngLat(locationData.latitude ?: 0.0, locationData.longitude ?: 0.0))
-            .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
-            .build()
-
-        mapboxGeocoding.enqueueCall(object : Callback<GeocodingResponse> {
-            override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                if (response.body() != null && response.body()!!.features().isNotEmpty()) {
-                    val placeName = response.body()!!.features()[0].placeName()
-                    textViewAddress.text = placeName
-                } else {
-                    textViewAddress.text = "No address found"
-                    // Log the response body for debugging
-                    Log.d("MapboxGeocoding", "Response body: ${response.body()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
-                // Log the error for debugging
-                Log.e("MapboxGeocoding", "Error: ", t)
-            }
-        })
+        textViewAddress.text = "No address found"
     }
 
 
