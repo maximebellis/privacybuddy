@@ -3,7 +3,6 @@ package be.kuleuven.privacybuddy
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
@@ -42,20 +41,21 @@ class LocTimelineActivity : BaseActivity() {
 
     private fun setupSpinner() {
         val spinner: Spinner = findViewById(R.id.spinnerChooseApp)
+        spinner.dropDownVerticalOffset = 100
+
         val apps = getUniqueAppNamesFromGeoJson(daysFilter).sorted().toMutableList()
         apps.add(0, "All apps")
 
         val spinnerItems = apps.map { appName ->
-            val appIcon = getAppIconByName(appName)
-            SpinnerItem(appIcon!!, appName)
+            SpinnerItem(getAppIconByName(appName)!!, appName)
         }
 
-        val adapter = SpinnerAdapter(this, R.layout.spinner_item, spinnerItems)
-        spinner.adapter = adapter
+        spinner.adapter = SpinnerAdapter(this, R.layout.spinner_item, spinnerItems)
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                selectedAppName = if (parent.getItemAtPosition(position) == "All apps") null else (parent.getItemAtPosition(position) as SpinnerItem).appName
+                val selectedItem = parent.getItemAtPosition(position) as SpinnerItem
+                selectedAppName = if (selectedItem.appName == "All apps") null else selectedItem.appName
                 refreshEvents()
             }
 

@@ -30,11 +30,19 @@
                 android:textColor="@color/title_prim"
                 android:textSize="32sp" />
 
-            <include layout="@layout/button_app_choice"
-                android:id="@+id/buttonChooseApp"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp" />
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="16dp">
+
+                <Spinner
+                    android:id="@+id/spinnerChooseApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="77dp"
+                    android:background="@color/background_sec"/>
+
+            </androidx.cardview.widget.CardView>
 
 
 
