@@ -34,11 +34,25 @@
             android:layout_marginTop="20dp"
             app:cardCornerRadius="16dp">
 
-            <Spinner
-                android:id="@+id/spinnerChooseApp"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="77dp"
-                android:background="@color/background_sec"/>
+                android:layout_height="wrap_content">
+
+                <Spinner
+                    android:id="@+id/spinnerChooseApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="77dp"
+                    android:background="@color/background_sec"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_chevron_down" />
+
+            </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
 
