@@ -19,24 +19,13 @@
             android:layout_height="45dp"
             android:layout_centerVertical="true" />
 
-
-        <TextView
-            android:id="@+id/textViewSelectedApp"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/spinnerChooseApp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/imageViewMostLocationAccessesApp3"
-            android:layout_marginStart="12dp"
             android:layout_centerVertical="true"
-            android:textColor="@color/title_prim"
-            android:textSize="24sp" />
+            />
 
-        <ImageView
-            android:id="@+id/imageViewArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_chevron_forward" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

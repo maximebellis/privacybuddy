@@ -1,79 +1,59 @@
 package be.kuleuven.privacybuddy
 
-import android.app.Activity
-import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ProgressBar
+import android.widget.Spinner
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
-import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
-import be.kuleuven.privacybuddy.utils.LocationDataUtils.prepareTimelineItems
 import kotlinx.coroutines.*
-import android.provider.Settings
-import android.view.LayoutInflater
-import android.widget.ProgressBar
-
 
 class LocTimelineActivity : BaseActivity() {
 
-    private lateinit var progressBar: ProgressBar
-    private lateinit var textViewTimeline: TextView
-
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
-    private lateinit var recyclerView: RecyclerView
     private var selectedAppName: String? = null
-    private lateinit var appNameTextView: TextView
-    private lateinit var appIconView: ImageView
-    private lateinit var adapter: LocationEventAdapter // Declare the adapter
-
-    private val chooseAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val newAppName = result.data?.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
-            if (newAppName != selectedAppName) {
-                selectedAppName = newAppName
-                updateChooseAppDisplay(selectedAppName)
-                refreshEvents()
-            }
-        }
-    }
-
-
+    private lateinit var adapter: LocationEventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_timeline_location)
         setupToolbar()
 
-        progressBar = findViewById(R.id.progressBar)
-
-
-        textViewTimeline = findViewById(R.id.textViewTimeline)
-
-
-        recyclerView = findViewById(R.id.recyclerViewTimelineLocation)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = LocationEventAdapter(this) // Initialize the adapter
-        recyclerView.adapter = adapter // Set the adapter
-
-        appIconView = findViewById(R.id.imageViewMostLocationAccessesApp3)
-        appNameTextView = findViewById(R.id.textViewSelectedApp)
-
-
-        selectedAppName = intent.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
-        setupChooseAppButton()
-        updateChooseAppDisplay(selectedAppName)
+        setupRecyclerView()
+        setupSpinner()
         refreshEvents()
+    }
 
+    private fun setupRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewTimelineLocation)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = LocationEventAdapter(this)
+        recyclerView.adapter = adapter
+    }
 
+    private fun setupSpinner() {
+        val spinner: Spinner = findViewById(R.id.spinnerChooseApp)
+        val apps = getUniqueAppNamesFromGeoJson(daysFilter).sorted().toMutableList()
+        apps.add(0, "All apps")
+        ArrayAdapter(this, R.layout.spinner_item, apps).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+        }
 
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                selectedAppName = if (parent.getItemAtPosition(position) == "All apps") null else parent.getItemAtPosition(position) as String
+                refreshEvents()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     override fun onResume() {
@@ -87,55 +67,34 @@ class LocTimelineActivity : BaseActivity() {
     }
 
     private fun refreshEvents() = coroutineScope.launch {
-        // Show the ProgressBar
-        progressBar.visibility = View.VISIBLE
-        textViewTimeline.visibility = View.GONE
-        recyclerView.visibility = View.GONE
+        toggleViewsVisibility(View.VISIBLE, View.GONE, View.GONE)
 
         val events = withContext(Dispatchers.IO) {
             LocationDataUtils.loadGeoJsonFromAssets(selectedAppName, this@LocTimelineActivity, days = daysFilter)
         }
         val groupedEvents = withContext(Dispatchers.Default) {
-            prepareTimelineItems(events)
+            LocationDataUtils.prepareTimelineItems(events)
         }
         withContext(Dispatchers.Main) {
-            adapter.submitList(groupedEvents) // Use submitList to update data
-
-            // Hide the ProgressBar
-            progressBar.visibility = View.GONE
-            textViewTimeline.visibility = View.VISIBLE
-            recyclerView.visibility = View.VISIBLE
-
+            adapter.submitList(groupedEvents)
+            toggleViewsVisibility(View.GONE, View.VISIBLE, View.VISIBLE)
         }
         updateTimelineText()
     }
 
-
-    private fun setupChooseAppButton() {
-        findViewById<View>(R.id.buttonChooseApp).setOnClickListener {
-            chooseAppLauncher.launch(Intent(this, ChooseAppActivity::class.java))
-        }
-    }
-
-    private fun updateChooseAppDisplay(appName: String?) {
-        appNameTextView.text = appName ?: "All Apps"
-        appIconView.visibility = if (appName != null) View.VISIBLE else View.GONE
-        if (appName != null) {
-            appIconView.setImageDrawable(applicationContext.getAppIconByName(appName))
-        }
+    private fun toggleViewsVisibility(progressBarVisibility: Int, textViewVisibility: Int, recyclerViewVisibility: Int) {
+        findViewById<ProgressBar>(R.id.progressBar).visibility = progressBarVisibility
+        findViewById<TextView>(R.id.textViewTimeline).visibility = textViewVisibility
+        findViewById<RecyclerView>(R.id.recyclerViewTimelineLocation).visibility = recyclerViewVisibility
     }
 
     override fun filterData(days: Int) {
-        daysFilter = days // Update the days filter
-        refreshEvents() // Refresh the events list with the new filter
+        daysFilter = days
+        refreshEvents()
     }
 
     private fun updateTimelineText() {
         val timelineTextId = if (daysFilter > 1) R.string.timeline_text else R.string.timeline_text_single_day
         findViewById<TextView>(R.id.textViewTimeline).text = getString(timelineTextId, daysFilter)
     }
-
-
 }
-
-

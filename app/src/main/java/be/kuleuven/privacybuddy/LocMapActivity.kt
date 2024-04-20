@@ -1,36 +1,18 @@
 package be.kuleuven.privacybuddy
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.cardview.widget.CardView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
-import be.kuleuven.privacybuddy.extension.getAppIconByName
 import com.mapbox.maps.MapView
 
-class LocMapActivity : BaseActivity(){
+class LocMapActivity : BaseActivity() {
 
     private lateinit var mapView: MapView
     private var selectedAppName: String? = null
-    private lateinit var appIconView: ImageView
-    private lateinit var appNameTextView: TextView
-
-    private val chooseAppLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val newAppName = result.data?.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
-                if (newAppName != selectedAppName) {
-                    selectedAppName = newAppName
-                    updateChooseAppDisplay(selectedAppName)
-                    setupMapView(mapView, selectedAppName)
-                }
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,38 +20,29 @@ class LocMapActivity : BaseActivity(){
         setupToolbar()
         updateMapText()
 
-        mapView =   findViewById(R.id.mapView)
-        appIconView = findViewById(R.id.imageViewMostLocationAccessesApp3)
-        appNameTextView = findViewById(R.id.textViewSelectedApp)
-        selectedAppName = intent.getStringExtra(ChooseAppActivity.SELECTED_APP_NAME)
-
-        setupChooseAppButton()
+        mapView = findViewById(R.id.mapView)
         setupMapView(mapView, selectedAppName)
+
+        setupSpinner()
     }
 
-    private fun updateChooseAppDisplay(appName: String?) {
-        appNameTextView.text = appName ?: "All Apps"
-        appIconView.visibility = if (appName == null) View.GONE else View.VISIBLE
-        if (appName != null) {
-            appIconView.setImageDrawable(applicationContext.getAppIconByName(appName))
-        }
-    }
-
-    private fun setupChooseAppButton() {
-        updateChooseAppDisplay(selectedAppName)
-        findViewById<View>(R.id.buttonChooseApp).setOnClickListener {
-            chooseAppLauncher.launch(Intent(this, ChooseAppActivity::class.java))
+    private fun setupSpinner() {
+        val spinner: Spinner = findViewById(R.id.spinnerChooseApp)
+        val apps = getUniqueAppNamesFromGeoJson(daysFilter).sorted().toMutableList()
+        apps.add(0, "All apps")
+        ArrayAdapter(this, R.layout.spinner_item, apps).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
         }
 
-/*
-        val buttonShowTimeline = findViewById<CardView>(R.id.buttonShowTimeline)
-        buttonShowTimeline.setOnClickListener {
-            val intent = Intent(this, LocTimelineActivity::class.java)
-            intent.putExtra(ChooseAppActivity.SELECTED_APP_NAME, selectedAppName)
-            startActivity(intent)
-        }
- */
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                selectedAppName = if (parent.getItemAtPosition(position) == "All apps") null else parent.getItemAtPosition(position) as String
+                setupMapView(mapView, selectedAppName)
+            }
 
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     override fun filterData(days: Int) {
@@ -79,14 +52,6 @@ class LocMapActivity : BaseActivity(){
     }
 
     private fun updateMapText() {
-        val mapText = if (daysFilter > 1) {
-            getString(R.string.dashboard_text, daysFilter)
-        } else {
-            getString(R.string.dashboard_text_single_day)
-        }
-
-        findViewById<TextView>(R.id.textViewMap).text = mapText
+        findViewById<TextView>(R.id.textViewMap).text = if (daysFilter > 1) getString(R.string.dashboard_text, daysFilter) else getString(R.string.dashboard_text_single_day)
     }
-
-
 }

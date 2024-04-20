@@ -1,6 +1,7 @@
 package be.kuleuven.privacybuddy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -21,6 +22,7 @@ import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.gestures.gestures
+import org.json.JSONObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -190,6 +192,30 @@ abstract class BaseActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun getUniqueAppNamesFromGeoJson(days: Int): List<String> {
+        val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        return runCatching {
+            assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { reader ->
+                val json = reader.readText()
+                val features = JSONObject(json).getJSONArray("features")
+
+                (0 until features.length()).mapNotNull { index ->
+                    val feature = features.getJSONObject(index)
+                    val properties = feature.getJSONObject("properties")
+                    val timestampStr = properties.getString("timestamp")
+                    val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
+
+                    if (featureDateTime.isAfter(cutoffDateTime)) properties.getString("appName") else null
+                }.distinct()
+            }
+        }.getOrElse {
+            Log.e("GeoJsonUtils", "Error getting unique app names from GeoJson", it)
+            emptyList()
         }
     }
 
