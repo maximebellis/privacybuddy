@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
+import be.kuleuven.privacybuddy.adapter.SpinnerAdapter
+import be.kuleuven.privacybuddy.data.SpinnerItem
+import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import kotlinx.coroutines.*
 
@@ -41,14 +44,18 @@ class LocTimelineActivity : BaseActivity() {
         val spinner: Spinner = findViewById(R.id.spinnerChooseApp)
         val apps = getUniqueAppNamesFromGeoJson(daysFilter).sorted().toMutableList()
         apps.add(0, "All apps")
-        ArrayAdapter(this, R.layout.spinner_item, apps).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
+
+        val spinnerItems = apps.map { appName ->
+            val appIcon = getAppIconByName(appName)
+            SpinnerItem(appIcon!!, appName)
         }
+
+        val adapter = SpinnerAdapter(this, R.layout.spinner_item, spinnerItems)
+        spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                selectedAppName = if (parent.getItemAtPosition(position) == "All apps") null else parent.getItemAtPosition(position) as String
+                selectedAppName = if (parent.getItemAtPosition(position) == "All apps") null else (parent.getItemAtPosition(position) as SpinnerItem).appName
                 refreshEvents()
             }
 

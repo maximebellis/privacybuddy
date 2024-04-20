@@ -20,8 +20,14 @@ import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.getSourceAs
 import com.mapbox.maps.plugin.gestures.gestures
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -117,6 +123,23 @@ abstract class BaseActivity : AppCompatActivity() {
             val biggestCluster = findBiggestCluster(featureCollection)
             if (biggestCluster != null) {
                 centerMapOnLocation(mapView, biggestCluster)
+            }
+        }
+    }
+
+    fun updateMapView(mapView: MapView, selectedAppName: String?) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, AppSettings.daysFilter)
+            withContext(Dispatchers.Main) {
+                val style = mapView.mapboxMap.style
+                val source = style?.getSourceAs<GeoJsonSource>(APP_USAGE_SOURCE_ID)
+                source?.featureCollection(newFeatureCollection)
+
+                // Find the biggest cluster and center the map on it
+                val biggestCluster = findBiggestCluster(newFeatureCollection)
+                if (biggestCluster != null) {
+                    centerMapOnLocation(mapView, biggestCluster)
+                }
             }
         }
     }

@@ -13,11 +13,6 @@
         android:background="@color/background_sec"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/imageViewMostLocationAccessesApp3"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerVertical="true" />
 
         <Spinner
             android:id="@+id/spinnerChooseApp"
