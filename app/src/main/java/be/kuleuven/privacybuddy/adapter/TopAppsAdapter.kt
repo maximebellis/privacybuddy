@@ -38,13 +38,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
         val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1
         holder.progressBarAppUsage.max = maxAccessCount
         holder.progressBarAppUsage.progress = app.accessCount
-        val appIcon = context.getAppIconByName(app.appName)
-        if (appIcon != null) {
-            holder.imageViewAppIcon.setImageDrawable(appIcon)
-        } else {
-            // Optional: Set a default icon if the app icon is not found
-            holder.imageViewAppIcon.setImageDrawable(ContextCompat.getDrawable(context, R.mipmap.ic_launcher))
-        }
+        holder.imageViewAppIcon.setImageDrawable(context.getAppIconByName(app.appName))
     }
 
     override fun getItemCount() = topApps.size

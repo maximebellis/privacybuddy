@@ -59,12 +59,13 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun centerMapOnLocation(mapView: MapView) {
+    private fun centerMapOnLocation(mapView: MapView, location: Point) {
         mapView.mapboxMap.setCamera(cameraOptions {
-            center(Point.fromLngLat(4.7012, 50.8789))
+            center(location)
             zoom(12.0)
         })
     }
+
 
     private fun addMapLayers(style: Style) {
         style.addLayer(circleLayer(CLUSTERS_LAYER_ID, APP_USAGE_SOURCE_ID) {
@@ -82,17 +83,39 @@ abstract class BaseActivity : AppCompatActivity() {
         })
     }
 
+    private fun findBiggestCluster(featureCollection: FeatureCollection): Point? {
+        var biggestCluster: Point? = null
+        var maxCount = 0
+
+        featureCollection.features()?.forEach { feature ->
+            val count = feature.getNumberProperty("point_count_abbreviated").toInt()
+            if (count > maxCount) {
+                maxCount = count
+                biggestCluster = feature.geometry() as Point
+            }
+        }
+
+        return biggestCluster
+    }
+
+
     protected fun setupMapView(mapView: MapView, selectedAppName: String?) {
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+            val featureCollection = loadGeoJsonFromAssets(selectedAppName, AppSettings.daysFilter)
             val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
-                featureCollection(loadGeoJsonFromAssets(selectedAppName, AppSettings.daysFilter))
+                featureCollection(featureCollection)
                 cluster(true)
                 clusterMaxZoom(14)
                 clusterRadius(50)
             }
             style.addSource(geoJsonSource)
             addMapLayers(style)
-            centerMapOnLocation(mapView)
+
+            // Find the biggest cluster and center the map on it
+            val biggestCluster = findBiggestCluster(featureCollection)
+            if (biggestCluster != null) {
+                centerMapOnLocation(mapView, biggestCluster)
+            }
         }
     }
 

@@ -85,7 +85,6 @@ class MainActivity : BaseActivity() {
     private fun setupWidgetClickListeners() {
         listOf(
             R.id.widgetMapLocation to LocMapActivity::class.java,
-            //R.id.widgetLocation to LocTimelineActivity::class.java,
             R.id.widgetLocationTimeline to LocTimelineActivity::class.java,
             R.id.widgetTopApps to LocTopAppsActivity::class.java
 

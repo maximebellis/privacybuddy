@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "be.kuleuven.privacybuddy"
+        applicationId = "be.kuleuven.privacybuddy2"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -66,7 +66,6 @@ dependencies {
 
     // added
     implementation(libs.mapbox)
-    implementation(libs.mapbox.sdk.services)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.appcompat)
