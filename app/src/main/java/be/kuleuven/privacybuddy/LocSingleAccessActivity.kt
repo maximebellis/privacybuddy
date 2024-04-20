@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -30,11 +31,22 @@ class LocSingleAccessActivity : BaseActivity() {
 
     private lateinit var mapView: MapView
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.findItem(R.id.action_refresh).isVisible = false // Hide the reload icon
+        menu.findItem(R.id.action_one_day).isVisible = false
+        menu.findItem(R.id.action_seven_days).isVisible = false
+        menu.findItem(R.id.action_twenty_one_days).isVisible = false
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_specific_access)
         setupToolbar()
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.locationAccessByTextView, getString(R.string.location_access_by))
+
+
+
 
         val locationData: LocationData? = intent.extras?.getParcelable("locationData")
 
