@@ -81,30 +81,5 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:layout_centerInParent="true"
-        app:cardCornerRadius="60dp">
-
-
-        <TextView
-            android:id="@+id/managePermissionsButton"
-            android:padding="12dp"
-            android:textSize="16sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Manage permission"
-            android:gravity="center"
-            android:textColor="@color/background_prim"
-            android:background="@color/title_prim"
-            app:drawableLeftCompat="@drawable/ic_settings"
-            android:drawablePadding="5dp"/>
-
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

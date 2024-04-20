@@ -10,7 +10,7 @@
 
     <string name="choose_page_text">Apps you do not see here, do not have any location accesses in the time period shown now</string>
 
-    <string name="welcome_text">Welcome to PrivacyBuddy. This app is a prototype designed to test a built-in OS service created by Tristan Pelgrims and Maxime Bellis for their thesis.\n\nWe present to you three different weekly itineraries. Please read them carefully and select the one that resonates most with you. Once you\'ve made your selection, the app will load simulated data based on your chosen itinerary.\n\nWe invite you to explore the app as if you are reviewing your own data from the past week.</string>
+    <string name="welcome_text">Welcome to PrivacyBuddy. This app is a prototype designed to test a built-in OS service created by Tristan Pelgrims and Maxime Bellis for their thesis.\n\nChoose a data file, the app will load into the privacy dashboard with the data you choose.\n\nWe invite you to explore the app as if you are reviewing your own data from the past week.</string>
 
     <!-- Location Accuracy Descriptions -->
     <string name="precise_location"><![CDATA[<b>Precise:</b> This means the app accessed the exact location of the device with high accuracy, using GPS or other high-precision location services.]]></string>
@@ -33,10 +33,10 @@
     <!-- Specific access page explanations -->
     <string name="info_latitude">Latitude is the north-south position on the Earth\'s surface.</string>
     <string name="info_longitude">Longitude is the east-west position on the Earth\'s surface.</string>
-    <string name="info_accuracy">Accuracy, measured in meters, indicates the radius within which your actual location is likely to be. An accuracy of %1$d meters means your location is known within a %1$d-meter radius. Lower values are more precise. This level of accuracy means your location could be identified to within a %2$s.</string>
+    <string name="info_accuracy">Accuracy, measured in meters, indicates the radius of the circle around the accessed location within which your actual location will be. With this accuracy of %1$d meters, the app knows you were in %2$s</string>
     <string name="info_speed">Speed is measured in meters per second (m/s) and represents the velocity at which the device is moving.</string>
     <string name="info_bearing">Bearing, measured in degrees, indicates the direction of travel. It represents an angle between 0 and 360 degrees, measured clockwise from true north.</string>
-    <string name="info_altitude">Altitude refers to the height above the Earths surface, measured in meters. It indicates how high the location is from sea level.</string>
+    <string name="info_altitude">Altitude, measured in meters. It indicates how high the location is from sea level.</string>
 
     <string name="dashboard_text">Showing accesses in last %1$d days</string>
     <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>

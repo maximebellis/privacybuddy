@@ -142,11 +142,16 @@ class LocSingleAccessActivity : BaseActivity() {
     }
 
     private fun getAccuracyDescription(accuracy: Double): String {
-        return when {
-            accuracy <= 5 -> "a very precise location, such as which part of a room you are in."
-            accuracy <= 10 -> "a precise location, such as the specific area of a small building."
-            accuracy <= 50 -> "a general area, such as the building you are in."
-            else -> "a broad area, making it difficult to determine your exact location."
+        return if (accuracy <= 5) {
+            "a very precise location, such as which part of a room you are in."
+        } else if (accuracy <= 10) {
+            "a precise location, such as the specific area of a small building."
+        } else if (accuracy <= 50) {
+            "a general area, such as the building you are in."
+        } else if (accuracy <= 100) {
+            "an area covering several buildings, making it possible to estimate your location within a small cluster."
+        } else {
+            "a broad area, making it difficult to determine your exact location, but approximating it within a larger cluster of buildings."
         }
     }
 

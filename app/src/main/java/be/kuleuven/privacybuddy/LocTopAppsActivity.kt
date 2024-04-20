@@ -29,11 +29,7 @@ class LocTopAppsActivity : BaseActivity() {
 
         setupToolbar()
 
-        val managePermissionsButton: TextView = findViewById(R.id.managePermissionsButton)
-        managePermissionsButton.setOnClickListener {
-            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivity(intent)
-        }
+
     }
 
     private fun updateTopAccessedApps() {

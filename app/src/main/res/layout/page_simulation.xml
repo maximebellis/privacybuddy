@@ -22,6 +22,7 @@
             android:textSize="32sp"
             tools:ignore="RtlCompat" />
 
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +31,6 @@
             android:text="@string/welcome_text"
             android:textColor="@color/text"
             android:textSize="16sp" />
-
 
         <include
             layout="@layout/component_simulation_viewpager"
