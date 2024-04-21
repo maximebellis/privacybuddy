@@ -13,7 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -25,36 +27,35 @@
             android:textSize="32sp"
             tools:ignore="RtlCompat" />
 
-        <include layout="@layout/button_app_choice"
-            android:id="@+id/buttonChooseApp"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"/>
-
-
-
-        <!--
-       <include layout="@layout/button_show_timeline"
-           android:id="@+id/buttonShowTimeline"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="20dp" />
-
-<<<<<<< HEAD
-        <TextView
-            android:id="@+id/textViewMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:gravity="center"
-            android:text="@string/dashboard_text"
-            android:textColor="@color/text"
-            android:textSize="15sp" />
-=======
-        -->
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Spinner
+                    android:id="@+id/spinnerChooseApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="77dp"
+                    android:background="@color/background_sec"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_chevron_down" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
        <TextView
            android:id="@+id/textViewMap"
            android:layout_width="match_parent"

@@ -7,5 +7,11 @@
         android:title="TODO"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_info"
+        android:icon="@drawable/ic_info"
+        android:title="TODO"
+        app:showAsAction="ifRoom"/>
+
 
 </menu>

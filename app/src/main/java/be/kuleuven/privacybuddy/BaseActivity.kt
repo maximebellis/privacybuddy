@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import com.google.android.material.appbar.MaterialToolbar
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -109,7 +111,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun setupMapView(mapView: MapView, selectedAppName: String?) {
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            val featureCollection = loadGeoJsonFromAssets(selectedAppName, AppSettings.daysFilter)
+            val featureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
             val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
                 featureCollection(featureCollection)
                 cluster(true)
@@ -129,7 +131,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun updateMapView(mapView: MapView, selectedAppName: String?) {
         CoroutineScope(Dispatchers.Default).launch {
-            val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, AppSettings.daysFilter)
+            val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
             withContext(Dispatchers.Main) {
                 val style = mapView.mapboxMap.style
                 val source = style?.getSourceAs<GeoJsonSource>(APP_USAGE_SOURCE_ID)
@@ -241,6 +243,7 @@ abstract class BaseActivity : AppCompatActivity() {
             emptyList()
         }
     }
+
 
 }
 

@@ -45,6 +45,8 @@ class MainActivity : BaseActivity() {
         setupWidgetClickListeners()
         setupMapWidget(null)
         updateDashboardText()
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
     }
     private fun updateWidgetEvents() {
         loadGeoJsonFromAssets(null, applicationContext, days = daysFilter).let {
