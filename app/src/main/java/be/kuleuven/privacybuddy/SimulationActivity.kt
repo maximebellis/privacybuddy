@@ -46,7 +46,7 @@ class SimulationActivity : BaseActivity() {
             getString(R.string.description_3),
             "dummydata 1 around Leuven",
             "dummydata 2 around Leuven",
-            "Simulated data made with chatgpt for a student/tutor",
+            "Simulated data made with chatgpt for a student/tutor that teaches and studies in and around Leuven",
             getString(R.string.description_4),
             getString(R.string.description_5),
             getString(R.string.description_6),
@@ -70,7 +70,7 @@ class SimulationActivity : BaseActivity() {
 
             clearTopAccessedAppsCache()
 
-            LocationDataUtils.buildAppAccessStatsFromGeoJson(this, 21)
+            LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

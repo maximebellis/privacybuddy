@@ -5,7 +5,7 @@ data class AppAccessStats(
 
     val totalAccesses: Int,
 
-    val frequencyPerDay: Float,
+    val days: Int,
 
     val approximateAccesses: Int,
     val preciseAccesses: Int,
@@ -21,6 +21,9 @@ data class AppAccessStats(
     val approximateBackgroundAccesses: Int,
 
     val preciseSubliminalAccesses: Int,
-    val approximateSubliminalAccesses: Int
+    val approximateSubliminalAccesses: Int,
+
+    val privacyScore: Double,
+    val numberOfPOIs: Int
 
 )
