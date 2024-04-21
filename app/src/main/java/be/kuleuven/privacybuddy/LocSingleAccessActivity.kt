@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import android.widget.TextView
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.data.LocationData
@@ -31,46 +32,67 @@ class LocSingleAccessActivity : BaseActivity() {
 
     private lateinit var mapView: MapView
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.action_refresh).isVisible = false // Hide the reload icon
-        menu.findItem(R.id.action_one_day).isVisible = false
-        menu.findItem(R.id.action_seven_days).isVisible = false
-        menu.findItem(R.id.action_twenty_one_days).isVisible = false
-        return super.onPrepareOptionsMenu(menu)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_specific_access)
         setupToolbar()
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.locationAccessByTextView, getString(R.string.location_access_by))
 
-
-
-
         val locationData: LocationData? = intent.extras?.getParcelable("locationData")
-
-        locationData?.accuracy?.let { setupInfoButtons(it) }
         locationData?.let {
-            findViewById<TextView>(R.id.dataEntryApp).text = it.appName
-            findViewById<ImageView>(R.id.appLogoImageView).setImageDrawable(getAppIconByName(it.appName))
-            findViewById<TextView>(R.id.dataEntryTime).text = it.timestamp
-
-            setDataEntry(R.id.dataEntryAccuracy, "Accuracy:", formatNumber(it.accuracy))
-            setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumber(it.speed))
-            setDataEntry(R.id.dataEntryBearing, "Bearing:", formatNumber(it.bearing))
-            setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumber(it.latitude ?: 0.0))
-            setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumber(it.longitude ?: 0.0))
-            setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumber(it.altitude))
+            setupDataEntries(it)
+            setupInfoButtonEntries(it)
         }
 
         mapView = findViewById(R.id.mapView)
         initializeMap(locationData?.latitude ?: 0.0, locationData?.longitude ?: 0.0)
-
         val textViewAddress = findViewById<TextView>(R.id.textViewAdress)
         textViewAddress.text = "No address found"
     }
 
+    private fun setupDataEntries(data: LocationData) {
+        findViewById<TextView>(R.id.dataEntryApp).text = data.appName
+        findViewById<ImageView>(R.id.appLogoImageView).setImageDrawable(getAppIconByName(data.appName))
+        findViewById<TextView>(R.id.dataEntryTime).text = data.timestamp
+
+        setDataEntry(R.id.dataEntryLatitude, "Latitude:", formatNumberWithUnit(data.latitude, "°"))
+        setDataEntry(R.id.dataEntryLongitude, "Longitude:", formatNumberWithUnit(data.longitude, "°"))
+        setDataEntry(R.id.dataEntryAltitude, "Altitude:", formatNumberWithUnit(data.altitude, "m"))
+        setDataEntry(R.id.dataEntrySpeed, "Speed:", formatNumberWithUnit(data.speed, "m/s"))
+    }
+
+    private fun setupInfoButtonEntries(data: LocationData) {
+        setupAccuracyEntry(data.accuracy)
+        setupBearingEntry(data.bearing)
+    }
+
+    private fun setupAccuracyEntry(accuracy: Double?) {
+        accuracy?.let {
+            val formattedAccuracy = formatNumberWithUnit(it, "m")
+            val accuracyTextView = findViewById<TextView>(R.id.textViewDataValueAccuracy)
+            accuracyTextView.text = "Accuracy: $formattedAccuracy"
+            setupInfoButton(R.id.imageViewInfo, getString(R.string.info_accuracy, it.toInt(), getAccuracyDescription(it)))
+        }
+    }
+
+    private fun setupBearingEntry(bearing: Double?) {
+        bearing?.let {
+            val formattedBearing = formatNumberWithUnit(it, "°")
+            val BearingTextView = findViewById<TextView>(R.id.textViewDataValueBearing)
+            BearingTextView.text = "Accuracy: $formattedBearing"
+            setupInfoButton(R.id.imageViewInfoBearing, getString(R.string.info_bearing))
+        }
+    }
+
+    private fun setupInfoButton(infoButtonId: Int, infoText: String) {
+        val infoButton = findViewById<ImageView>(infoButtonId)
+        infoButton.visibility = View.VISIBLE
+        infoButton.setOnClickListener { showInfoPopup(it, infoText) }
+    }
+
+    private fun formatNumberWithUnit(value: Double?, unit: String): String {
+        return if (value != null) String.format(Locale.US, "%.2f %s", value, unit) else "N/A"
+    }
 
 
     private fun initializeMap(latitude: Double, longitude: Double) {
@@ -101,13 +123,6 @@ class LocSingleAccessActivity : BaseActivity() {
     disableMapGestures(mapView)
 }
 
-
-
-
-    private fun formatNumber(value: Double?): String {
-        return if (value != null) "%.7g".format(Locale.US, value) else "N/A"
-    }
-
     private fun setDataEntry(viewId: Int, dataName: String, dataValue: String) {
         val dataEntryView = findViewById<View>(viewId)
         val nameTextView = dataEntryView.findViewById<TextView>(R.id.textViewDataName)
@@ -116,42 +131,11 @@ class LocSingleAccessActivity : BaseActivity() {
         valueTextView.text = dataValue
     }
 
-    private fun hideDataEntry(viewId: Int) {
-        val dataEntryView = findViewById<View>(viewId)
-        dataEntryView.visibility = View.GONE
-    }
-
     override fun filterData(days: Int) {
         daysFilter = days
         //this page does not need to reload anything for this
     }
 
-    private fun setupInfoButtons(accuracy: Double) {
-        val infoButtonLatitude = findViewById<View>(R.id.dataEntryLatitude).findViewById<ImageView>(R.id.imageViewInfo)
-        val infoButtonLongitude = findViewById<View>(R.id.dataEntryLongitude).findViewById<ImageView>(R.id.imageViewInfo)
-        val infoButtonAccuracy = findViewById<View>(R.id.dataEntryAccuracy).findViewById<ImageView>(R.id.imageViewInfo)
-        val infoButtonSpeed = findViewById<View>(R.id.dataEntrySpeed).findViewById<ImageView>(R.id.imageViewInfo)
-        val infoButtonBearing = findViewById<View>(R.id.dataEntryBearing).findViewById<ImageView>(R.id.imageViewInfo)
-        val infoButtonAltitude = findViewById<View>(R.id.dataEntryAltitude).findViewById<ImageView>(R.id.imageViewInfo)
-
-        infoButtonLatitude.setOnClickListener { view ->
-            showInfoPopup(view, getString(R.string.info_latitude))
-        }
-        infoButtonLongitude.setOnClickListener { view ->
-            showInfoPopup(view, getString(R.string.info_longitude))
-        }
-        val accuracyDescription = getAccuracyDescription(accuracy)
-        infoButtonAccuracy.setOnClickListener { showInfoPopup(it, getString(R.string.info_accuracy, accuracy.toInt(), accuracyDescription)) }
-        infoButtonSpeed.setOnClickListener { view ->
-            showInfoPopup(view, getString(R.string.info_speed))
-        }
-        infoButtonBearing.setOnClickListener { view ->
-            showInfoPopup(view, getString(R.string.info_bearing))
-        }
-        infoButtonAltitude.setOnClickListener { view ->
-            showInfoPopup(view, getString(R.string.info_altitude))
-        }
-    }
 
     private fun getAccuracyDescription(accuracy: Double): String {
         return if (accuracy <= 5) {

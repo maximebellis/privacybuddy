@@ -66,7 +66,7 @@ class LocationEventAdapter(private val context: Context) :
         private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewMostLocationAccessesApp3)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
-        private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
+        //private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
             (item as? TimelineItem.EventItem)?.let { eventItem ->
                 timeView.text = formatTimestamp(eventItem.event.timestamp)
@@ -82,10 +82,12 @@ class LocationEventAdapter(private val context: Context) :
                     }
                     context.startActivity(intent)
                 }
-
+                /*
                 infoIconView.setOnClickListener { view ->
                     showInfoPopup(view, eventItem.event)
                 }
+
+                 */
             }
         }
     }

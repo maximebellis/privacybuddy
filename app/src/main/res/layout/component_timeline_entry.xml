@@ -77,15 +77,21 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/text" />
 
-        <ImageView
-            android:id="@+id/iconView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_info"
-            android:clickable="true"
-            android:focusable="true" />
+        <!--
+               <ImageView
+                   android:id="@+id/iconView"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_alignParentEnd="true"
+                   android:layout_centerVertical="true"
+                   android:src="@drawable/ic_info"
+                   android:clickable="true"
+                   android:focusable="true" />
+
+
+
+
+            -->
 
 
     </RelativeLayout>
