@@ -55,4 +55,10 @@
     <string name="top_apps_text">This is a list of all your apps ordered by the amount of location accesses they did. If an app did not do location accesses they are not featured.</string>
 
 
+    <string name="sort_by_accesses">Number of Location Accesses</string>
+    <string name="sort_by_frequency">Frequency of Location Accesses</string>
+    <string name="sort_by_privacy_score">Privacy Score</string>
+
+
+
 </resources>

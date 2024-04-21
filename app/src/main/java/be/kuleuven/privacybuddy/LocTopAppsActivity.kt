@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.adapter.DisplayMode
 import be.kuleuven.privacybuddy.adapter.TopAppsAdapter
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.data.AppAccessStats
@@ -27,20 +28,64 @@ class LocTopAppsActivity : BaseActivity() {
 
         recyclerView = findViewById(R.id.recyclerViewTopAppsLocation)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        updateTopAccessedApps()
+        AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, DisplayMode.ACCESS_COUNT) }
 
         setupToolbar()
 
-
+        val topAppsTextViewChoice: TextView = findViewById(R.id.topAppsTextViewChoice)
+        topAppsTextViewChoice.setOnClickListener {
+            showSortingPopup(it)
+        }
     }
 
-    private fun updateTopAccessedApps() {
-        val topApps = AppState.topAccessedAppsCache ?: emptyList<AppAccessStats>()  // Ensure this matches with the new cache type
-        topAppsAdapter = TopAppsAdapter(this, topApps)
+    private fun showSortingPopup(anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        popup.menuInflater.inflate(R.menu.top_apps_sorting_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem ->
+            val textViewChoice: TextView = findViewById(R.id.topAppsTextViewChoice)
+            when (menuItem.itemId) {
+                R.id.menu_location_accesses -> {
+                    sortAppsByAccessCount()
+                    textViewChoice.text = getString(R.string.sort_by_accesses)
+                }
+                R.id.menu_access_frequency -> {
+                    sortAppsByFrequency()
+                    textViewChoice.text = getString(R.string.sort_by_frequency)
+                }
+                R.id.menu_privacy_score -> {
+                    sortAppsByPrivacyScore()
+                    textViewChoice.text = getString(R.string.sort_by_privacy_score)
+                }
+                else -> false
+            }
+            true
+        }
+        popup.show()
+    }
+
+
+    private fun sortAppsByAccessCount(): Boolean {
+        val sortedList = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses } ?: emptyList()
+        updateTopAccessedApps(sortedList, DisplayMode.ACCESS_COUNT)
+        return true
+    }
+
+    private fun sortAppsByFrequency(): Boolean {
+        val sortedList = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses.toDouble() / it.days } ?: emptyList()
+        updateTopAccessedApps(sortedList, DisplayMode.FREQUENCY)
+        return true
+    }
+
+    private fun sortAppsByPrivacyScore(): Boolean {
+        val sortedList = AppState.topAccessedAppsCache?.sortedByDescending { it.privacyScore } ?: emptyList()
+        updateTopAccessedApps(sortedList, DisplayMode.PRIVACY_SCORE)
+        return true
+    }
+
+    private fun updateTopAccessedApps(sortedList: List<AppAccessStats>, mode: DisplayMode) {
+        topAppsAdapter = TopAppsAdapter(this, sortedList, mode)
         recyclerView.adapter = topAppsAdapter
     }
-
-
 
 
 

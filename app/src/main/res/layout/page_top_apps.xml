@@ -40,7 +40,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
-                android:text="location accesses"
+                android:text="@string/sort_by_accesses"
                 android:textColor="@color/title_prim"
                 android:paddingStart="12dp"
                 android:textSize="24sp"

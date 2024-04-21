@@ -12,7 +12,14 @@ import be.kuleuven.privacybuddy.R
 import android.content.Context
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 
-class TopAppsAdapter(private val context: Context, private val topApps: List<AppAccessStats>) :
+enum class DisplayMode {
+    ACCESS_COUNT,
+    FREQUENCY,
+    PRIVACY_SCORE
+}
+
+
+class TopAppsAdapter(private val context: Context, private val topApps: List<AppAccessStats>, private var displayMode: DisplayMode) :
     RecyclerView.Adapter<TopAppsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,12 +37,38 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val app = topApps[position]
         holder.textViewAppName.text = app.appName
-        holder.textViewAppAccesses.text = "${app.totalAccesses} accesses"  // Updated to use totalAccesses
-        val maxAccessCount = topApps.maxOfOrNull { it.totalAccesses } ?: 1  // Use totalAccesses
-        holder.progressBarAppUsage.max = maxAccessCount
-        holder.progressBarAppUsage.progress = app.totalAccesses
         holder.imageViewAppIcon.setImageDrawable(context.getAppIconByName(app.appName))
+
+        val max = calculateMaxForMode()
+        holder.progressBarAppUsage.max = max  // Ensure max is updated each time
+
+        when (displayMode) {
+            DisplayMode.ACCESS_COUNT -> {
+                holder.textViewAppAccesses.text = "${app.totalAccesses} accesses"
+                holder.progressBarAppUsage.progress = app.totalAccesses
+            }
+            DisplayMode.FREQUENCY -> {
+                val frequency = if (app.days > 0) app.totalAccesses.toDouble() / app.days else 0.0
+                holder.textViewAppAccesses.text = "${frequency.toInt()} accesses per day"
+                holder.progressBarAppUsage.progress = frequency.toInt()
+            }
+            DisplayMode.PRIVACY_SCORE -> {
+                holder.textViewAppAccesses.text = "Privacy Score: ${app.privacyScore.toInt()}"
+                holder.progressBarAppUsage.progress = app.privacyScore.toInt()
+            }
+        }
+    }
+
+    private fun calculateMaxForMode(): Int = when (displayMode) {
+        DisplayMode.ACCESS_COUNT -> topApps.maxOfOrNull { it.totalAccesses } ?: 1
+        DisplayMode.FREQUENCY -> topApps.maxOfOrNull { it.days.let { days -> if (days > 0) it.totalAccesses / days else 0 } } ?: 1
+        DisplayMode.PRIVACY_SCORE -> 100  // Since privacy score is scaled between 0 and 100
     }
 
     override fun getItemCount() = topApps.size
+
+    fun updateDisplayMode(newMode: DisplayMode) {
+        displayMode = newMode
+        notifyDataSetChanged()
+    }
 }
