@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
 import be.kuleuven.privacybuddy.adapter.TimelineItem
-import be.kuleuven.privacybuddy.data.AppAccessInfo
+import be.kuleuven.privacybuddy.data.AppAccessStats
 import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
@@ -96,26 +96,70 @@ object LocationDataUtils {
         return result
     }
 
-    fun getTopAccessedAppsFromGeoJson(context: Context): List<AppAccessInfo> {
-        AppState.topAccessedAppsCache?.let {
-            // Return the cached list if it exists
-            return it
-        }
 
-        // Logic to fetch data from GeoJSON
+    fun buildAppAccessStatsFromGeoJson(context: Context, days: Int = 21): List<AppAccessStats> {
         val geoJsonString = context.assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
-        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
+        val features = featureCollection.features() ?: return emptyList()
 
-        // Sort the list by accessCount in descending order before caching and returning
-        val topApps = accessCounts.entries
-            .map { AppAccessInfo(it.key, it.value) }
-            .sortedByDescending { it.accessCount }
+        val accessStatsMap = features.groupBy { it.getStringProperty("appName") }
+            .mapValues { entry ->
+                val totalAccesses = entry.value.size
+                val frequencyPerDay = totalAccesses.toFloat() / days
+                val approximateAccesses = entry.value.count { it.getStringProperty("usageType") == "approximate" }
+                val preciseAccesses = entry.value.count { it.getStringProperty("usageType") == "precise" }
 
-        // Cache the sorted list in AppState before returning
-        AppState.topAccessedAppsCache = topApps
-        return topApps
+                val foregroundAccesses = entry.value.count { it.getStringProperty("interactionType") == "foreground" }
+                val backgroundAccesses = entry.value.count { it.getStringProperty("interactionType") == "background" }
+                val subliminalAccesses = entry.value.count { it.getStringProperty("interactionType") == "subliminal" }
+
+                val preciseForegroundAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "foreground"
+                }
+                val approximateForegroundAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "foreground"
+                }
+
+                val preciseBackgroundAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "background"
+                }
+                val approximateBackgroundAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "background"
+                }
+
+                val preciseSubliminalAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "subliminal"
+                }
+                val approximateSubliminalAccesses = entry.value.count {
+                    it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "subliminal"
+                }
+
+                AppAccessStats(
+                    appName = entry.key,
+                    totalAccesses = totalAccesses,
+                    frequencyPerDay = frequencyPerDay,
+                    approximateAccesses = approximateAccesses,
+                    preciseAccesses = preciseAccesses,
+                    foregroundAccesses = foregroundAccesses,
+                    backgroundAccesses = backgroundAccesses,
+                    subliminalAccesses = subliminalAccesses,
+                    preciseForegroundAccesses = preciseForegroundAccesses,
+                    approximateForegroundAccesses = approximateForegroundAccesses,
+                    preciseBackgroundAccesses = preciseBackgroundAccesses,
+                    approximateBackgroundAccesses = approximateBackgroundAccesses,
+                    preciseSubliminalAccesses = preciseSubliminalAccesses,
+                    approximateSubliminalAccesses = approximateSubliminalAccesses
+                )
+            }.values.toList()
+
+
+        // Sort the list by totalAccesses in descending order before caching and returning
+        AppState.topAccessedAppsCache = accessStatsMap.sortedByDescending { it.totalAccesses }
+        return AppState.topAccessedAppsCache!!
     }
+
+
+
 
 
 }

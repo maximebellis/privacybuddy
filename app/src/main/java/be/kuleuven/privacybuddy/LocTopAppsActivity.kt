@@ -3,12 +3,14 @@ package be.kuleuven.privacybuddy
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.adapter.TopAppsAdapter
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
-import be.kuleuven.privacybuddy.data.AppAccessInfo
+import be.kuleuven.privacybuddy.data.AppAccessStats
 
 
 class LocTopAppsActivity : BaseActivity() {
@@ -33,8 +35,13 @@ class LocTopAppsActivity : BaseActivity() {
     }
 
     private fun updateTopAccessedApps() {
-        val topApps = AppState.topAccessedAppsCache ?: emptyList<AppAccessInfo>()
-        topAppsAdapter = TopAppsAdapter(this , topApps)
+        val topApps = AppState.topAccessedAppsCache ?: emptyList<AppAccessStats>()  // Ensure this matches with the new cache type
+        topAppsAdapter = TopAppsAdapter(this, topApps)
         recyclerView.adapter = topAppsAdapter
     }
+
+
+
+
+
 }

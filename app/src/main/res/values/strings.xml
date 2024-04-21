@@ -51,7 +51,7 @@
     <string name="description_5">Datastream 5, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
     <string name="description_6">Datastream 6, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
     <string name="description_7">Datastream 7, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was often around Rotselaar.</string>
-    <string name="top_apps_title">App ordered by location accesses</string>
+    <string name="top_apps_title">App ordered by</string>
     <string name="top_apps_text">This is a list of all your apps ordered by the amount of location accesses they did. If an app did not do location accesses they are not featured.</string>
 
 
