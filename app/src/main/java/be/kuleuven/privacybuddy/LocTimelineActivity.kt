@@ -97,6 +97,7 @@ class LocTimelineActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         daysFilter = days
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
         refreshEvents()
     }
 

@@ -47,6 +47,8 @@ class MainActivity : BaseActivity() {
         updateDashboardText()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        updateTopAccessedAppsWidget()
     }
     private fun updateWidgetEvents() {
         loadGeoJsonFromAssets(null, applicationContext, days = daysFilter).let {
@@ -99,6 +101,7 @@ class MainActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         daysFilter = days
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
         initUI()
     }
 

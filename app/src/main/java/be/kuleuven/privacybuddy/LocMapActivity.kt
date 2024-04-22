@@ -9,6 +9,7 @@ import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.SpinnerAdapter
 import be.kuleuven.privacybuddy.data.SpinnerItem
 import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 
 class LocMapActivity : BaseActivity() {
 
@@ -49,6 +50,7 @@ class LocMapActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         daysFilter = days
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
         updateMapText()
         updateMapView(findViewById(R.id.mapView), selectedAppName)
     }

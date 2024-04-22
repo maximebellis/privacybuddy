@@ -22,6 +22,7 @@ class LocTopAppsActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         AppSettings.daysFilter = days
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
         initUI()
     }
 
@@ -39,8 +40,6 @@ class LocTopAppsActivity : BaseActivity() {
     }
 
     private fun initUI() {
-        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
-
         recyclerView = findViewById(R.id.recyclerViewTopAppsLocation)
         recyclerView.layoutManager = LinearLayoutManager(this)
         textViewDescription = findViewById(R.id.textViewTimeline)
