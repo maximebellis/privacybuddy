@@ -19,30 +19,15 @@ import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatDateLabel
 import be.kuleuven.privacybuddy.utils.DateTimeUtils.formatTimestamp
 import java.util.*
 import androidx.core.text.HtmlCompat
+import be.kuleuven.privacybuddy.LocTimelineActivity
 
 sealed interface TimelineItem {
     data class DateLabel(val date: Date) : TimelineItem
     data class EventItem(val event: LocationData) : TimelineItem
-
-    companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
-            override fun areItemsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean =
-                oldItem == newItem
-
-            override fun areContentsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean =
-                oldItem == newItem
-        }
-    }
 }
 
-class LocationEventAdapter(private val context: Context) :
-    ListAdapter<TimelineItem, LocationEventAdapter.TimelineViewHolder>(TimelineItem.DIFF_CALLBACK) {
-
-
-    companion object {
-        private const val TYPE_DATE_LABEL = 0
-        private const val TYPE_EVENT = 1
-    }
+class LocationEventAdapter(private val context: Context, private val isWidget: Boolean = false) :
+    ListAdapter<TimelineItem, LocationEventAdapter.TimelineViewHolder>(DIFF_CALLBACK) {
 
     abstract class TimelineViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: TimelineItem)
@@ -52,9 +37,7 @@ class LocationEventAdapter(private val context: Context) :
         private val dateLabel: TextView = itemView.findViewById(R.id.dataLabelTextView)
 
         override fun bind(item: TimelineItem) {
-            (item as? TimelineItem.DateLabel)?.let { label ->
-                dateLabel.text = formatDateLabel(label.date)
-            }
+            dateLabel.text = formatDateLabel((item as TimelineItem.DateLabel).date)
         }
     }
 
@@ -66,82 +49,45 @@ class LocationEventAdapter(private val context: Context) :
         private val appLogoView: ImageView = itemView.findViewById(R.id.imageViewMostLocationAccessesApp3)
         private val verticalLineView: View = itemView.findViewById(R.id.verticalLineView)
 
-        private val infoIconView: ImageView = itemView.findViewById(R.id.iconView)
         override fun bind(item: TimelineItem) {
-            (item as? TimelineItem.EventItem)?.let { eventItem ->
-                timeView.text = formatTimestamp(eventItem.event.timestamp)
-                appNameView.text = eventItem.event.appName
-                usageTypeView.text = eventItem.event.usageType
-                interactionTypeView.text = eventItem.event.interactionType
-                appLogoView.setImageDrawable(context.getAppIconByName(eventItem.event.appName))
-                verticalLineView.visibility = if (bindingAdapterPosition == itemCount - 1) View.INVISIBLE else View.VISIBLE
+            val eventItem = item as TimelineItem.EventItem
+            timeView.text = formatTimestamp(eventItem.event.timestamp)
+            appNameView.text = eventItem.event.appName
+            usageTypeView.text = eventItem.event.usageType
+            interactionTypeView.text = eventItem.event.interactionType
+            appLogoView.setImageDrawable(context.getAppIconByName(eventItem.event.appName))
+            verticalLineView.visibility = if (bindingAdapterPosition == itemCount - 1) View.INVISIBLE else View.VISIBLE
 
-                itemView.setOnClickListener {
-                    val intent = Intent(context, LocSingleAccessActivity::class.java).apply {
-                        putExtra("locationData", eventItem.event)
-                    }
-                    context.startActivity(intent)
+            itemView.setOnClickListener {
+                val intent = Intent(context, if (isWidget) LocTimelineActivity::class.java else LocSingleAccessActivity::class.java).apply {
+                    if (!isWidget) putExtra("locationData", eventItem.event)
                 }
-
-                infoIconView.setOnClickListener { view ->
-                    showInfoPopup(view, eventItem.event)
-                }
+                context.startActivity(intent)
             }
         }
     }
 
-    private fun showInfoPopup(view: View, event: LocationData) {
-        val inflater = LayoutInflater.from(view.context)
-        val popupView = inflater.inflate(R.layout.popup_info, null)
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
-
-        val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
-
-        val usageTypeDescription = when (event.usageType) {
-            "precise" -> HtmlCompat.fromHtml(view.context.getString(R.string.precise_location), HtmlCompat.FROM_HTML_MODE_LEGACY)
-            "approximate" -> context.getString(R.string.approximate)
-            else -> ""
-        }
-        val interactionTypeDescription = when (event.interactionType) {
-            "sanctioned" -> context.getString(R.string.sanctioned)
-            "foreground" -> context.getString(R.string.foreground)
-            "background" -> context.getString(R.string.background)
-            "subliminal" -> context.getString(R.string.subliminal)
-            else -> ""
-        }
-
-
-        textViewPopupContent.text = listOf(usageTypeDescription, interactionTypeDescription)
-            .filter { it.isNotEmpty() }
-            .joinToString("\n\n")
-
-        popupWindow.showAsDropDown(view)
-    }
-
-
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
-        is TimelineItem.DateLabel -> TYPE_DATE_LABEL
-        is TimelineItem.EventItem -> TYPE_EVENT
+        is TimelineItem.DateLabel -> 0
+        is TimelineItem.EventItem -> 1
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineViewHolder = when (viewType) {
-        TYPE_DATE_LABEL -> DateLabelViewHolder(LayoutInflater.from(context).inflate(R.layout.component_date_label, parent, false))
-        TYPE_EVENT -> EventViewHolder(LayoutInflater.from(context).inflate(R.layout.component_timeline_entry, parent, false))
-        else -> throw IllegalArgumentException("Invalid View Type")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineViewHolder {
+        val inflater = LayoutInflater.from(context)
+        val view = when (viewType) {
+            0 -> inflater.inflate(R.layout.component_date_label, parent, false)
+            1 -> inflater.inflate(R.layout.component_timeline_entry, parent, false)
+            else -> throw IllegalArgumentException("Invalid View Type")
+        }
+        return if (viewType == 0) DateLabelViewHolder(view) else EventViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TimelineViewHolder, position: Int) = holder.bind(getItem(position))
 
-
-
-
-
-
-
-
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
+            override fun areItemsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean = oldItem == newItem
+            override fun areContentsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean = oldItem == newItem
+        }
+    }
 }

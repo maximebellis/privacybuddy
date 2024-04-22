@@ -57,7 +57,7 @@ class MainActivity : BaseActivity() {
     private fun setupLocationEventsRecyclerView() {
         findViewById<RecyclerView>(R.id.latestEventsRecyclerView).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = LocationEventAdapter(this@MainActivity).also {
+            adapter = LocationEventAdapter(this@MainActivity, true).also {
                 locationEventAdapter = it
             }
         }
