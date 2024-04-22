@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_prim">
+
+    <include layout="@layout/component_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Page Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Information on access types"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/title_prim"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Section Title for Location Accuracy -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location Accuracy"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/title_prim"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Location Accuracy Descriptions -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/precise"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/approximate"
+                android:textSize="16sp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/text"/>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Section Title for Access Type -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Access Type"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/title_prim"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Access Type Descriptions -->
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/foreground"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/background"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/subliminal"
+                android:textSize="16sp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/text"/>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

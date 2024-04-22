@@ -105,12 +105,11 @@ class LocationEventAdapter(private val context: Context) :
         val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
 
         val usageTypeDescription = when (event.usageType) {
-            "precise" -> HtmlCompat.fromHtml(view.context.getString(R.string.precise_location), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            "precise" -> HtmlCompat.fromHtml(view.context.getString(R.string.precise), HtmlCompat.FROM_HTML_MODE_LEGACY)
             "approximate" -> context.getString(R.string.approximate)
             else -> ""
         }
         val interactionTypeDescription = when (event.interactionType) {
-            "sanctioned" -> context.getString(R.string.sanctioned)
             "foreground" -> context.getString(R.string.foreground)
             "background" -> context.getString(R.string.background)
             "subliminal" -> context.getString(R.string.subliminal)
