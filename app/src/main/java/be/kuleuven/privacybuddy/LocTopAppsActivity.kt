@@ -1,6 +1,8 @@
 package be.kuleuven.privacybuddy
 
+import android.content.res.Resources
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -46,7 +48,8 @@ class LocTopAppsActivity : BaseActivity() {
     }
 
     private fun showSortingPopup(anchor: View) {
-        val popup = PopupMenu(this, anchor)
+        val wrapper = ContextThemeWrapper(this, R.style.PopupMenuStyle)
+        val popup = PopupMenu(wrapper, anchor)
         popup.menuInflater.inflate(R.menu.top_apps_sorting_menu, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
             val textViewChoice: TextView = findViewById(R.id.topAppsTextViewChoice)
@@ -73,6 +76,17 @@ class LocTopAppsActivity : BaseActivity() {
             }
             true
         }
+
+        anchor.post {
+            val location = IntArray(2)
+            // Get the location of the anchor view on the screen
+            anchor.getLocationOnScreen(location)
+            // Get the screen width
+            val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+            // Set the width of the popup menu to match the anchor view
+            popup.menu.findItem(R.id.menu_location_accesses).actionView?.layoutParams?.width = screenWidth - location[0] - anchor.paddingRight
+        }
+
         popup.show()
     }
 
