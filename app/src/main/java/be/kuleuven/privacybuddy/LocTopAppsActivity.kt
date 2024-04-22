@@ -18,6 +18,8 @@ class LocTopAppsActivity : BaseActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var topAppsAdapter: TopAppsAdapter
+    private lateinit var textViewDescription: TextView
+
     override fun filterData(days: Int) {
         TODO("Not yet implemented")
     }
@@ -28,6 +30,7 @@ class LocTopAppsActivity : BaseActivity() {
 
         recyclerView = findViewById(R.id.recyclerViewTopAppsLocation)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        textViewDescription = findViewById(R.id.textViewTimeline)
         AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, DisplayMode.ACCESS_COUNT) }
 
         setupToolbar()
@@ -47,14 +50,17 @@ class LocTopAppsActivity : BaseActivity() {
                 R.id.menu_location_accesses -> {
                     sortAppsByAccessCount()
                     textViewChoice.text = getString(R.string.sort_by_accesses)
+                    textViewDescription.text = getString(R.string.top_apps_text)
                 }
                 R.id.menu_access_frequency -> {
                     sortAppsByFrequency()
                     textViewChoice.text = getString(R.string.sort_by_frequency)
+                    textViewDescription.text = getString(R.string.top_apps_access_frequency)
                 }
                 R.id.menu_privacy_score -> {
                     sortAppsByPrivacyScore()
                     textViewChoice.text = getString(R.string.sort_by_privacy_score)
+                    textViewDescription.text = getString(R.string.top_apps_privacy_score)
                 }
                 else -> false
             }
