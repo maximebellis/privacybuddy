@@ -3,14 +3,17 @@ package be.kuleuven.privacybuddy.utils
 import android.content.Context
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
+import be.kuleuven.privacybuddy.BaseActivity
 import be.kuleuven.privacybuddy.adapter.TimelineItem
-import be.kuleuven.privacybuddy.data.AppAccessInfo
+import be.kuleuven.privacybuddy.data.AppAccessStats
 import be.kuleuven.privacybuddy.data.LocationData
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import com.mapbox.geojson.Point
 
 
 
@@ -96,26 +99,128 @@ object LocationDataUtils {
         return result
     }
 
-    fun getTopAccessedAppsFromGeoJson(context: Context): List<AppAccessInfo> {
-        AppState.topAccessedAppsCache?.let {
-            // Return the cached list if it exists
-            return it
-        }
 
-        // Logic to fetch data from GeoJSON
+    fun buildAppAccessStatsFromGeoJson(context: Context): List<AppAccessStats> {
         val geoJsonString = context.assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
-        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
+        val features = featureCollection.features() ?: return emptyList()
 
-        // Sort the list by accessCount in descending order before caching and returning
-        val topApps = accessCounts.entries
-            .map { AppAccessInfo(it.key, it.value) }
-            .sortedByDescending { it.accessCount }
+        val accessStatsList = features.groupBy { it.getStringProperty("appName") }
+            .map { (appName, featuresList) -> // Here we capture the grouped features list correctly
+                val numberOfPOIs = calculatePOIs(featuresList) // Assuming calculatePOIs is correctly implemented
 
-        // Cache the sorted list in AppState before returning
-        AppState.topAccessedAppsCache = topApps
-        return topApps
+                AppAccessStats(
+                    appName = appName,
+                    totalAccesses = featuresList.size,
+                    days = 21, // Example days filter
+                    approximateAccesses = featuresList.count { it.getStringProperty("usageType") == "approximate" },
+                    preciseAccesses = featuresList.count { it.getStringProperty("usageType") == "precise" },
+                    foregroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "foreground" },
+                    backgroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "background" },
+                    subliminalAccesses = featuresList.count { it.getStringProperty("interactionType") == "subliminal" },
+                    preciseForegroundAccesses = featuresList.count { it.usageAndInteraction("precise", "foreground") },
+                    approximateForegroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "foreground") },
+                    preciseBackgroundAccesses = featuresList.count { it.usageAndInteraction("precise", "background") },
+                    approximateBackgroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "background") },
+                    preciseSubliminalAccesses = featuresList.count { it.usageAndInteraction("precise", "subliminal") },
+                    approximateSubliminalAccesses = featuresList.count { it.usageAndInteraction("approximate", "subliminal") },
+                    numberOfPOIs = numberOfPOIs,
+                    privacyScore = 0.0  // Placeholder, will be calculated next
+                ).also {
+                    it.privacyScore = calculatePrivacyScore(it)
+                }
+            }
+        accessStatsList.forEach { app ->
+            app.privacyScore = calculatePrivacyScore(app)
+        }
+        accessStatsList.forEach { app ->
+            app.privacyScore = normalizeScore(app.privacyScore, -37.0, 0.0, 0.0, 100.0)
+            Log.d("AppStats", app.toString())
+        }
+
+        AppState.topAccessedAppsCache = accessStatsList.sortedByDescending { it.totalAccesses }
+
+        return AppState.topAccessedAppsCache!!
     }
+
+    fun calculatePrivacyScore(stats: AppAccessStats): Double {
+        // Calculate daily frequency of each access type
+        val dailyPreciseForeground = stats.preciseForegroundAccesses.toDouble() / stats.days
+        val dailyApproximateForeground = stats.approximateForegroundAccesses.toDouble() / stats.days
+        val dailyPreciseBackground = stats.preciseBackgroundAccesses.toDouble() / stats.days
+        val dailyApproximateBackground = stats.approximateBackgroundAccesses.toDouble() / stats.days
+        val dailyPreciseSubliminal = stats.preciseSubliminalAccesses.toDouble() / stats.days
+        val dailyApproximateSubliminal = stats.approximateSubliminalAccesses.toDouble() / stats.days
+
+        // Assign penalties
+        val penaltyPreciseForeground = dailyPreciseForeground * 0.1  // lower penalty for foreground
+        val penaltyApproximateForeground = dailyApproximateForeground * 0.05
+        val penaltyPreciseBackground = dailyPreciseBackground * 0.2  // higher penalty for background
+        val penaltyApproximateBackground = dailyApproximateBackground * 0.1
+        val penaltyPreciseSubliminal = dailyPreciseSubliminal * 0.4  // highest penalty for subliminal
+        val penaltyApproximateSubliminal = dailyApproximateSubliminal * 0.2
+
+        // Total penalty is the sum of all penalties
+        val totalPenalty = penaltyPreciseForeground + penaltyApproximateForeground +
+                penaltyPreciseBackground + penaltyApproximateBackground +
+                penaltyPreciseSubliminal + penaltyApproximateSubliminal
+
+        // Subtract the penalty and the impact of points of interest from the base score of 100
+        return 0 - (totalPenalty + stats.numberOfPOIs * 5)
+    }
+
+
+
+    private fun normalizeScore(oldScore: Double, minOld: Double, maxOld: Double, minNew: Double, maxNew: Double): Double {
+        return ((oldScore - minOld) / (maxOld - minOld)) * (maxNew - minNew) + minNew
+    }
+
+    private fun Feature.usageAndInteraction(usageType: String, interactionType: String): Boolean {
+        return getStringProperty("usageType") == usageType && getStringProperty("interactionType") == interactionType
+    }
+
+
+
+    fun calculatePOIs(features: List<Feature>, threshold: Int = 100, radius: Double = 30.0): Int {
+        // Convert features to points
+        val points = features.mapNotNull { it.geometry() as? Point }
+        val visited = BooleanArray(points.size)
+        var poiCount = 0
+
+        for (i in points.indices) {
+            if (!visited[i]) {
+                var count = 1
+                for (j in points.indices) {
+                    if (i != j && !visited[j] && points[i].distanceTo(points[j]) <= radius) {
+                        count++
+                        visited[j] = true
+                    }
+                }
+                if (count >= threshold) {
+                    poiCount++
+                    visited[i] = true
+                }
+            }
+        }
+        return poiCount
+    }
+
+    fun Point.distanceTo(other: Point): Double {
+        val earthRadius = 6371000 // m
+        val dLat = Math.toRadians(other.latitude() - this.latitude())
+        val dLon = Math.toRadians(other.longitude() - this.longitude())
+        val lat1 = Math.toRadians(this.latitude())
+        val lat2 = Math.toRadians(other.latitude())
+
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return earthRadius * c
+    }
+
+
+
+
 
 
 }

@@ -1,45 +1,43 @@
 <resources>
     <string name="app_name">PrivacyBuddy</string>
-    <string name="location_icon">Location Icon</string>
-    <string name="microphone_icon">Microphone Icon</string>
-    <string name="camera_icon">Camera Icon</string>
     <string name="timeline_text">Timeline of when apps used your location in the past %1$d days \n\nClick on an access to get more information</string>
     <string name="timeline_text_single_day">Timeline of when apps used your location in the past 24 hours</string>
 
     <string name="timeline_title">Location usage for</string>
 
-    <string name="choose_page_text">Apps you do not see here, do not have any location accesses in the time period shown now</string>
-
     <string name="welcome_text">Welcome to PrivacyBuddy. This app is a prototype designed to test a built-in OS service created by Tristan Pelgrims and Maxime Bellis for their thesis.\n\nChoose a data file, the app will load into the privacy dashboard with the data you choose.\n\nWe invite you to explore the app as if you are reviewing your own data from the past week.</string>
 
     <!-- Location Accuracy Descriptions -->
-    <string name="precise_location"><![CDATA[<b>Precise:</b> This means the app accessed the exact location of the device with high accuracy, using GPS or other high-precision location services.]]></string>
-    <string name="approximate">Approximate: This means the app accessed the general area of the device. The accuracy can range from several hundred meters to several kilometers, based on Wi-Fi networks, cell towers, and other less precise location sources.</string>
+    <string name="precise"><b>Precise:</b> Uses GPS or similar services to access the device\'s exact location with high accuracy.</string>
+    <string name="approximate"><b>Approximate:</b> Determines the general area of the device using Wi-Fi, cell towers, and less precise methods.</string>
 
     <!-- Access Type Descriptions -->
-    <string name="sanctioned"><b>Sanctioned:</b> This means the user has specifically allowed and requested this specific location access. Examples include sharing your location on Facebook with a friend, which can occur in the background but is still sanctioned by the user, or initiating a route in Google Maps.</string>
-    <string name="foreground"><b>Foreground:</b> This occurs when the app accesses your location while you are using the app, but without you allowing it at that specific time. For example, Google Chrome using your exact location for searches while you are actively using the browser.</string>
-    <string name="background"><b>Background:</b> This indicates that the location was accessed without specific permission for this instance and while you were not actively using the app, but still doing something on the phone. An example is the weather app automatically updating its information while you are using your phone for other tasks.</string>
-    <string name="subliminal"><b>Subliminal:</b> This is when the phone accesses your location while you are not actively using the phone, and it is in sleep mode. An example includes the weather app automatically updating its forecast while you are not interacting with your phone.</string>
+    <string name="foreground"><b>Foreground:</b> Accesses location while the app doing the location access is in use.</string>
+    <string name="background"><b>Background:</b> Accesses location in the background, without user interaction, like weather updates during other phone use.</string>
+    <string name="subliminal"><b>Subliminal:</b> Obtains location data when the phone is not in use, such as during sleep mode when the phone is resting on a table. When your phone is turned off completely, no accesses can be done.</string>
 
 
-    <!-- Titles -->
+    <!-- dashboard -->
     <string name="dashboard_title">Privacy dashboard</string>
     <string name="choose_app_title">Choose app to show</string>
-
+    <string name="dashboard_text">Showing accesses in last %1$d days</string>
+    <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
 
     <string name="title_activity_loc_timeline">LocTimelineActivity</string>
 
     <!-- Specific access page explanations -->
+
+    <string name="info_accuracy">Accuracy, measured in meters, indicates the radius of the circle around the accessed location within which your actual location will be. With this accuracy of %1$d meters, the app knows you were in %2$s</string>
+    <string name="info_bearing">Bearing, measured in degrees, indicates the direction of travel. It represents an angle between 0 and 360 degrees, measured clockwise from true north.</string>
+
+    <!--
     <string name="info_latitude">Latitude is the north-south position on the Earth\'s surface.</string>
     <string name="info_longitude">Longitude is the east-west position on the Earth\'s surface.</string>
-    <string name="info_accuracy">Accuracy, measured in meters, indicates the radius of the circle around the accessed location within which your actual location will be. With this accuracy of %1$d meters, the app knows you were in %2$s</string>
     <string name="info_speed">Speed is measured in meters per second (m/s) and represents the velocity at which the device is moving.</string>
-    <string name="info_bearing">Bearing, measured in degrees, indicates the direction of travel. It represents an angle between 0 and 360 degrees, measured clockwise from true north.</string>
     <string name="info_altitude">Altitude, measured in meters. It indicates how high the location is from sea level.</string>
+    -->
 
-    <string name="dashboard_text">Showing accesses in last %1$d days</string>
-    <string name="dashboard_text_single_day">Showing accesses in last 24 hours</string>
+
     <string name="location_access_by">Location access by</string>
 
     <!-- Simulation page descriptions -->
@@ -51,8 +49,16 @@
     <string name="description_5">Datastream 5, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
     <string name="description_6">Datastream 6, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
     <string name="description_7">Datastream 7, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was often around Rotselaar.</string>
-    <string name="top_apps_title">App ordered by location accesses</string>
+
+    <!-- Top apps page -->
+    <string name="top_apps_title">App ordered by</string>
     <string name="top_apps_text">This is a list of all your apps ordered by the amount of location accesses they did. If an app did not do location accesses they are not featured.</string>
+    <string name="top_apps_privacy_score">This list ranks your apps by their privacy score, where a higher score indicates better privacy practices.</string>
+    <string name="top_apps_access_frequency">This list shows your apps ordered by the frequency of location accesses, with more frequent accessors listed first.</string>
+    <string name="sort_by_accesses">Number of location accesses</string>
+    <string name="sort_by_frequency">Location access frequency</string>
+    <string name="sort_by_privacy_score">Privacy score</string>
+
 
 
 </resources>

@@ -140,10 +140,19 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Location details send"
+                            android:text="Location details accessed"
                             android:textColor="@color/title_prim"
                             android:textSize="28sp"
                             tools:ignore="RtlCompat" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="This is the exact information the app received when it accessed your location."
+                android:textColor="@color/text"
+                android:textSize="16sp" />
 
             <include layout="@layout/component_single_access_data_entry"
                 android:id="@+id/dataEntryLatitude"
@@ -160,20 +169,90 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <include layout="@layout/component_single_access_data_entry"
-                android:id="@+id/dataEntryAccuracy"
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:paddingTop="10dp"
+                android:background="@color/background_prim"
+                android:layout_height="wrap_content">
+
+                <!-- Data Name -->
+                <TextView
+                    android:id="@+id/textViewDataNameAccuracy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Accuracy:"
+                    android:textSize="20sp"
+                    android:textColor="@color/text" />
+
+                <!-- Data Value -->
+                <TextView
+                    android:id="@+id/textViewDataValueAccuracy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/textViewDataNameAccuracy"
+                    android:layout_marginStart="16dp"
+                    android:text="59.871"
+                    android:textSize="20sp"
+                    android:textColor="@color/text" />
+
+
+                <ImageView
+                    android:id="@+id/imageViewInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_info"
+                    android:textColor="@color/text"/>
+
+            </RelativeLayout>
 
             <include layout="@layout/component_single_access_data_entry"
                 android:id="@+id/dataEntrySpeed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <include layout="@layout/component_single_access_data_entry"
-                android:id="@+id/dataEntryBearing"
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:paddingTop="10dp"
+                android:background="@color/background_prim"
+                android:layout_height="wrap_content">
+
+                <!-- Data Name -->
+                <TextView
+                    android:id="@+id/textViewDataNameBearing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bearing:"
+                    android:textSize="20sp"
+                    android:textColor="@color/text" />
+
+                <!-- Data Value -->
+                <TextView
+                    android:id="@+id/textViewDataValueBearing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/textViewDataNameBearing"
+                    android:layout_marginStart="16dp"
+                    android:text="59.871"
+                    android:textSize="20sp"
+                    android:textColor="@color/text" />
+
+
+                <ImageView
+                    android:id="@+id/imageViewInfoBearing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:textColor="@color/text"
+                    android:src="@drawable/ic_info" />
+
+            </RelativeLayout>
 
 
 

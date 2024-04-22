@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_location_accesses"
+        android:title="@string/sort_by_accesses" />
+    <item android:id="@+id/menu_access_frequency"
+        android:title="@string/sort_by_frequency" />
+    <item android:id="@+id/menu_privacy_score"
+        android:title="@string/sort_by_privacy_score" />
+</menu>

@@ -22,7 +22,7 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapView
-import be.kuleuven.privacybuddy.data.AppAccessInfo
+import be.kuleuven.privacybuddy.data.AppAccessStats
 
 class MainActivity : BaseActivity() {
 
@@ -102,50 +102,38 @@ class MainActivity : BaseActivity() {
         initUI()
     }
 
-    private fun getAllAccessedAppsFromGeoJson(): List<AppAccessInfo> {
-        val geoJsonString = assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
-        val featureCollection = FeatureCollection.fromJson(geoJsonString)
-        val accessCounts = featureCollection.features()?.groupingBy { it.getStringProperty("appName") }?.eachCount() ?: emptyMap()
-        return accessCounts.entries.map { AppAccessInfo(it.key, it.value) }
-    }
 
     private fun updateDashboardText() {
-        val allApps = getAllAccessedAppsFromGeoJson()
-        val distinctAppsCount = allApps.map { it.appName }.distinct().size
+        val distinctAppsCount = AppState.topAccessedAppsCache?.map { it.appName }?.distinct()?.size ?: 0
 
         val dashboardTextId = if (daysFilter > 1) R.string.dashboard_text else R.string.dashboard_text_single_day
-        findViewById<TextView>(R.id.pageSubTitleTextView).text = getString(dashboardTextId, daysFilter)
-
-        //findViewById<TextView>(R.id.textViewLocationUsage).text = "Used by $distinctAppsCount app${if (distinctAppsCount > 1) "s" else ""}"
+        findViewById<TextView>(R.id.pageSubTitleTextView).text = getString(dashboardTextId, daysFilter, distinctAppsCount)
     }
+
 
     private fun updateTopAccessedAppsWidget() {
         val container = findViewById<LinearLayout>(R.id.containerAppViews)
-        // Ensure topApps is sorted if necessary and take the top 3
-        val topApps = AppState.topAccessedAppsCache?.sortedByDescending { it.accessCount }?.take(3) ?: emptyList()
-        container.removeAllViews() // Clear existing views
+        val topApps = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses }?.take(3) ?: emptyList()
+        container.removeAllViews()
 
-        // Find the max access count among the top 3 apps for proper scaling of the progress bars
-        val maxAccessCount = topApps.maxOfOrNull { it.accessCount } ?: 1
+        val maxAccessCount = topApps.maxOfOrNull { it.totalAccesses } ?: 1
 
-        topApps.forEach { appInfo ->
+        topApps.forEach { appStats ->
             val appView = LayoutInflater.from(this).inflate(R.layout.component_top_app, container, false)
 
-            // Configure the view elements
-            appView.findViewById<TextView>(R.id.textViewAppName).text = appInfo.appName
-            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "${appInfo.accessCount} accesses"
+            appView.findViewById<TextView>(R.id.textViewAppName).text = appStats.appName
+            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "${appStats.totalAccesses} accesses"
             val progressBar = appView.findViewById<ProgressBar>(R.id.progressBarAppUsage)
-            progressBar.max = maxAccessCount // Use the same max for all progress bars
-            progressBar.progress = appInfo.accessCount
+            progressBar.max = maxAccessCount
+            progressBar.progress = appStats.totalAccesses
 
-            // Set the app icon
-            val appIcon = this.getAppIconByName(appInfo.appName) // Ensure getAppIconByName is accessible
+            val appIcon = this.getAppIconByName(appStats.appName)
             appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
 
-            // Add the configured view to the container
             container.addView(appView)
         }
     }
+
 
 
 }

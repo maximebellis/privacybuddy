@@ -31,6 +31,27 @@
                 android:textSize="32sp" />
 
             <TextView
+                android:id="@+id/topAppsTextViewChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:drawableEnd="@drawable/ic_dropdown_arrow"
+                android:drawableTint="@color/title_prim"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/sort_by_accesses"
+                android:textColor="@color/title_prim"
+                android:paddingStart="12dp"
+                android:textSize="24sp"
+                android:paddingBottom="2dp"
+                android:background="@drawable/bg_dropdown"
+                android:onClick="onTitleClick"
+                android:gravity="center"
+            />
+
+
+            <TextView
                 android:id="@+id/textViewTimeline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
