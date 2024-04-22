@@ -14,8 +14,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import com.mapbox.geojson.Point
-
-
+import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 object LocationDataUtils {
 
@@ -105,34 +106,40 @@ object LocationDataUtils {
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
         val features = featureCollection.features() ?: return emptyList()
 
-        val accessStatsList = features.groupBy { it.getStringProperty("appName") }
-            .map { (appName, featuresList) -> // Here we capture the grouped features list correctly
-                val numberOfPOIs = calculatePOIs(featuresList) // Assuming calculatePOIs is correctly implemented
+        // Define a formatter for the timestamp format in your GeoJSON data
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // Calculate the cutoff date for the days filter
+        val cutoffDate = LocalDateTime.now(ZoneOffset.UTC).minusDays(BaseActivity.AppSettings.daysFilter.toLong())
+
+        val accessStatsList = features.filter {
+            // Parse each timestamp using the defined formatter
+            LocalDateTime.parse(it.getStringProperty("timestamp"), formatter) >= cutoffDate
+        }.groupBy { it.getStringProperty("appName") }
+            .map { (appName, filteredFeatures) ->
+                val numberOfPOIs = calculatePOIs(filteredFeatures) // Assuming calculatePOIs is correctly implemented
 
                 AppAccessStats(
                     appName = appName,
-                    totalAccesses = featuresList.size,
-                    days = 21, // Example days filter
-                    approximateAccesses = featuresList.count { it.getStringProperty("usageType") == "approximate" },
-                    preciseAccesses = featuresList.count { it.getStringProperty("usageType") == "precise" },
-                    foregroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "foreground" },
-                    backgroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "background" },
-                    subliminalAccesses = featuresList.count { it.getStringProperty("interactionType") == "subliminal" },
-                    preciseForegroundAccesses = featuresList.count { it.usageAndInteraction("precise", "foreground") },
-                    approximateForegroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "foreground") },
-                    preciseBackgroundAccesses = featuresList.count { it.usageAndInteraction("precise", "background") },
-                    approximateBackgroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "background") },
-                    preciseSubliminalAccesses = featuresList.count { it.usageAndInteraction("precise", "subliminal") },
-                    approximateSubliminalAccesses = featuresList.count { it.usageAndInteraction("approximate", "subliminal") },
+                    totalAccesses = filteredFeatures.size,
+                    days = BaseActivity.AppSettings.daysFilter,
+                    approximateAccesses = filteredFeatures.count { it.getStringProperty("usageType") == "approximate" },
+                    preciseAccesses = filteredFeatures.count { it.getStringProperty("usageType") == "precise" },
+                    foregroundAccesses = filteredFeatures.count { it.getStringProperty("interactionType") == "foreground" },
+                    backgroundAccesses = filteredFeatures.count { it.getStringProperty("interactionType") == "background" },
+                    subliminalAccesses = filteredFeatures.count { it.getStringProperty("interactionType") == "subliminal" },
+                    preciseForegroundAccesses = filteredFeatures.count { it.usageAndInteraction("precise", "foreground") },
+                    approximateForegroundAccesses = filteredFeatures.count { it.usageAndInteraction("approximate", "foreground") },
+                    preciseBackgroundAccesses = filteredFeatures.count { it.usageAndInteraction("precise", "background") },
+                    approximateBackgroundAccesses = filteredFeatures.count { it.usageAndInteraction("approximate", "background") },
+                    preciseSubliminalAccesses = filteredFeatures.count { it.usageAndInteraction("precise", "subliminal") },
+                    approximateSubliminalAccesses = filteredFeatures.count { it.usageAndInteraction("approximate", "subliminal") },
                     numberOfPOIs = numberOfPOIs,
                     privacyScore = 0.0  // Placeholder, will be calculated next
                 ).also {
                     it.privacyScore = calculatePrivacyScore(it)
                 }
             }
-        accessStatsList.forEach { app ->
-            app.privacyScore = calculatePrivacyScore(app)
-        }
         accessStatsList.forEach { app ->
             app.privacyScore = normalizeScore(app.privacyScore, -37.0, 0.0, 0.0, 100.0)
             Log.d("AppStats", app.toString())

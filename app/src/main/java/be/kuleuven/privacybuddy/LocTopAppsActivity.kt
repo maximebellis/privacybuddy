@@ -21,24 +21,30 @@ class LocTopAppsActivity : BaseActivity() {
     private lateinit var textViewDescription: TextView
 
     override fun filterData(days: Int) {
-        TODO("Not yet implemented")
+        AppSettings.daysFilter = days
+        initUI()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_top_apps)
 
-        recyclerView = findViewById(R.id.recyclerViewTopAppsLocation)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        textViewDescription = findViewById(R.id.textViewTimeline)
-        AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, DisplayMode.ACCESS_COUNT) }
-
+        initUI()
         setupToolbar()
 
         val topAppsTextViewChoice: TextView = findViewById(R.id.topAppsTextViewChoice)
         topAppsTextViewChoice.setOnClickListener {
             showSortingPopup(it)
         }
+    }
+
+    private fun initUI() {
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+
+        recyclerView = findViewById(R.id.recyclerViewTopAppsLocation)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        textViewDescription = findViewById(R.id.textViewTimeline)
+        AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, DisplayMode.ACCESS_COUNT) }
     }
 
     private fun showSortingPopup(anchor: View) {
