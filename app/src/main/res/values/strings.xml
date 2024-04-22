@@ -51,12 +51,12 @@
     <string name="description_7">Datastream 7, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was often around Rotselaar.</string>
 
     <!-- Top apps page -->
-    <string name="top_apps_title">App ordered by</string>
+    <string name="top_apps_title">Apps ordered by</string>
     <string name="top_apps_text">This is a list of all your apps ordered by the amount of location accesses they did. If an app did not do location accesses they are not featured.</string>
     <string name="top_apps_privacy_score">This list ranks your apps by their privacy score, where a higher score indicates better privacy practices.</string>
     <string name="top_apps_access_frequency">This list shows your apps ordered by the frequency of location accesses, with more frequent accessors listed first.</string>
-    <string name="sort_by_accesses">Number of location accesses</string>
-    <string name="sort_by_frequency">Location access frequency</string>
+    <string name="sort_by_accesses">Access total</string>
+    <string name="sort_by_frequency">Access frequency</string>
     <string name="sort_by_privacy_score">Privacy score</string>
 
 

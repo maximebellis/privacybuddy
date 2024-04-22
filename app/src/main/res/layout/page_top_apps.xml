@@ -32,7 +32,7 @@
 
             <TextView
                 android:id="@+id/topAppsTextViewChoice"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:drawableEnd="@drawable/ic_dropdown_arrow"
@@ -40,14 +40,15 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/sort_by_accesses"
+                android:text="@string/sort_by_privacy_score"
+                android:textAlignment="textStart"
                 android:textColor="@color/title_prim"
                 android:paddingStart="12dp"
-                android:textSize="24sp"
+                android:textSize="30sp"
                 android:paddingBottom="2dp"
                 android:background="@drawable/bg_dropdown"
                 android:onClick="onTitleClick"
-                android:gravity="center"
+                android:gravity="center_vertical|start"
             />
 
 
@@ -56,10 +57,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="start"
-                android:text="@string/top_apps_text"
+                android:text="@string/top_apps_privacy_score"
                 android:textColor="@color/text"
                 android:textSize="15sp" />
 

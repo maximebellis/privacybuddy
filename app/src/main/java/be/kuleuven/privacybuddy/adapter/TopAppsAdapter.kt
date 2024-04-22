@@ -49,11 +49,11 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
             }
             DisplayMode.FREQUENCY -> {
                 val frequency = if (app.days > 0) app.totalAccesses.toDouble() / app.days else 0.0
-                holder.textViewAppAccesses.text = "${frequency.toInt()} accesses per day"
+                holder.textViewAppAccesses.text = String.format("%.1f accesses per day", frequency)
                 holder.progressBarAppUsage.progress = frequency.toInt()
             }
             DisplayMode.PRIVACY_SCORE -> {
-                holder.textViewAppAccesses.text = "Privacy Score: ${app.privacyScore.toInt()}"
+                holder.textViewAppAccesses.text = String.format("Privacy Score: %.1f", app.privacyScore)
                 holder.progressBarAppUsage.progress = app.privacyScore.toInt()
             }
         }
@@ -67,8 +67,4 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
 
     override fun getItemCount() = topApps.size
 
-    fun updateDisplayMode(newMode: DisplayMode) {
-        displayMode = newMode
-        notifyDataSetChanged()
-    }
 }

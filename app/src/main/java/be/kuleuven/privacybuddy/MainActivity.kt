@@ -116,19 +116,20 @@ class MainActivity : BaseActivity() {
 
     private fun updateTopAccessedAppsWidget() {
         val container = findViewById<LinearLayout>(R.id.containerAppViews)
-        val topApps = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses }?.take(3) ?: emptyList()
+        val topApps = AppState.topAccessedAppsCache?.sortedBy { it.privacyScore }?.take(3) ?: emptyList()
         container.removeAllViews()
 
-        val maxAccessCount = topApps.maxOfOrNull { it.totalAccesses } ?: 1
+        val minPrivacyScore = topApps.minOfOrNull { it.privacyScore }?.toInt() ?: 1
 
         topApps.forEach { appStats ->
             val appView = LayoutInflater.from(this).inflate(R.layout.component_top_app, container, false)
 
             appView.findViewById<TextView>(R.id.textViewAppName).text = appStats.appName
-            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "${appStats.totalAccesses} accesses"
+            val formattedPrivacyScore = String.format("%.1f", appStats.privacyScore)
+            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "Privacy Score: $formattedPrivacyScore"
             val progressBar = appView.findViewById<ProgressBar>(R.id.progressBarAppUsage)
-            progressBar.max = maxAccessCount
-            progressBar.progress = appStats.totalAccesses
+            progressBar.max = minPrivacyScore
+            progressBar.progress = appStats.privacyScore.toInt()
 
             val appIcon = this.getAppIconByName(appStats.appName)
             appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
@@ -136,6 +137,9 @@ class MainActivity : BaseActivity() {
             container.addView(appView)
         }
     }
+
+
+
 
 
 
