@@ -23,7 +23,7 @@ data class AppAccessStats(
     val preciseSubliminalAccesses: Int,
     val approximateSubliminalAccesses: Int,
 
-    val privacyScore: Double,
+    var privacyScore: Double,
     val numberOfPOIs: Int
 
 )

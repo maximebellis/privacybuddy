@@ -105,74 +105,81 @@ object LocationDataUtils {
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
         val features = featureCollection.features() ?: return emptyList()
 
-        val accessStatsMap = features.groupBy { it.getStringProperty("appName") }
-            .mapValues { entry ->
-                val totalAccesses = entry.value.size
-                val numberOfPOIs = calculatePOIs(entry.value)
+        val accessStatsList = features.groupBy { it.getStringProperty("appName") }
+            .map { (appName, featuresList) -> // Here we capture the grouped features list correctly
+                val numberOfPOIs = calculatePOIs(featuresList) // Assuming calculatePOIs is correctly implemented
 
-                // Initialize stats object with all parameters except the privacy score
-                val initialStats = AppAccessStats(
-                    appName = entry.key,
-                    totalAccesses = totalAccesses,
-                    days = BaseActivity.AppSettings.daysFilter,
-                    approximateAccesses = entry.value.count { it.getStringProperty("usageType") == "approximate" },
-                    preciseAccesses = entry.value.count { it.getStringProperty("usageType") == "precise" },
-                    foregroundAccesses = entry.value.count { it.getStringProperty("interactionType") == "foreground" },
-                    backgroundAccesses = entry.value.count { it.getStringProperty("interactionType") == "background" },
-                    subliminalAccesses = entry.value.count { it.getStringProperty("interactionType") == "subliminal" },
-                    preciseForegroundAccesses = entry.value.count { it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "foreground" },
-                    approximateForegroundAccesses = entry.value.count { it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "foreground" },
-                    preciseBackgroundAccesses = entry.value.count { it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "background" },
-                    approximateBackgroundAccesses = entry.value.count { it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "background" },
-                    preciseSubliminalAccesses = entry.value.count { it.getStringProperty("usageType") == "precise" && it.getStringProperty("interactionType") == "subliminal" },
-                    approximateSubliminalAccesses = entry.value.count { it.getStringProperty("usageType") == "approximate" && it.getStringProperty("interactionType") == "subliminal" },
+                AppAccessStats(
+                    appName = appName,
+                    totalAccesses = featuresList.size,
+                    days = 21, // Example days filter
+                    approximateAccesses = featuresList.count { it.getStringProperty("usageType") == "approximate" },
+                    preciseAccesses = featuresList.count { it.getStringProperty("usageType") == "precise" },
+                    foregroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "foreground" },
+                    backgroundAccesses = featuresList.count { it.getStringProperty("interactionType") == "background" },
+                    subliminalAccesses = featuresList.count { it.getStringProperty("interactionType") == "subliminal" },
+                    preciseForegroundAccesses = featuresList.count { it.usageAndInteraction("precise", "foreground") },
+                    approximateForegroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "foreground") },
+                    preciseBackgroundAccesses = featuresList.count { it.usageAndInteraction("precise", "background") },
+                    approximateBackgroundAccesses = featuresList.count { it.usageAndInteraction("approximate", "background") },
+                    preciseSubliminalAccesses = featuresList.count { it.usageAndInteraction("precise", "subliminal") },
+                    approximateSubliminalAccesses = featuresList.count { it.usageAndInteraction("approximate", "subliminal") },
                     numberOfPOIs = numberOfPOIs,
                     privacyScore = 0.0  // Placeholder, will be calculated next
-                )
+                ).also {
+                    it.privacyScore = calculatePrivacyScore(it)
+                }
+            }
+        accessStatsList.forEach { app ->
+            app.privacyScore = calculatePrivacyScore(app)
+        }
+        accessStatsList.forEach { app ->
+            app.privacyScore = normalizeScore(app.privacyScore, -37.0, 0.0, 0.0, 100.0)
+            Log.d("AppStats", app.toString())
+        }
 
-                // Calculate the privacy score and update the stats object
-                val privacyScore = calculatePrivacyScore(initialStats)
-                val updatedStats = initialStats.copy(privacyScore = privacyScore)
+        AppState.topAccessedAppsCache = accessStatsList.sortedByDescending { it.totalAccesses }
 
-                // Log the final stats including the correctly calculated privacy score
-                Log.d("AppStats", "App: ${updatedStats.appName}, Privacy Score: ${updatedStats.privacyScore}, Number of POIs: ${updatedStats.numberOfPOIs}")
-
-                updatedStats
-            }.values.toList()
-
-        AppState.topAccessedAppsCache = accessStatsMap.sortedByDescending { it.totalAccesses }
         return AppState.topAccessedAppsCache!!
     }
 
-
     fun calculatePrivacyScore(stats: AppAccessStats): Double {
+        // Calculate daily frequency of each access type
+        val dailyPreciseForeground = stats.preciseForegroundAccesses.toDouble() / stats.days
+        val dailyApproximateForeground = stats.approximateForegroundAccesses.toDouble() / stats.days
+        val dailyPreciseBackground = stats.preciseBackgroundAccesses.toDouble() / stats.days
+        val dailyApproximateBackground = stats.approximateBackgroundAccesses.toDouble() / stats.days
+        val dailyPreciseSubliminal = stats.preciseSubliminalAccesses.toDouble() / stats.days
+        val dailyApproximateSubliminal = stats.approximateSubliminalAccesses.toDouble() / stats.days
 
+        // Assign penalties
+        val penaltyPreciseForeground = dailyPreciseForeground * 0.1  // lower penalty for foreground
+        val penaltyApproximateForeground = dailyApproximateForeground * 0.05
+        val penaltyPreciseBackground = dailyPreciseBackground * 0.2  // higher penalty for background
+        val penaltyApproximateBackground = dailyApproximateBackground * 0.1
+        val penaltyPreciseSubliminal = dailyPreciseSubliminal * 0.4  // highest penalty for subliminal
+        val penaltyApproximateSubliminal = dailyApproximateSubliminal * 0.2
 
-        // Base penalties for subliminal, background, and precise accesses per day
-        val subliminalPenalty = minOf(35.0, (stats.subliminalAccesses.toDouble() / stats.days) * 10)
-        val backgroundPenalty = minOf(35.0, (stats.backgroundAccesses.toDouble() / stats.days) * 3)
-        val precisePenalty = minOf(15.0, (stats.preciseAccesses.toDouble() / stats.days) * 3)
+        // Total penalty is the sum of all penalties
+        val totalPenalty = penaltyPreciseForeground + penaltyApproximateForeground +
+                penaltyPreciseBackground + penaltyApproximateBackground +
+                penaltyPreciseSubliminal + penaltyApproximateSubliminal
 
-        // Additional detailed frequencies
-        val preciseBackgroundFreq = stats.preciseBackgroundAccesses.toDouble() / stats.days
-        val preciseSubliminalFreq = stats.preciseSubliminalAccesses.toDouble() / stats.days
-        val approximateSubliminalFreq = stats.approximateSubliminalAccesses.toDouble() / stats.days
-        val freqPenalty = preciseBackgroundFreq + preciseSubliminalFreq + approximateSubliminalFreq
-
-        // Incorporating POI impact
-        val poiImpact = minOf(15.0, 5 * minOf(3, stats.numberOfPOIs).toDouble())
-
-        // Calculating the final privacy score
-        var score = 100.0
-        score -= minOf(35.0, freqPenalty) // cap frequency impact at 35 points
-        score -= subliminalPenalty
-        score -= backgroundPenalty
-        score -= precisePenalty
-        score -= poiImpact
-
-        // Ensure score is within 0-100
-        return maxOf(0.0, score)
+        // Subtract the penalty and the impact of points of interest from the base score of 100
+        return 0 - (totalPenalty + stats.numberOfPOIs * 5)
     }
+
+
+
+    private fun normalizeScore(oldScore: Double, minOld: Double, maxOld: Double, minNew: Double, maxNew: Double): Double {
+        return ((oldScore - minOld) / (maxOld - minOld)) * (maxNew - minNew) + minNew
+    }
+
+    private fun Feature.usageAndInteraction(usageType: String, interactionType: String): Boolean {
+        return getStringProperty("usageType") == usageType && getStringProperty("interactionType") == interactionType
+    }
+
+
 
     fun calculatePOIs(features: List<Feature>, threshold: Int = 100, radius: Double = 30.0): Int {
         // Convert features to points
