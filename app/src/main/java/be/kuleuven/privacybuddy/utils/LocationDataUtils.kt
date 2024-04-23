@@ -141,7 +141,7 @@ object LocationDataUtils {
                 }
             }
         accessStatsList.forEach { app ->
-            app.privacyScore = normalizeScore(app.privacyScore, -37.0, 0.0, 0.0, 100.0)
+            app.privacyScore = normalizeScore(app.privacyScore, -33.0, 0.0, 0.0, 100.0)
             Log.d("AppStats", app.toString())
         }
 
