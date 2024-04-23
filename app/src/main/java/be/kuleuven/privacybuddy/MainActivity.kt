@@ -12,14 +12,17 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.AppState.globalData
+import be.kuleuven.privacybuddy.AppState.selectedInteractionTypes
+import be.kuleuven.privacybuddy.AppState.selectedUsageTypes
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.AppOpsUtility
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
-import be.kuleuven.privacybuddy.utils.LocationDataUtils.loadGeoJsonFromAssets
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapView
 import be.kuleuven.privacybuddy.data.AppAccessStats
@@ -34,24 +37,30 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_main_dashboard)
         setupToolbar()
-        setupLocationEventsRecyclerView()
         initUI()
         AppOpsUtility.setupLocationAccessListener(this)
-        updateTopAccessedAppsWidget()
+
+        setupCardView(R.id.cardViewSubliminal, R.id.textViewSubliminal, "subliminal", false)
+        setupCardView(R.id.cardViewForeground, R.id.textViewForeground, "foreground", false)
+        setupCardView(R.id.cardViewBackground, R.id.textViewBackground, "background", false)
+        setupCardView(R.id.cardViewApproximate, R.id.textViewApproximate, "approximate", true)
+        setupCardView(R.id.cardViewPrecise, R.id.textViewPrecise, "precise", true)
     }
 
     private fun initUI() {
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
         setupWidgetClickListeners()
-        setupMapWidget(null)
+        setupLocationEventsRecyclerView() // widget timeline
+        setupMapWidget(null) // widget map
+        updateTopAccessedAppsWidget() // widget top apps
+
         updateDashboardText()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
-        updateTopAccessedAppsWidget()
     }
     private fun updateWidgetEvents() {
-        loadGeoJsonFromAssets(null, applicationContext, days = daysFilter).let {
+        filterGlobalData().let {
             val lastThreeItems = LocationDataUtils.getFirstThreeTimelineItems(it)
             locationEventAdapter.submitList(lastThreeItems)
         }
@@ -100,8 +109,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun filterData(days: Int) {
-        daysFilter = days
-        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+        super.filterData(days)
         initUI()
     }
 
@@ -135,6 +143,43 @@ class MainActivity : BaseActivity() {
             appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
 
             container.addView(appView)
+        }
+    }
+
+    private fun setupCardView(cardViewId: Int, textViewId: Int, type: String, isUsageType: Boolean) {
+        val cardView = findViewById<CardView>(cardViewId)
+        val textView = cardView.findViewById<TextView>(textViewId)
+
+        cardView.setOnClickListener {
+            val isSelected = it.tag as? Boolean ?: false
+            it.tag = !isSelected
+            if (isSelected) {
+                // Change appearance to 'off' state
+                (it as CardView).setCardBackgroundColor(ContextCompat.getColor(this, R.color.background_sec))
+                textView.setTextColor(ContextCompat.getColor(this, R.color.text))
+                // Remove type from the list
+                if (isUsageType) {
+                    selectedUsageTypes.remove(type)
+                } else {
+                    selectedInteractionTypes.remove(type)
+                }
+            } else {
+                // Change appearance to 'on' state
+                (it as CardView).setCardBackgroundColor(ContextCompat.getColor(this, R.color.text))
+                textView.setTextColor(ContextCompat.getColor(this, R.color.background_sec))
+                // Add type to the list
+                if (isUsageType) {
+                    selectedUsageTypes.add(type)
+                } else {
+                    selectedInteractionTypes.add(type)
+                }
+            }
+            // Filter the data
+            LocationDataUtils.cacheAllLocationData(this)
+            setupLocationEventsRecyclerView() // widget timeline
+            setupMapWidget(null) // widget map
+            updateTopAccessedAppsWidget() // widget top apps
+
         }
     }
 

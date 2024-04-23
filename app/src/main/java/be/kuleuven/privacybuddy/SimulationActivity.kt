@@ -71,6 +71,7 @@ class SimulationActivity : BaseActivity() {
             clearTopAccessedAppsCache()
 
             LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+            LocationDataUtils.cacheAllLocationData(this)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

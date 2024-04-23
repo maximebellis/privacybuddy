@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.DisplayMode
 import be.kuleuven.privacybuddy.adapter.TopAppsAdapter
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
@@ -21,7 +22,7 @@ class LocTopAppsActivity : BaseActivity() {
     private var currentDisplayMode: DisplayMode = DisplayMode.PRIVACY_SCORE
 
     override fun filterData(days: Int) {
-        AppSettings.daysFilter = days
+        daysFilter = days
         LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
         initUI()
     }

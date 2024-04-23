@@ -3,6 +3,10 @@ package be.kuleuven.privacybuddy.utils
 import android.content.Context
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
+import be.kuleuven.privacybuddy.AppState.globalData
+import be.kuleuven.privacybuddy.AppState.selectedGeoJsonFile
+import be.kuleuven.privacybuddy.AppState.selectedInteractionTypes
+import be.kuleuven.privacybuddy.AppState.selectedUsageTypes
 import be.kuleuven.privacybuddy.BaseActivity
 import be.kuleuven.privacybuddy.adapter.TimelineItem
 import be.kuleuven.privacybuddy.data.AppAccessStats
@@ -30,43 +34,42 @@ object LocationDataUtils {
                         events.map { TimelineItem.EventItem(it) }
             }
     }
-    fun loadGeoJsonFromAssets(selectedAppName: String?, context: Context, filename: String = AppState.selectedGeoJsonFile, days: Int): List<LocationData> {
+
+    fun cacheAllLocationData(context: Context, filename: String = selectedGeoJsonFile, days: Int = BaseActivity.AppSettings.daysFilter): List<LocationData> {
         return try {
             val featureCollection = parseGeoJsonFromAssets(context, filename)
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-            val calendar = Calendar.getInstance().apply {
-                add(Calendar.DATE, -days)
-            }
-            val cutoffDate = calendar.time
+            val cutoffDate = System.currentTimeMillis() - days * 24 * 60 * 60 * 1000
 
-            featureCollection.features()?.mapNotNull { feature ->
+            globalData = featureCollection.features()?.mapNotNull { feature ->
                 val timestamp = feature.getStringProperty("timestamp")
                 val date = dateFormat.parse(timestamp)
 
-                if (date != null && date.after(cutoffDate) && (selectedAppName == null || feature.getStringProperty("appName") == selectedAppName)) {
-                    // Check if the feature's geometry is a Point
-                    val point = feature.geometry() as? com.mapbox.geojson.Point
-                    val coordinates = point?.coordinates()
+                // Check if the feature's geometry is a Point
+                val point = feature.geometry() as? Point
+                val coordinates = point?.coordinates()
 
-                    LocationData(
-                        timestamp = timestamp,
-                        date = date,
-                        appName = feature.getStringProperty("appName"),
-                        usageType = feature.getStringProperty("usageType"),
-                        interactionType = feature.getStringProperty("interactionType"),
-                        accuracy = feature.getNumberProperty("accuracy")?.toDouble(),
-                        speed = feature.getNumberProperty("speed")?.toDouble(),
-                        bearing = feature.getNumberProperty("bearing")?.toDouble(),
-                        screenState = feature.getStringProperty("screenState"),
-                        latitude = point?.latitude(),
-                        longitude = point?.longitude(),
-                        altitude = if (coordinates?.size == 3) coordinates[2] else null
-                    )
-                } else {
-                    null
-                }
+                LocationData(
+                    timestamp = timestamp,
+                    date = date,
+                    appName = feature.getStringProperty("appName"),
+                    usageType = feature.getStringProperty("usageType"),
+                    interactionType = feature.getStringProperty("interactionType"),
+                    accuracy = feature.getNumberProperty("accuracy")?.toDouble(),
+                    speed = feature.getNumberProperty("speed")?.toDouble(),
+                    bearing = feature.getNumberProperty("bearing")?.toDouble(),
+                    screenState = feature.getStringProperty("screenState"),
+                    latitude = point?.latitude(),
+                    longitude = point?.longitude(),
+                    altitude = if (coordinates?.size == 3) coordinates[2] else null
+                )
+            }?.filter { data ->
+                (selectedUsageTypes.isEmpty() || selectedUsageTypes.contains(data.usageType)) &&
+                        (selectedInteractionTypes.isEmpty() || selectedInteractionTypes.contains(data.interactionType)) &&
+                        (data.date.time >= cutoffDate)
             } ?: emptyList()
+            globalData
         } catch (e: Exception) {
             Log.e("LocationDataUtils", "Error loading or parsing GeoJSON data", e)
             emptyList()

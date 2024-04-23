@@ -4,14 +4,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
+import be.kuleuven.privacybuddy.AppState.globalData
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
+import be.kuleuven.privacybuddy.adapter.SpinnerAdapter
+import be.kuleuven.privacybuddy.data.LocationData
+import be.kuleuven.privacybuddy.data.SpinnerItem
+import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import com.google.android.material.appbar.MaterialToolbar
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
@@ -37,18 +46,26 @@ import java.time.format.DateTimeFormatter
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    // Constants
+    companion object {
+        const val APP_USAGE_SOURCE_ID = "app-usage-source"
+        private const val CLUSTERS_LAYER_ID = "clusters"
+        private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
+    }
+
+    // Properties
+    protected var selectedAppName: String? = null
     object AppSettings {
         var daysFilter: Int = 21
     }
 
-
-    abstract fun filterData(days: Int)
+    // Lifecycle methods
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.background_prim)
-
     }
 
+    // UI setup methods
     protected fun setupToolbar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.title = ""
@@ -69,13 +86,120 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    protected fun setupMapView(mapView: MapView, selectedAppName: String?) {
+        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+            val featureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
+            val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
+                featureCollection(featureCollection)
+                cluster(true)
+                clusterMaxZoom(14)
+                clusterRadius(50)
+            }
+            style.addSource(geoJsonSource)
+            addMapLayers(style)
+
+            // Find the biggest cluster and center the map on it
+            val biggestCluster = findBiggestCluster(featureCollection)
+            if (biggestCluster != null) {
+                centerMapOnLocation(mapView, biggestCluster)
+            }
+        }
+    }
+
+    protected fun setupSpinner() {
+        val spinner: Spinner = findViewById(R.id.spinnerChooseApp)
+        spinner.dropDownVerticalOffset = 100
+
+        val apps = getUniqueAppNamesFromGeoJson().sorted().toMutableList()
+        apps.add(0, "All apps")
+
+        val spinnerItems = apps.map { appName ->
+            SpinnerItem(getAppIconByName(appName)!!, appName)
+        }
+
+        spinner.adapter = SpinnerAdapter(this, R.layout.spinner_item, spinnerItems)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position) as SpinnerItem
+                selectedAppName = if (selectedItem.appName == "All apps") null else selectedItem.appName
+                onSpinnerItemSelected()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+    // UI update methods
+    fun updateMapView(mapView: MapView, selectedAppName: String?) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
+            withContext(Dispatchers.Main) {
+                val style = mapView.mapboxMap.style
+                val source = style?.getSourceAs<GeoJsonSource>(APP_USAGE_SOURCE_ID)
+                source?.featureCollection(newFeatureCollection)
+
+                // Find the biggest cluster and center the map on it
+                val biggestCluster = findBiggestCluster(newFeatureCollection)
+                if (biggestCluster != null) {
+                    centerMapOnLocation(mapView, biggestCluster)
+                }
+            }
+        }
+    }
+
+    // Data processing methods
+    protected open fun filterData(days: Int) {
+        daysFilter = days
+        LocationDataUtils.cacheAllLocationData(this, days = daysFilter)
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+    }
+
+    private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
+        return try {
+            // Filter the global data based on the selected app name
+            val filteredData = filterGlobalData(selectedAppName)
+
+            // Convert the filtered data into features
+            val features = filteredData.map { data ->
+                // Create a point for the location data
+                val point = data.longitude?.let { data.latitude?.let { it1 ->
+                    Point.fromLngLat(it,
+                        it1
+                    )
+                } }
+
+                // Create a feature for the location data
+                val feature = Feature.fromGeometry(point)
+
+                // Add properties to the feature
+                feature.addStringProperty("timestamp", data.timestamp.toString())
+                feature.addStringProperty("appName", data.appName)
+                feature.addNumberProperty("point_count_abbreviated", 1)
+
+                feature
+            }
+
+            // Create a feature collection from the features
+            FeatureCollection.fromFeatures(features)
+        } catch (e: Exception) {
+            FeatureCollection.fromFeatures(emptyList())
+        }
+    }
+
+    fun filterGlobalData(appName: String? = null): List<LocationData> {
+        return globalData.filter { data ->
+            appName == null || data.appName == appName
+        }
+    }
+
+    // Helper methods
     private fun centerMapOnLocation(mapView: MapView, location: Point) {
         mapView.mapboxMap.setCamera(cameraOptions {
             center(location)
             zoom(12.0)
         })
     }
-
 
     private fun addMapLayers(style: Style) {
         style.addLayer(circleLayer(CLUSTERS_LAYER_ID, APP_USAGE_SOURCE_ID) {
@@ -108,41 +232,16 @@ abstract class BaseActivity : AppCompatActivity() {
         return biggestCluster
     }
 
+    private fun getUniqueAppNamesFromGeoJson(): List<String> {
+        val filteredData = filterGlobalData()
 
-    protected fun setupMapView(mapView: MapView, selectedAppName: String?) {
-        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            val featureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
-            val geoJsonSource = geoJsonSource(APP_USAGE_SOURCE_ID) {
-                featureCollection(featureCollection)
-                cluster(true)
-                clusterMaxZoom(14)
-                clusterRadius(50)
-            }
-            style.addSource(geoJsonSource)
-            addMapLayers(style)
-
-            // Find the biggest cluster and center the map on it
-            val biggestCluster = findBiggestCluster(featureCollection)
-            if (biggestCluster != null) {
-                centerMapOnLocation(mapView, biggestCluster)
-            }
-        }
-    }
-
-    fun updateMapView(mapView: MapView, selectedAppName: String?) {
-        CoroutineScope(Dispatchers.Default).launch {
-            val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
-            withContext(Dispatchers.Main) {
-                val style = mapView.mapboxMap.style
-                val source = style?.getSourceAs<GeoJsonSource>(APP_USAGE_SOURCE_ID)
-                source?.featureCollection(newFeatureCollection)
-
-                // Find the biggest cluster and center the map on it
-                val biggestCluster = findBiggestCluster(newFeatureCollection)
-                if (biggestCluster != null) {
-                    centerMapOnLocation(mapView, biggestCluster)
-                }
-            }
+        return runCatching {
+            filteredData.map { data ->
+                data.appName
+            }.distinct()
+        }.getOrElse {
+            Log.e("GeoJsonUtils", "Error getting unique app names from GeoJson", it)
+            emptyList()
         }
     }
 
@@ -158,37 +257,11 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
-        return try {
-            val originalFeatureCollection = FeatureCollection.fromJson(assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() })
-
-            val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-            val filteredFeatures = originalFeatureCollection.features()?.mapNotNull { feature ->
-                val featureDateTime = LocalDateTime.parse(feature.getStringProperty("timestamp"), formatter)
-
-                if ((selectedAppName == null || feature.getStringProperty("appName") == selectedAppName) &&
-                    featureDateTime.isAfter(cutoffDateTime)) {
-                    feature.addNumberProperty("point_count_abbreviated", 1)
-                    feature
-                } else null
-            }
-
-            FeatureCollection.fromFeatures(filteredFeatures ?: emptyList())
-        } catch (e: Exception) {
-            FeatureCollection.fromFeatures(emptyList())
-        }
+    // Event handlers
+    protected open fun onSpinnerItemSelected() {
     }
 
-    companion object {
-        const val APP_USAGE_SOURCE_ID = "app-usage-source"
-        private const val CLUSTERS_LAYER_ID = "clusters"
-        private const val CLUSTER_COUNT_LAYER_ID = "cluster-count"
-    }
-
-
-
+    // Menu methods
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         menuInflater.inflate(R.menu.timespan_menu, menu)
@@ -220,29 +293,9 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun getUniqueAppNamesFromGeoJson(days: Int): List<String> {
-        val cutoffDateTime = LocalDateTime.now().minusDays(days.toLong())
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-        return runCatching {
-            assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { reader ->
-                val json = reader.readText()
-                val features = JSONObject(json).getJSONArray("features")
 
-                (0 until features.length()).mapNotNull { index ->
-                    val feature = features.getJSONObject(index)
-                    val properties = feature.getJSONObject("properties")
-                    val timestampStr = properties.getString("timestamp")
-                    val featureDateTime = LocalDateTime.parse(timestampStr, formatter)
 
-                    if (featureDateTime.isAfter(cutoffDateTime)) properties.getString("appName") else null
-                }.distinct()
-            }
-        }.getOrElse {
-            Log.e("GeoJsonUtils", "Error getting unique app names from GeoJson", it)
-            emptyList()
-        }
-    }
 
 
 }

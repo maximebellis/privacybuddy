@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_prim">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:columnCount="3">
+
+        <!-- Row 1 -->
+        <!-- Card 1: Subliminal -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewSubliminal"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_columnWeight="2"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewSubliminal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subliminal"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card 2: Foreground -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewForeground"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_columnWeight="2"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewForeground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Foreground"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card 3: Background -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewBackground"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="2"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Background"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
+    </GridLayout>
+
+    <!-- Row 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <!-- Card 4: Approximate -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewApproximate"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.5"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewApproximate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Approximate"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card 5: Precise -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewPrecise"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewPrecise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="Precise"
+                android:textColor="@color/text" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
