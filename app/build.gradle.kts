@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "be.kuleuven.privacybuddy2"
+        applicationId = "be.kuleuven.privacybuddy"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

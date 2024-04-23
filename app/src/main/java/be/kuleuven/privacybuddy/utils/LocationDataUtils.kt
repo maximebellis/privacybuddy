@@ -144,7 +144,7 @@ object LocationDataUtils {
                 }
             }
         accessStatsList.forEach { app ->
-            app.privacyScore = normalizeScore(app.privacyScore, -33.0, 0.0, 0.0, 100.0)
+            app.privacyScore = normalizeScore(app.privacyScore, 86.0, 100.0, 0.0, 100.0)
             Log.d("AppStats", app.toString())
         }
 
@@ -176,13 +176,14 @@ object LocationDataUtils {
                 penaltyPreciseSubliminal + penaltyApproximateSubliminal
 
         // Subtract the penalty and the impact of points of interest from the base score of 100
-        return 0 - (totalPenalty + stats.numberOfPOIs * 5)
+        return 100 - (totalPenalty + stats.numberOfPOIs * 5)
     }
 
 
 
     private fun normalizeScore(oldScore: Double, minOld: Double, maxOld: Double, minNew: Double, maxNew: Double): Double {
-        return ((oldScore - minOld) / (maxOld - minOld)) * (maxNew - minNew) + minNew
+        val score =  ((oldScore - minOld) / (maxOld - minOld)) * (maxNew - minNew) + minNew
+        return Math.max(0.0, Math.min(100.0, score))
     }
 
     private fun Feature.usageAndInteraction(usageType: String, interactionType: String): Boolean {
