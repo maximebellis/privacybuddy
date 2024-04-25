@@ -39,13 +39,33 @@
                 android:padding="16dp" />
         </androidx.cardview.widget.CardView>
 
+        <!-- Card 2: Background -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewBackground"
+            android:tag="@{false}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="2"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/background_sec">
+
+            <TextView
+                android:id="@+id/textViewBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Background"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
         <!-- Card 2: Foreground -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewForeground"
             android:tag="@{false}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_columnWeight="2"
             app:cardCornerRadius="8dp"
             app:cardBackgroundColor="@color/background_sec">
@@ -55,26 +75,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Foreground"
-                android:gravity="center"
-                android:textColor="@color/text"
-                android:padding="16dp" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- Card 3: Background -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewBackground"
-            android:tag="@{false}"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="2"
-            app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="@color/background_sec">
-
-            <TextView
-                android:id="@+id/textViewBackground"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Background"
                 android:gravity="center"
                 android:textColor="@color/text"
                 android:padding="16dp" />

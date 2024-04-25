@@ -18,7 +18,7 @@ class LocMapActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_map_location)
         setupToolbar()
-        updateMapText()
+        updateSubtitleText()
         setupMapView(findViewById(R.id.mapView), selectedAppName)
         setupSpinner()
     }
@@ -30,11 +30,11 @@ class LocMapActivity : BaseActivity() {
 
     override fun filterData(days: Int) {
         super.filterData(days)
-        updateMapText()
+        updateSubtitleText()
         updateMapView(findViewById(R.id.mapView), selectedAppName)
     }
 
-    private fun updateMapText() {
-        findViewById<TextView>(R.id.textViewMap).text = if (daysFilter > 1) getString(R.string.dashboard_text, daysFilter) else getString(R.string.dashboard_text_single_day)
+    private fun updateSubtitleText() {
+        findViewById<TextView>(R.id.pageSubTitleTextView).text = if (daysFilter > 1) getString(R.string.dashboard_text, daysFilter) else getString(R.string.dashboard_text_single_day)
     }
 }

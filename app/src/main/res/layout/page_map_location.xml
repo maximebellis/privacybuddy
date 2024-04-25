@@ -27,6 +27,17 @@
             android:textSize="32sp"
             tools:ignore="RtlCompat" />
 
+        <TextView
+            android:id="@+id/pageSubTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+
+            android:text="@string/dashboard_text"
+            android:textColor="@color/title_prim"
+            android:textSize="18sp" />
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,18 +66,6 @@
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
-
-       <TextView
-           android:id="@+id/textViewMap"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center"
-           android:layout_marginBottom="10dp"
-           android:gravity="center"
-           android:text="@string/dashboard_text"
-           android:textColor="@color/text"
-           android:textSize="16sp" />
-
 
        <androidx.cardview.widget.CardView
            android:layout_width="match_parent"

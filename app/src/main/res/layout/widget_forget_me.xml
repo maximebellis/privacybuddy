@@ -1,37 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/widgetDeleteAllMyData"
-    android:layout_width="wrap_content"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="32dp">
+    android:orientation="horizontal"
+    android:background="@color/background_prim"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/background_sec"
-        android:padding="16dp">
+
 
         <TextView
-            android:id="@+id/textViewLocation"
+            android:id="@+id/forgetMeTitleTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginRight="8dp"
             android:text="Delete all my data"
-            android:background="@color/background_sec"
             android:textColor="@color/title_prim"
-            android:textSize="24sp" />
+            android:textSize="12sp"
+            android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/ic_delete_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp"
 
-            android:src="@drawable/ic_delete_icon" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>

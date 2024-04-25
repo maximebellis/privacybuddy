@@ -68,7 +68,7 @@
 
 
         <activity
-            android:name=".ChooseAppActivity"
+            android:name=".LocInfoActivity"
             android:exported="true"
             android:theme="@style/Theme.PrivacyBuddy">
 

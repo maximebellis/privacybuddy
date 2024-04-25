@@ -30,6 +30,17 @@
                 android:textColor="@color/title_prim"
                 android:textSize="32sp" />
 
+            <TextView
+                android:id="@+id/pageSubTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+
+                android:text="@string/dashboard_text"
+                android:textColor="@color/title_prim"
+                android:textSize="18sp" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,17 +87,6 @@
                     android:indeterminate="true"
                     android:indeterminateTint="@color/title_prim"/>
 
-                <TextView
-                    android:id="@+id/textViewTimeline"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"
-                    android:gravity="start"
-                    android:text="@string/timeline_text"
-                    android:textColor="@color/text"
-                    android:textSize="15sp"
-                    android:visibility="gone"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewTimelineLocation"

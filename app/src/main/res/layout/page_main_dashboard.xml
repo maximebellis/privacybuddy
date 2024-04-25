@@ -20,9 +20,10 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+
             <TextView
                 android:id="@+id/dashboardTitleTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/dashboard_title"
@@ -30,57 +31,86 @@
                 android:textColor="@color/title_prim"
                 android:textSize="36sp" />
 
+
             <TextView
                 android:id="@+id/pageSubTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/dashboard_text"
-                android:textColor="@color/text"
-                android:textSize="16sp" />
+                android:textColor="@color/title_prim"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/filterTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="Select location access types you want to see"
+                    android:textColor="@color/text"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/dashboardInfoIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_info" />
+
+            </LinearLayout>
 
             <include layout="@layout/component_filter" />
 
 
-            <include layout="@layout/widget_map_location"
-                android:layout_marginBottom="16dp"
+            <LinearLayout
+                android:id="@+id/dashboardContent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <!--
-                        <include layout="@layout/widget_most_accessed_permissions"
-                            android:layout_marginBottom="16dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/title_prim"
+                    android:visibility="gone"/>
 
-            -->
-            <!--
-                       <include layout="@layout/widget_location"
-                           android:layout_marginBottom="16dp"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content" />
-            -->
-                       <include layout="@layout/widget_location_timeline"
-                           android:layout_marginBottom="16dp"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content" />
+                <include layout="@layout/widget_map_location"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
 
-                       <include layout="@layout/widget_top_apps"
-                           android:layout_marginBottom="16dp"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content" />
-
-                        <include layout="@layout/widget_forget_me"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
+                <include layout="@layout/widget_location_timeline"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"/>
 
 
+                <include layout="@layout/widget_top_apps"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
 
+            </LinearLayout>
 
-                   </LinearLayout>
-               </androidx.core.widget.NestedScrollView>
-           </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <include layout="@layout/widget_forget_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

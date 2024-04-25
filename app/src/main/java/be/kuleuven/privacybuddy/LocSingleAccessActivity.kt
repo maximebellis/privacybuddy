@@ -131,12 +131,6 @@ class LocSingleAccessActivity : BaseActivity() {
         valueTextView.text = dataValue
     }
 
-    override fun filterData(days: Int) {
-        daysFilter = days
-        //this page does not need to reload anything for this
-    }
-
-
     private fun getAccuracyDescription(accuracy: Double): String {
         return if (accuracy <= 5) {
             "a very precise location, such as which part of a room you are in."

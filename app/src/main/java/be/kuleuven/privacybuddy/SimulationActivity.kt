@@ -30,12 +30,6 @@ class SimulationActivity : BaseActivity() {
         "Dummy data 7",
         )
 
-
-    override fun filterData(days: Int) {
-        TODO("Not yet implemented")
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_simulation)

@@ -4,7 +4,10 @@ package be.kuleuven.privacybuddy
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -17,7 +20,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import be.kuleuven.privacybuddy.AppState.globalData
 import be.kuleuven.privacybuddy.AppState.selectedInteractionTypes
 import be.kuleuven.privacybuddy.AppState.selectedUsageTypes
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
@@ -25,9 +27,11 @@ import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import be.kuleuven.privacybuddy.utils.AppOpsUtility
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
-import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapView
-import be.kuleuven.privacybuddy.data.AppAccessStats
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : BaseActivity() {
 
@@ -50,15 +54,22 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initUI() {
+
         setupToolbarWithNestedScrollListener(R.id.nestedScrollView, R.id.dashboardTitleTextView, getString(R.string.dashboard_title))
         setupWidgetClickListeners()
         setupLocationEventsRecyclerView() // widget timeline
         setupMapWidget(null) // widget map
         updateTopAccessedAppsWidget() // widget top apps
 
-        updateDashboardText()
+        updateSubtitleText()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        val textView = findViewById<TextView>(R.id.forgetMeTitleTextView)
+        val content = textView.text.toString()
+        val spannableString = SpannableString(content)
+        spannableString.setSpan(UnderlineSpan(), 0, content.length, 0)
+        textView.text = spannableString
 
     }
     private fun updateWidgetEvents() {
@@ -108,6 +119,10 @@ class MainActivity : BaseActivity() {
                 startActivity(Intent(this, activityClass))
             }
         }
+        // link dashboardInfoIcon to page_info.xml
+        findViewById<ImageView>(R.id.dashboardInfoIcon).setOnClickListener {
+            startActivity(Intent(this, LocInfoActivity::class.java))
+        }
     }
 
     override fun filterData(days: Int) {
@@ -116,7 +131,7 @@ class MainActivity : BaseActivity() {
     }
 
 
-    private fun updateDashboardText() {
+    private fun updateSubtitleText() {
         val distinctAppsCount = AppState.topAccessedAppsCache?.map { it.appName }?.distinct()?.size ?: 0
 
         val dashboardTextId = if (daysFilter > 1) R.string.dashboard_text else R.string.dashboard_text_single_day
@@ -151,41 +166,44 @@ class MainActivity : BaseActivity() {
         }
     }
 
+
     private fun setupCardView(cardViewId: Int, textViewId: Int, type: String, isUsageType: Boolean) {
         val cardView = findViewById<CardView>(cardViewId)
         val textView = cardView.findViewById<TextView>(textViewId)
 
+        cardView.tag = Triple(type, isUsageType, false)
+
         cardView.setOnClickListener {
-            val isSelected = it.tag as? Boolean ?: false
-            it.tag = !isSelected
-            if (isSelected) {
-                // Change appearance to 'off' state
-                (it as CardView).setCardBackgroundColor(ContextCompat.getColor(this, R.color.background_sec))
-                textView.setTextColor(ContextCompat.getColor(this, R.color.text))
-                // Remove type from the list
-                if (isUsageType) {
-                    selectedUsageTypes.remove(type)
-                } else {
-                    selectedInteractionTypes.remove(type)
-                }
-            } else {
-                // Change appearance to 'on' state
-                (it as CardView).setCardBackgroundColor(ContextCompat.getColor(this, R.color.text))
-                textView.setTextColor(ContextCompat.getColor(this, R.color.background_sec))
-                // Add type to the list
-                if (isUsageType) {
-                    selectedUsageTypes.add(type)
-                } else {
-                    selectedInteractionTypes.add(type)
+            val (type, isUsageType, isSelected) = it.tag as Triple<String, Boolean, Boolean>
+            it.tag = Triple(type, isUsageType, !isSelected)
+            updateCardViewState(it, isSelected, textView, type, isUsageType)
+            CoroutineScope(Dispatchers.IO).launch {
+                LocationDataUtils.cacheAllLocationData(this@MainActivity)
+                withContext(Dispatchers.Main) {
+                    updateContent()
                 }
             }
-            // Filter the data
-            LocationDataUtils.cacheAllLocationData(this)
-            setupLocationEventsRecyclerView() // widget timeline
-            setupMapWidget(null) // widget map
-            updateTopAccessedAppsWidget() // widget top apps
-
         }
+    }
+
+    private fun updateCardViewState(view: View, isSelected: Boolean, textView: TextView, type: String, isUsageType: Boolean) {
+        val color = if (isSelected) R.color.background_sec else R.color.text
+        val textColor = if (isSelected) R.color.text else R.color.background_sec
+        val list = if (isUsageType) selectedUsageTypes else selectedInteractionTypes
+
+        (view as CardView).setCardBackgroundColor(ContextCompat.getColor(this, color))
+        textView.setTextColor(ContextCompat.getColor(this, textColor))
+
+        // Set text to bold if selected, normal otherwise
+        textView.setTypeface(null, if (isSelected) Typeface.NORMAL else Typeface.BOLD)
+
+        if (isSelected) list.remove(type) else list.add(type)
+    }
+
+    private fun updateContent() {
+        setupLocationEventsRecyclerView()
+        setupMapWidget(null)
+        updateTopAccessedAppsWidget()
     }
 
 

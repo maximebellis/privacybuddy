@@ -26,7 +26,7 @@ class LocTimelineActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_timeline_location)
         setupToolbar()
-
+        updateSubtitleText()
         setupRecyclerView()
         setupSpinner()
         refreshEvents()
@@ -43,8 +43,6 @@ class LocTimelineActivity : BaseActivity() {
         refreshEvents()
     }
 
-
-
     override fun onResume() {
         super.onResume()
         refreshEvents()
@@ -56,7 +54,7 @@ class LocTimelineActivity : BaseActivity() {
     }
 
     private fun refreshEvents() = coroutineScope.launch {
-        toggleViewsVisibility(View.VISIBLE, View.GONE, View.GONE)
+        toggleViewsVisibility(View.VISIBLE, View.GONE)
 
         val events = withContext(Dispatchers.IO) {
             filterGlobalData(selectedAppName)
@@ -66,24 +64,23 @@ class LocTimelineActivity : BaseActivity() {
         }
         withContext(Dispatchers.Main) {
             adapter.submitList(groupedEvents)
-            toggleViewsVisibility(View.GONE, View.VISIBLE, View.VISIBLE)
+            toggleViewsVisibility(View.GONE, View.VISIBLE)
         }
-        updateTimelineText()
+        updateSubtitleText()
     }
 
-    private fun toggleViewsVisibility(progressBarVisibility: Int, textViewVisibility: Int, recyclerViewVisibility: Int) {
+    private fun toggleViewsVisibility(progressBarVisibility: Int, recyclerViewVisibility: Int) {
         findViewById<ProgressBar>(R.id.progressBar).visibility = progressBarVisibility
-        findViewById<TextView>(R.id.textViewTimeline).visibility = textViewVisibility
         findViewById<RecyclerView>(R.id.recyclerViewTimelineLocation).visibility = recyclerViewVisibility
     }
 
     override fun filterData(days: Int) {
         super.filterData(days)
+        updateSubtitleText()
         refreshEvents()
     }
 
-    private fun updateTimelineText() {
-        val timelineTextId = if (daysFilter > 1) R.string.timeline_text else R.string.timeline_text_single_day
-        findViewById<TextView>(R.id.textViewTimeline).text = getString(timelineTextId, daysFilter)
+    private fun updateSubtitleText() {
+        findViewById<TextView>(R.id.pageSubTitleTextView).text = if (daysFilter > 1) getString(R.string.dashboard_text, daysFilter) else getString(R.string.dashboard_text_single_day)
     }
 }

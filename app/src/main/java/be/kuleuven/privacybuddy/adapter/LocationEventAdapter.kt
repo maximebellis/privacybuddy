@@ -38,6 +38,13 @@ class LocationEventAdapter(private val context: Context, private val isWidget: B
 
         override fun bind(item: TimelineItem) {
             dateLabel.text = formatDateLabel((item as TimelineItem.DateLabel).date)
+
+            if (isWidget) {
+                itemView.setOnClickListener {
+                    val intent = Intent(context, LocTimelineActivity::class.java)
+                    context.startActivity(intent)
+                }
+            }
         }
     }
 

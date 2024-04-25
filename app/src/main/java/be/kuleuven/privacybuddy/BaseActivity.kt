@@ -151,8 +151,10 @@ abstract class BaseActivity : AppCompatActivity() {
     // Data processing methods
     protected open fun filterData(days: Int) {
         daysFilter = days
-        LocationDataUtils.cacheAllLocationData(this, days = daysFilter)
-        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+        CoroutineScope(Dispatchers.IO).launch {
+            LocationDataUtils.cacheAllLocationData(this@BaseActivity, days = daysFilter)
+            LocationDataUtils.buildAppAccessStatsFromGeoJson(this@BaseActivity)
+        }
     }
 
     private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
