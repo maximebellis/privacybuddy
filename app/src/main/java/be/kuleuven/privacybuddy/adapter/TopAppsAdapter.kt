@@ -12,6 +12,7 @@ import be.kuleuven.privacybuddy.R
 import android.content.Context
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import android.graphics.Color
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 
 enum class DisplayMode {
     ACCESS_COUNT,
@@ -57,7 +58,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
                 holder.textViewAppAccesses.text = String.format("Privacy Score: %.1f", app.privacyScore)
                 holder.progressBarAppUsage.progress = app.privacyScore.toInt()
                 holder.progressBarAppUsage.progressDrawable.setColorFilter(
-                    getPrivacyScoreColor(app.privacyScore), android.graphics.PorterDuff.Mode.SRC_IN)
+                    LocationDataUtils.getPrivacyScoreColor(app.privacyScore), android.graphics.PorterDuff.Mode.SRC_IN)
             }
         }
     }
@@ -68,49 +69,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
         DisplayMode.PRIVACY_SCORE -> 100  // Since privacy score is scaled between 0 and 100
     }
 
-    private fun getPrivacyScoreColor(score: Double): Int {
-        val colorStops = arrayOf(
-            Pair(100.0, Color.parseColor("#4CAF50")), // Vibrant Green
-            Pair(80.0, Color.parseColor("#8BC34A")), // Light Green
-            Pair(60.0, Color.parseColor("#CDDC39")), // Lime
-            Pair(40.0, Color.parseColor("#FFEB3B")), // Bright Yellow
-            Pair(20.0, Color.parseColor("#FFC107")), // Amber
-            Pair(0.0, Color.parseColor("#F44336"))   // Bright Red
-        )
 
-        // Find the two color stops between which the score lies
-        val lowerStop = colorStops.last { it.first <= score }
-        val upperStop = colorStops.first { it.first >= score }
-
-        // Calculate the ratio between the two stops
-        val ratio = (score - lowerStop.first) / (upperStop.first - lowerStop.first)
-
-        // Interpolate the colors
-        return interpolateColor(lowerStop.second, upperStop.second, ratio.toFloat())
-    }
-
-    private fun interpolateColor(colorStart: Int, colorEnd: Int, fraction: Float): Int {
-        val startA = Color.alpha(colorStart)
-        val startR = Color.red(colorStart)
-        val startG = Color.green(colorStart)
-        val startB = Color.blue(colorStart)
-
-        val endA = Color.alpha(colorEnd)
-        val endR = Color.red(colorEnd)
-        val endG = Color.green(colorEnd)
-        val endB = Color.blue(colorEnd)
-
-        val newA = interpolate(startA, endA, fraction)
-        val newR = interpolate(startR, endR, fraction)
-        val newG = interpolate(startG, endG, fraction)
-        val newB = interpolate(startB, endB, fraction)
-
-        return Color.argb(newA, newR, newG, newB)
-    }
-
-    private fun interpolate(start: Int, end: Int, fraction: Float): Int {
-        return (start + (end - start) * fraction).toInt()
-    }
 
     override fun getItemCount() = topApps.size
 
