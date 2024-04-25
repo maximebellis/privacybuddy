@@ -30,6 +30,7 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import com.mapbox.maps.MapView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -37,6 +38,7 @@ class MainActivity : BaseActivity() {
 
     private lateinit var locationEventAdapter: LocationEventAdapter
     private lateinit var mapView: MapView
+    private var cacheDataJob: Job? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +53,11 @@ class MainActivity : BaseActivity() {
         setupCardView(R.id.cardViewBackground, R.id.textViewBackground, "background", false)
         setupCardView(R.id.cardViewApproximate, R.id.textViewApproximate, "approximate", true)
         setupCardView(R.id.cardViewPrecise, R.id.textViewPrecise, "precise", true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateContent()
     }
 
     private fun initUI() {
@@ -177,7 +184,8 @@ class MainActivity : BaseActivity() {
             val (type, isUsageType, isSelected) = it.tag as Triple<String, Boolean, Boolean>
             it.tag = Triple(type, isUsageType, !isSelected)
             updateCardViewState(it, isSelected, textView, type, isUsageType)
-            CoroutineScope(Dispatchers.IO).launch {
+            cacheDataJob?.cancel()
+            cacheDataJob = CoroutineScope(Dispatchers.IO).launch {
                 LocationDataUtils.cacheAllLocationData(this@MainActivity)
                 withContext(Dispatchers.Main) {
                     updateContent()
