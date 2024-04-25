@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -127,29 +128,44 @@ class MainActivity : BaseActivity() {
 
     private fun updateTopAccessedAppsWidget() {
         val container = findViewById<LinearLayout>(R.id.containerAppViews)
-        val topApps = AppState.topAccessedAppsCache?.sortedBy { it.privacyScore }?.take(3) ?: emptyList()
         container.removeAllViews()
 
-        val maxScore = 100
+        if (daysFilter == 1) {
+            val messageView = TextView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    setMargins(10, 10, 20, 20)
+                }
+                gravity = Gravity.START
+                setText(R.string.privacy_scores_not_calculated)
+                setTextColor(ContextCompat.getColor(context, R.color.text))
+                textSize = 15f
+            }
+            container.addView(messageView)
+        } else {
+            val topApps = AppState.topAccessedAppsCache?.sortedBy { it.privacyScore }?.take(3) ?: emptyList()
+            val maxScore = 100
 
-        topApps.forEach { appStats ->
-            val appView = LayoutInflater.from(this).inflate(R.layout.component_top_app, container, false)
+            topApps.forEach { appStats ->
+                val appView = LayoutInflater.from(this).inflate(R.layout.component_top_app, container, false)
 
-            appView.findViewById<TextView>(R.id.textViewAppName).text = appStats.appName
-            val formattedPrivacyScore = String.format("%.1f", appStats.privacyScore)
-            appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "Privacy Score: $formattedPrivacyScore"
+                appView.findViewById<TextView>(R.id.textViewAppName).text = appStats.appName
+                val formattedPrivacyScore = String.format("%.1f", appStats.privacyScore)
+                appView.findViewById<TextView>(R.id.textViewAppAccesses).text = "Privacy Score: $formattedPrivacyScore"
 
-            val progressBar = appView.findViewById<ProgressBar>(R.id.progressBarAppUsage)
-            progressBar.max = maxScore
-            progressBar.progress = appStats.privacyScore.toInt()
-            progressBar.progressDrawable.setColorFilter(getPrivacyScoreColor(appStats.privacyScore), PorterDuff.Mode.SRC_IN)
+                val progressBar = appView.findViewById<ProgressBar>(R.id.progressBarAppUsage)
+                progressBar.max = maxScore
+                progressBar.progress = appStats.privacyScore.toInt()
+                progressBar.progressDrawable.setColorFilter(getPrivacyScoreColor(appStats.privacyScore), PorterDuff.Mode.SRC_IN)
 
-            val appIcon = this.getAppIconByName(appStats.appName)
-            appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
+                val appIcon = getAppIconByName(appStats.appName)
+                appView.findViewById<ImageView>(R.id.imageViewAppIcon).setImageDrawable(appIcon)
 
-            container.addView(appView)
+                container.addView(appView)
+            }
         }
     }
+
+
 
     private fun setupCardView(cardViewId: Int, textViewId: Int, type: String, isUsageType: Boolean) {
         val cardView = findViewById<CardView>(cardViewId)

@@ -24,21 +24,41 @@ class LocTopAppsActivity : BaseActivity() {
     override fun filterData(days: Int) {
         daysFilter = days
         LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
-        initUI()
+        updateUIBasedOnDays(days)
+    }
+
+
+    private fun updateUIBasedOnDays(days: Int) {
+        if (days == 1) {
+            textViewDescription.text = getString(R.string.privacy_scores_not_calculated)
+            updateTopAccessedApps(emptyList(), currentDisplayMode)
+        } else {
+            textViewDescription.text = "This list ranks your apps by their privacy score, where a higher score indicates better privacy practices.\nShowing data for $days days."
+            AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, currentDisplayMode)
+                sortAppsBasedOnCurrentDisplayMode()
+            }
+        }
+    }
+
+    private fun sortAppsBasedOnCurrentDisplayMode() {
+        when (currentDisplayMode) {
+            DisplayMode.ACCESS_COUNT -> sortAppsByAccessCount()
+            DisplayMode.FREQUENCY -> sortAppsByFrequency()
+            DisplayMode.PRIVACY_SCORE -> sortAppsByPrivacyScore()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_top_apps)
-
         initUI()
         setupToolbar()
         AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, currentDisplayMode) }
-        sortAppsByPrivacyScore()
         val topAppsTextViewChoice: TextView = findViewById(R.id.topAppsTextViewChoice)
         topAppsTextViewChoice.setOnClickListener {
             showSortingPopup(it)
         }
+        updateUIBasedOnDays(daysFilter)
     }
 
     private fun initUI() {
@@ -80,11 +100,8 @@ class LocTopAppsActivity : BaseActivity() {
 
         anchor.post {
             val location = IntArray(2)
-            // Get the location of the anchor view on the screen
             anchor.getLocationOnScreen(location)
-            // Get the screen width
             val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-            // Set the width of the popup menu to match the anchor view
             popup.menu.findItem(R.id.menu_location_accesses).actionView?.layoutParams?.width = screenWidth - location[0] - anchor.paddingRight
         }
 

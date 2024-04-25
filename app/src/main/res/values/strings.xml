@@ -59,6 +59,9 @@
     <string name="sort_by_frequency">Access frequency</string>
     <string name="sort_by_privacy_score">Privacy score</string>
 
+    <string name="privacy_scores_not_calculated">Privacy scores are not calculated for one day because we need more data to average out.</string>
+
+
 
 
 </resources>
