@@ -70,7 +70,7 @@ class LocSingleAccessActivity : BaseActivity() {
         accuracy?.let {
             val formattedAccuracy = formatNumberWithUnit(it, "m")
             val accuracyTextView = findViewById<TextView>(R.id.textViewDataValueAccuracy)
-            accuracyTextView.text = "Accuracy: $formattedAccuracy"
+            accuracyTextView.text = "$formattedAccuracy"
             setupInfoButton(R.id.imageViewInfo, getString(R.string.info_accuracy, it.toInt(), getAccuracyDescription(it)))
         }
     }
@@ -79,7 +79,7 @@ class LocSingleAccessActivity : BaseActivity() {
         bearing?.let {
             val formattedBearing = formatNumberWithUnit(it, "°")
             val BearingTextView = findViewById<TextView>(R.id.textViewDataValueBearing)
-            BearingTextView.text = "Accuracy: $formattedBearing"
+            BearingTextView.text = "$formattedBearing"
             setupInfoButton(R.id.imageViewInfoBearing, getString(R.string.info_bearing))
         }
     }

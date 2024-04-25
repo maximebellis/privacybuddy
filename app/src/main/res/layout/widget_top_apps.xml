@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Most location accesses"
+            android:text="Apps by privacy score"
             android:textColor="@color/title_prim"
             android:textSize="24sp" />
 
