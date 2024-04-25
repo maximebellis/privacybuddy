@@ -59,7 +59,9 @@
     <string name="sort_by_frequency">Access frequency</string>
     <string name="sort_by_privacy_score">Privacy score</string>
 
-    <string name="privacy_scores_not_calculated">Privacy scores are not calculated for one day because we need more data to average out.</string>
+    <string name="privacy_scores_not_calculated">Privacy scores require more than one day of data to ensure accuracy of the calculation.</string>
+    <string name="privacy_score_explanation">Privacy Score is derived by analyzing daily app accesses: less frequent and less intrusive accesses lead to a higher score. Penalties are applied based on access type and frequency, reducing the base score of 100.</string>
+
 
 
 

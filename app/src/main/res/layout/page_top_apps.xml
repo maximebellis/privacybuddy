@@ -30,11 +30,15 @@
                 android:textColor="@color/title_prim"
                 android:textSize="32sp" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/topAppsTextViewChoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="50dp"
                 android:drawableEnd="@drawable/ic_dropdown_arrow"
                 android:drawableTint="@color/title_prim"
                 android:clickable="true"
@@ -50,6 +54,16 @@
                 android:onClick="onTitleClick"
                 android:gravity="center_vertical|start"
             />
+                <ImageView
+                    android:id="@+id/infoButton"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_info"
+       />
+            </RelativeLayout>
+
 
 
             <TextView

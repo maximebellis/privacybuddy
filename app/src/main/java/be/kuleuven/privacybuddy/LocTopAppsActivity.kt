@@ -3,8 +3,13 @@ package be.kuleuven.privacybuddy
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.ContextThemeWrapper
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +20,7 @@ import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.data.AppAccessStats
 
 class LocTopAppsActivity : BaseActivity() {
+
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var topAppsAdapter: TopAppsAdapter
@@ -41,12 +47,22 @@ class LocTopAppsActivity : BaseActivity() {
     }
 
     private fun sortAppsBasedOnCurrentDisplayMode() {
+        val infoButton: ImageView = findViewById(R.id.infoButton)
         when (currentDisplayMode) {
-            DisplayMode.ACCESS_COUNT -> sortAppsByAccessCount()
-            DisplayMode.FREQUENCY -> sortAppsByFrequency()
-            DisplayMode.PRIVACY_SCORE -> sortAppsByPrivacyScore()
+            DisplayMode.ACCESS_COUNT, DisplayMode.FREQUENCY -> {
+                infoButton.visibility = View.GONE
+                sortAppsByAccessCount()
+            }
+            DisplayMode.PRIVACY_SCORE -> {
+                infoButton.visibility = View.VISIBLE
+                sortAppsByPrivacyScore()
+                infoButton.setOnClickListener {
+                    showInfoPopup(it, getString(R.string.privacy_score_explanation))
+                }
+            }
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +75,7 @@ class LocTopAppsActivity : BaseActivity() {
             showSortingPopup(it)
         }
         updateUIBasedOnDays(daysFilter)
+
     }
 
     private fun initUI() {
@@ -66,7 +83,39 @@ class LocTopAppsActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         textViewDescription = findViewById(R.id.textViewTimeline)
         AppState.topAccessedAppsCache?.let { updateTopAccessedApps(it, currentDisplayMode) }
+
+        val infoButton: ImageView = findViewById(R.id.infoButton)
+        if (currentDisplayMode == DisplayMode.PRIVACY_SCORE) {
+            infoButton.visibility = View.VISIBLE
+            infoButton.setOnClickListener {
+                showInfoPopup(it, getString(R.string.privacy_score_explanation))
+            }
+        } else {
+            infoButton.visibility = View.GONE
+        }
     }
+
+    private fun showInfoPopup(anchor: View, text: String) {
+        val inflater = LayoutInflater.from(anchor.context)
+        val popupView = inflater.inflate(R.layout.popup_info, null)
+        val textViewPopupContent: TextView = popupView.findViewById(R.id.textViewPopupContent)
+        textViewPopupContent.text = text
+
+        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true).apply {
+            elevation = 10f
+            isOutsideTouchable = true
+        }
+
+        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val xOff = anchor.width / 2 - popupView.measuredWidth / 2
+        val yOff = -popupView.measuredHeight
+
+        popupWindow.showAsDropDown(anchor, xOff, yOff, Gravity.START)
+    }
+
+
+
+
 
     private fun showSortingPopup(anchor: View) {
         val wrapper = ContextThemeWrapper(this, R.style.PopupMenuStyle)
@@ -110,20 +159,29 @@ class LocTopAppsActivity : BaseActivity() {
 
 
     private fun sortAppsByAccessCount(): Boolean {
+        val infoButton: ImageView = findViewById(R.id.infoButton)
         val sortedList = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses } ?: emptyList()
         updateTopAccessedApps(sortedList, DisplayMode.ACCESS_COUNT)
+        infoButton.visibility = View.GONE
         return true
     }
 
     private fun sortAppsByFrequency(): Boolean {
+        val infoButton: ImageView = findViewById(R.id.infoButton)
         val sortedList = AppState.topAccessedAppsCache?.sortedByDescending { it.totalAccesses.toDouble() / it.days } ?: emptyList()
         updateTopAccessedApps(sortedList, DisplayMode.FREQUENCY)
+        infoButton.visibility = View.GONE
         return true
     }
 
     private fun sortAppsByPrivacyScore(): Boolean {
+        val infoButton: ImageView = findViewById(R.id.infoButton)
         val sortedList = AppState.topAccessedAppsCache?.sortedBy { it.privacyScore } ?: emptyList()
         updateTopAccessedApps(sortedList, DisplayMode.PRIVACY_SCORE)
+        infoButton.visibility = View.VISIBLE
+        infoButton.setOnClickListener {
+            showInfoPopup(it, getString(R.string.privacy_score_explanation))
+        }
         return true
     }
 
