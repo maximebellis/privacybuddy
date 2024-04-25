@@ -1,6 +1,7 @@
 package be.kuleuven.privacybuddy.utils
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import be.kuleuven.privacybuddy.AppState
 import be.kuleuven.privacybuddy.AppState.globalData
@@ -177,6 +178,50 @@ object LocationDataUtils {
 
         // Subtract the penalty and the impact of points of interest from the base score of 100
         return 100 - (totalPenalty + stats.numberOfPOIs * 5)
+    }
+
+    fun getPrivacyScoreColor(score: Double): Int {
+        val colorStops = arrayOf(
+            Pair(100.0, Color.parseColor("#4CAF50")), // Vibrant Green
+            Pair(80.0, Color.parseColor("#8BC34A")), // Light Green
+            Pair(60.0, Color.parseColor("#CDDC39")), // Lime
+            Pair(40.0, Color.parseColor("#FFEB3B")), // Bright Yellow
+            Pair(20.0, Color.parseColor("#FFC107")), // Amber
+            Pair(0.0, Color.parseColor("#F44336"))   // Bright Red
+        )
+
+        // Find the two color stops between which the score lies
+        val lowerStop = colorStops.last { it.first <= score }
+        val upperStop = colorStops.first { it.first >= score }
+
+        // Calculate the ratio between the two stops
+        val ratio = (score - lowerStop.first) / (upperStop.first - lowerStop.first)
+
+        // Interpolate the colors
+        return interpolateColor(lowerStop.second, upperStop.second, ratio.toFloat())
+    }
+
+    private fun interpolateColor(colorStart: Int, colorEnd: Int, fraction: Float): Int {
+        val startA = Color.alpha(colorStart)
+        val startR = Color.red(colorStart)
+        val startG = Color.green(colorStart)
+        val startB = Color.blue(colorStart)
+
+        val endA = Color.alpha(colorEnd)
+        val endR = Color.red(colorEnd)
+        val endG = Color.green(colorEnd)
+        val endB = Color.blue(colorEnd)
+
+        val newA = interpolate(startA, endA, fraction)
+        val newR = interpolate(startR, endR, fraction)
+        val newG = interpolate(startG, endG, fraction)
+        val newB = interpolate(startB, endB, fraction)
+
+        return Color.argb(newA, newR, newG, newB)
+    }
+
+    private fun interpolate(start: Int, end: Int, fraction: Float): Int {
+        return (start + (end - start) * fraction).toInt()
     }
 
 
