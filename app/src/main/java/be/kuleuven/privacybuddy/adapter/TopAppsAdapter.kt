@@ -10,9 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import be.kuleuven.privacybuddy.data.AppAccessStats  // Import AppAccessStats instead of AppAccessInfo
 import be.kuleuven.privacybuddy.R
 import android.content.Context
+import android.content.Intent
 import be.kuleuven.privacybuddy.extension.getAppIconByName
 import android.graphics.Color
+import android.view.ContextThemeWrapper
+import android.view.Menu
+import android.widget.PopupMenu
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
+import be.kuleuven.privacybuddy.LocMapActivity
+import be.kuleuven.privacybuddy.LocTimelineActivity
 
 enum class DisplayMode {
     ACCESS_COUNT,
@@ -29,6 +35,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
         val textViewAppName: TextView = view.findViewById(R.id.textViewAppName)
         val textViewAppAccesses: TextView = view.findViewById(R.id.textViewAppAccesses)
         val progressBarAppUsage: ProgressBar = view.findViewById(R.id.progressBarAppUsage)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -61,6 +68,38 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
                     LocationDataUtils.getPrivacyScoreColor(app.privacyScore), android.graphics.PorterDuff.Mode.SRC_IN)
             }
         }
+
+        holder.itemView.setOnClickListener { view ->
+            showPopupMenu(view, app.appName)
+        }
+    }
+
+    private fun showPopupMenu(view: View, appName: String) {
+        val wrapper = ContextThemeWrapper(view.context, R.style.PopupMenuStyle)
+        val popup = PopupMenu(wrapper, view)
+        popup.menu.add(Menu.NONE, Menu.NONE, 0, "Go to map for $appName")
+        popup.menu.add(Menu.NONE, Menu.NONE, 1, "Go to timeline for $appName")
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.order) {
+                0 -> {  // Map
+                    val intent = Intent(context, LocMapActivity::class.java).apply {
+                        putExtra("APP_NAME", appName)
+                    }
+                    context.startActivity(intent)
+                    true
+                }
+                1 -> {  // Timeline
+                    val intent = Intent(context, LocTimelineActivity::class.java).apply {
+                        putExtra("APP_NAME", appName)
+                    }
+                    context.startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun calculateMaxForMode(): Int = when (displayMode) {

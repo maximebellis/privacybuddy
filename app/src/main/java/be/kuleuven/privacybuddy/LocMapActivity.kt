@@ -19,6 +19,7 @@ class LocMapActivity : BaseActivity() {
         setContentView(R.layout.page_map_location)
         setupToolbar()
         updateSubtitleText()
+        selectedAppName = intent.getStringExtra("APP_NAME")
         setupMapView(findViewById(R.id.mapView), selectedAppName)
         setupSpinner()
     }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/ctp_map"
+        android:title="Go to map for" />
+    <item android:id="@+id/ctp_timeline"
+        android:title="Go to timeline for" />
+</menu>
