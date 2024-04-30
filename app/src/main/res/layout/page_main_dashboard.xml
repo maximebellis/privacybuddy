@@ -20,7 +20,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-
             <TextView
                 android:id="@+id/dashboardTitleTextView"
                 android:layout_width="wrap_content"
@@ -53,14 +52,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="Select location access types you want to see"
+                    android:text="Select location access types you want to see      "
                     android:textColor="@color/text"
                     android:textSize="16sp" />
 
                 <ImageView
                     android:id="@+id/dashboardInfoIcon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/ic_info" />

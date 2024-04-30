@@ -122,20 +122,31 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp">
 
+                <!-- ImageView to display the icon -->
+                <ImageView
+                    android:id="@+id/imageViewMarker"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_red_marker"
+
+
+                android:layout_gravity="center_vertical" />
+
+                <!-- TextView for displaying the address -->
                 <TextView
                     android:id="@+id/textViewAdress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/textViewDataName"
-                    android:text="Grote Steenweg 470, 3350 Linter"
-                    android:textSize="20sp"
-                    android:textColor="@color/text" />
-
+                    android:layout_marginStart="10dp"
+                android:text="Grote Steenweg 470, 3350 Linter"
+                android:textSize="20sp"
+                android:textColor="@color/text" />
             </LinearLayout>
 
 
 
-                <TextView
+
+            <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"

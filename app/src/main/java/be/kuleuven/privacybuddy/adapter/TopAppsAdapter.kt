@@ -75,10 +75,12 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
     }
 
     private fun showPopupMenu(view: View, appName: String) {
-        val wrapper = ContextThemeWrapper(view.context, R.style.PopupMenuStyle)
+        val wrapper = ContextThemeWrapper(context, R.style.PopupMenuStyle)
         val popup = PopupMenu(wrapper, view)
-        popup.menu.add(Menu.NONE, Menu.NONE, 0, "Go to map for $appName")
-        popup.menu.add(Menu.NONE, Menu.NONE, 1, "Go to timeline for $appName")
+        popup.menu.apply {
+            add(Menu.NONE, Menu.NONE, 0, "Go to map for $appName")
+            add(Menu.NONE, Menu.NONE, 1, "Go to timeline for $appName")
+        }
 
         popup.setOnMenuItemClickListener { item ->
             when (item.order) {
@@ -101,6 +103,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
         }
         popup.show()
     }
+
 
     private fun calculateMaxForMode(): Int = when (displayMode) {
         DisplayMode.ACCESS_COUNT -> topApps.maxOfOrNull { it.totalAccesses } ?: 1

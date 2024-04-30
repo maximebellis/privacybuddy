@@ -47,7 +47,7 @@ class LocSingleAccessActivity : BaseActivity() {
         mapView = findViewById(R.id.mapView)
         initializeMap(locationData?.latitude ?: 0.0, locationData?.longitude ?: 0.0)
         val textViewAddress = findViewById<TextView>(R.id.textViewAdress)
-        textViewAddress.text = "No address found"
+        textViewAddress.text = "Nonnenhoefstraat 7 Aarschot"
     }
 
     private fun setupDataEntries(data: LocationData) {

@@ -145,7 +145,7 @@ object LocationDataUtils {
                 }
             }
         accessStatsList.forEach { app ->
-            app.privacyScore = normalizeScore(app.privacyScore, 86.0, 100.0, 0.0, 100.0)
+            app.privacyScore = normalizeScore(app.privacyScore, 82.0, 100.0, 0.0, 100.0)
             Log.d("AppStats", app.toString())
         }
 
@@ -163,13 +163,18 @@ object LocationDataUtils {
         val dailyPreciseSubliminal = stats.preciseSubliminalAccesses.toDouble() / stats.days
         val dailyApproximateSubliminal = stats.approximateSubliminalAccesses.toDouble() / stats.days
 
-        // Assign penalties
-        val penaltyPreciseForeground = dailyPreciseForeground * 0.1  // lower penalty for foreground
-        val penaltyApproximateForeground = dailyApproximateForeground * 0.05
-        val penaltyPreciseBackground = dailyPreciseBackground * 0.2  // higher penalty for background
-        val penaltyApproximateBackground = dailyApproximateBackground * 0.1
-        val penaltyPreciseSubliminal = dailyPreciseSubliminal * 0.4  // highest penalty for subliminal
-        val penaltyApproximateSubliminal = dailyApproximateSubliminal * 0.2
+        val peopleAsked = 2
+        val weightPreciseForeground = 0.1
+        val weightPreciseBackground = weightPreciseForeground * (3+3)/peopleAsked
+        val weightPreciseSubliminal = weightPreciseForeground * (10+8)/peopleAsked
+        val relativeWeightApproxToPrecise = (0.2+0.5)/peopleAsked
+
+        val penaltyPreciseForeground = dailyPreciseForeground * weightPreciseForeground
+        val penaltyApproximateForeground = dailyApproximateForeground * relativeWeightApproxToPrecise
+        val penaltyPreciseBackground = dailyPreciseBackground * weightPreciseBackground
+        val penaltyApproximateBackground = dailyApproximateBackground * relativeWeightApproxToPrecise
+        val penaltyPreciseSubliminal = dailyPreciseSubliminal * weightPreciseSubliminal
+        val penaltyApproximateSubliminal = dailyApproximateSubliminal * relativeWeightApproxToPrecise
 
         // Total penalty is the sum of all penalties
         val totalPenalty = penaltyPreciseForeground + penaltyApproximateForeground +
@@ -177,7 +182,7 @@ object LocationDataUtils {
                 penaltyPreciseSubliminal + penaltyApproximateSubliminal
 
         // Subtract the penalty and the impact of points of interest from the base score of 100
-        return 100 - (totalPenalty + stats.numberOfPOIs * 5)
+        return 100 - (totalPenalty + stats.numberOfPOIs * 7)
     }
 
     fun getPrivacyScoreColor(score: Double): Int {

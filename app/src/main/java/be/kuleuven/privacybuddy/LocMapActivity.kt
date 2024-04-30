@@ -1,6 +1,7 @@
 package be.kuleuven.privacybuddy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
@@ -19,8 +20,10 @@ class LocMapActivity : BaseActivity() {
         setContentView(R.layout.page_map_location)
         setupToolbar()
         updateSubtitleText()
-        selectedAppName = intent.getStringExtra("APP_NAME")
         setupMapView(findViewById(R.id.mapView), selectedAppName)
+        selectedAppName = intent.getStringExtra("APP_NAME")
+        Log.d("LocMapActivity", "App Name: $selectedAppName")
+        updateMapView(findViewById(R.id.mapView), selectedAppName)
         setupSpinner()
     }
 
@@ -34,6 +37,7 @@ class LocMapActivity : BaseActivity() {
         updateSubtitleText()
         updateMapView(findViewById(R.id.mapView), selectedAppName)
     }
+
 
     private fun updateSubtitleText() {
         findViewById<TextView>(R.id.pageSubTitleTextView).text = if (daysFilter > 1) getString(R.string.dashboard_text, daysFilter) else getString(R.string.dashboard_text_single_day)
