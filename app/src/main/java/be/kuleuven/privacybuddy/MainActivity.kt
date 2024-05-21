@@ -2,12 +2,14 @@ package be.kuleuven.privacybuddy
 
 
 import android.content.Intent
-import android.graphics.Color
+import android.database.Cursor
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -26,9 +28,7 @@ import be.kuleuven.privacybuddy.AppState.selectedUsageTypes
 import be.kuleuven.privacybuddy.BaseActivity.AppSettings.daysFilter
 import be.kuleuven.privacybuddy.adapter.LocationEventAdapter
 import be.kuleuven.privacybuddy.extension.getAppIconByName
-import be.kuleuven.privacybuddy.utils.AppOpsUtility
 import be.kuleuven.privacybuddy.utils.LocationDataUtils
-
 import com.mapbox.maps.MapView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,16 +45,46 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AppState.clearTopAccessedAppsCache()
+
+        LocationDataUtils.buildAppAccessStatsFromGeoJson(this)
+        LocationDataUtils.cacheAllLocationData(this)
+
         setContentView(R.layout.page_main_dashboard)
         setupToolbar()
         initUI()
-        AppOpsUtility.setupLocationAccessListener(this)
 
         setupCardView(R.id.cardViewSubliminal, R.id.textViewSubliminal, "subliminal", false)
         setupCardView(R.id.cardViewForeground, R.id.textViewForeground, "foreground", false)
         setupCardView(R.id.cardViewBackground, R.id.textViewBackground, "background", false)
         setupCardView(R.id.cardViewApproximate, R.id.textViewApproximate, "approximate", true)
         setupCardView(R.id.cardViewPrecise, R.id.textViewPrecise, "precise", true)
+
+        val uri: Uri = Uri.parse("content://be.kuleuven.locationusagescontentprovider/data")
+        Log.d("PermissionLogDebug", "URI: $uri")
+        try {
+            Log.d("PermissionLogDebug", "Trying to access the provider")
+            val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
+            Log.d("PermissionLogDebug", "Cursor: $cursor")
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    val packageNameIndex = cursor.getColumnIndex("packageName")
+                    val permissionGroupIndex = cursor.getColumnIndex("permissionGroup")
+                    val accessTimeIndex = cursor.getColumnIndex("accessTime")
+
+                    val packageName = if (packageNameIndex != -1) cursor.getString(packageNameIndex) else null
+                    val permissionGroup = if (permissionGroupIndex != -1) cursor.getString(permissionGroupIndex) else null
+                    val accessTime = if (accessTimeIndex != -1) cursor.getString(accessTimeIndex) else null
+                    // Log the data
+                    Log.d("PermissionLogDebug", "packageName: $packageName, permissionGroup: $permissionGroup, accessTime: $accessTime")
+                } while (cursor.moveToNext())
+                cursor.close()
+            }
+        } catch (e: Exception) {
+            Log.d("PermissionLogDebug", "Exception: ${e.message}")
+        }
+
     }
 
     override fun onResume() {
@@ -213,8 +243,6 @@ class MainActivity : BaseActivity() {
 
         (view as CardView).setCardBackgroundColor(ContextCompat.getColor(this, color))
         textView.setTextColor(ContextCompat.getColor(this, textColor))
-
-        // Set text to bold if selected, normal otherwise
         textView.setTypeface(null, if (isSelected) Typeface.NORMAL else Typeface.BOLD)
 
         if (isSelected) list.remove(type) else list.add(type)

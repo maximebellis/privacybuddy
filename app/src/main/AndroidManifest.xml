@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WATCH_APP_USAGE"/>
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -31,18 +27,11 @@
        </activity>
        -->
 
-        <!-- MainActivity -->
+
+
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.PrivacyBuddy">
-            <!-- Intent-filter removed from here -->
-        </activity>
-
-        <!-- Simulation Page -->
-        <activity
-            android:name=".SimulationActivity"
             android:exported="true"
             android:theme="@style/Theme.PrivacyBuddy">
             <intent-filter>

@@ -39,9 +39,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -64,8 +61,6 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.background_prim)
     }
-
-    // UI setup methods
     protected fun setupToolbar() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.title = ""
@@ -98,7 +93,6 @@ abstract class BaseActivity : AppCompatActivity() {
             style.addSource(geoJsonSource)
             addMapLayers(style)
 
-            // Find the biggest cluster and center the map on it
             val biggestCluster = findBiggestCluster(featureCollection)
             if (biggestCluster != null) {
                 centerMapOnLocation(mapView, biggestCluster)
@@ -130,7 +124,6 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    // UI update methods
     fun updateMapView(mapView: MapView, selectedAppName: String?) {
         CoroutineScope(Dispatchers.Default).launch {
             val newFeatureCollection = loadGeoJsonFromAssets(selectedAppName, daysFilter)
@@ -139,7 +132,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 val source = style?.getSourceAs<GeoJsonSource>(APP_USAGE_SOURCE_ID)
                 source?.featureCollection(newFeatureCollection)
 
-                // Find the biggest cluster and center the map on it
                 val biggestCluster = findBiggestCluster(newFeatureCollection)
                 if (biggestCluster != null) {
                     centerMapOnLocation(mapView, biggestCluster)
@@ -147,8 +139,6 @@ abstract class BaseActivity : AppCompatActivity() {
             }
         }
     }
-
-    // Data processing methods
     protected open fun filterData(days: Int) {
         daysFilter = days
         CoroutineScope(Dispatchers.IO).launch {
@@ -159,10 +149,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun loadGeoJsonFromAssets(selectedAppName: String?, days: Int): FeatureCollection {
         return try {
-            // Filter the global data based on the selected app name
             val filteredData = filterGlobalData(selectedAppName)
-
-            // Convert the filtered data into features
             val features = filteredData.map { data ->
                 // Create a point for the location data
                 val point = data.longitude?.let { data.latitude?.let { it1 ->
@@ -171,10 +158,8 @@ abstract class BaseActivity : AppCompatActivity() {
                     )
                 } }
 
-                // Create a feature for the location data
                 val feature = Feature.fromGeometry(point)
 
-                // Add properties to the feature
                 feature.addStringProperty("timestamp", data.timestamp.toString())
                 feature.addStringProperty("appName", data.appName)
                 feature.addNumberProperty("point_count_abbreviated", 1)
@@ -182,7 +167,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 feature
             }
 
-            // Create a feature collection from the features
             FeatureCollection.fromFeatures(features)
         } catch (e: Exception) {
             FeatureCollection.fromFeatures(emptyList())

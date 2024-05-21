@@ -1,24 +1,23 @@
 package be.kuleuven.privacybuddy.adapter
 
+import android.content.Context
+import android.content.Intent
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import be.kuleuven.privacybuddy.data.AppAccessStats  // Import AppAccessStats instead of AppAccessInfo
-import be.kuleuven.privacybuddy.R
-import android.content.Context
-import android.content.Intent
-import be.kuleuven.privacybuddy.extension.getAppIconByName
-import android.graphics.Color
-import android.view.ContextThemeWrapper
-import android.view.Menu
-import android.widget.PopupMenu
-import be.kuleuven.privacybuddy.utils.LocationDataUtils
 import be.kuleuven.privacybuddy.LocMapActivity
 import be.kuleuven.privacybuddy.LocTimelineActivity
+import be.kuleuven.privacybuddy.R
+import be.kuleuven.privacybuddy.data.AppAccessStats
+import be.kuleuven.privacybuddy.extension.getAppIconByName
+import be.kuleuven.privacybuddy.utils.LocationDataUtils
 
 enum class DisplayMode {
     ACCESS_COUNT,
@@ -49,7 +48,7 @@ class TopAppsAdapter(private val context: Context, private val topApps: List<App
         holder.imageViewAppIcon.setImageDrawable(context.getAppIconByName(app.appName))
 
         val max = calculateMaxForMode()
-        holder.progressBarAppUsage.max = max  // Ensure max is updated each time
+        holder.progressBarAppUsage.max = max
 
         when (displayMode) {
             DisplayMode.ACCESS_COUNT -> {

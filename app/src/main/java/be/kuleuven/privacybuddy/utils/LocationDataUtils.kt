@@ -14,14 +14,13 @@ import be.kuleuven.privacybuddy.data.AppAccessStats
 import be.kuleuven.privacybuddy.data.LocationData
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
 import java.io.BufferedReader
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import com.mapbox.geojson.Point
-import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object LocationDataUtils {
 
@@ -47,7 +46,6 @@ object LocationDataUtils {
                 val timestamp = feature.getStringProperty("timestamp")
                 val date = dateFormat.parse(timestamp)
 
-                // Check if the feature's geometry is a Point
                 val point = feature.geometry() as? Point
                 val coordinates = point?.coordinates()
 
@@ -70,6 +68,7 @@ object LocationDataUtils {
                         (selectedInteractionTypes.isEmpty() || selectedInteractionTypes.contains(data.interactionType)) &&
                         (data.date.time >= cutoffDate)
             } ?: emptyList()
+            Log.d("LocationDataUtils", "Location data cached: ${globalData.toString()}")
             globalData
         } catch (e: Exception) {
             Log.e("LocationDataUtils", "Error loading or parsing GeoJSON data", e)
@@ -107,21 +106,19 @@ object LocationDataUtils {
 
     fun buildAppAccessStatsFromGeoJson(context: Context): List<AppAccessStats> {
         val geoJsonString = context.assets.open(AppState.selectedGeoJsonFile).bufferedReader().use { it.readText() }
+        Log.d("LocationDataUtils", "GeoJSON data loaded")
         val featureCollection = FeatureCollection.fromJson(geoJsonString)
         val features = featureCollection.features() ?: return emptyList()
 
-        // Define a formatter for the timestamp format in your GeoJSON data
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-        // Calculate the cutoff date for the days filter
         val cutoffDate = LocalDateTime.now(ZoneOffset.UTC).minusDays(BaseActivity.AppSettings.daysFilter.toLong())
 
         val accessStatsList = features.filter {
-            // Parse each timestamp using the defined formatter
             LocalDateTime.parse(it.getStringProperty("timestamp"), formatter) >= cutoffDate
         }.groupBy { it.getStringProperty("appName") }
             .map { (appName, filteredFeatures) ->
-                val numberOfPOIs = calculatePOIs(filteredFeatures) // Assuming calculatePOIs is correctly implemented
+                val numberOfPOIs = calculatePOIs(filteredFeatures)
 
                 AppAccessStats(
                     appName = appName,
@@ -155,7 +152,6 @@ object LocationDataUtils {
     }
 
     fun calculatePrivacyScore(stats: AppAccessStats): Double {
-        // Calculate daily frequency of each access type
         val dailyPreciseForeground = stats.preciseForegroundAccesses.toDouble() / stats.days
         val dailyApproximateForeground = stats.approximateForegroundAccesses.toDouble() / stats.days
         val dailyPreciseBackground = stats.preciseBackgroundAccesses.toDouble() / stats.days
@@ -176,12 +172,10 @@ object LocationDataUtils {
         val penaltyPreciseSubliminal = dailyPreciseSubliminal * weightPreciseSubliminal
         val penaltyApproximateSubliminal = dailyApproximateSubliminal * relativeWeightApproxToPrecise
 
-        // Total penalty is the sum of all penalties
         val totalPenalty = penaltyPreciseForeground + penaltyApproximateForeground +
                 penaltyPreciseBackground + penaltyApproximateBackground +
                 penaltyPreciseSubliminal + penaltyApproximateSubliminal
 
-        // Subtract the penalty and the impact of points of interest from the base score of 100
         return 100 - (totalPenalty + stats.numberOfPOIs * 7)
     }
 
@@ -195,14 +189,11 @@ object LocationDataUtils {
             Pair(0.0, Color.parseColor("#F44336"))   // Bright Red
         )
 
-        // Find the two color stops between which the score lies
         val lowerStop = colorStops.last { it.first <= score }
         val upperStop = colorStops.first { it.first >= score }
 
-        // Calculate the ratio between the two stops
         val ratio = (score - lowerStop.first) / (upperStop.first - lowerStop.first)
 
-        // Interpolate the colors
         return interpolateColor(lowerStop.second, upperStop.second, ratio.toFloat())
     }
 
@@ -243,7 +234,6 @@ object LocationDataUtils {
 
 
     fun calculatePOIs(features: List<Feature>, threshold: Int = 100, radius: Double = 30.0): Int {
-        // Convert features to points
         val points = features.mapNotNull { it.geometry() as? Point }
         val visited = BooleanArray(points.size)
         var poiCount = 0
