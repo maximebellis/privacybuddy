@@ -42,7 +42,7 @@
                 android:textSize="18sp" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="8dp">
@@ -58,11 +58,11 @@
 
                 <ImageView
                     android:id="@+id/dashboardInfoIcon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
                     android:layout_gravity="center"
-                    android:layout_marginStart="4dp"
-                    android:src="@drawable/ic_info" />
+                    android:src="@drawable/ic_info"
+                    android:adjustViewBounds="true" />
 
             </LinearLayout>
 
