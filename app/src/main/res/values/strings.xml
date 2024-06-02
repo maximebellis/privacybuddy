@@ -16,7 +16,6 @@
     <string name="background"><b>Background:</b> Accesses location in the background, without user interaction, like weather updates during other phone use.</string>
     <string name="subliminal"><b>Subliminal:</b> Obtains location data when the phone is not in use, such as during sleep mode when the phone is resting on a table. When your phone is turned off completely, no accesses can be done.</string>
 
-
     <!-- dashboard -->
     <string name="dashboard_title">Privacy dashboard</string>
     <string name="choose_app_title">Choose app to show</string>
@@ -30,25 +29,7 @@
     <string name="info_accuracy">Accuracy, measured in meters, indicates the radius of the circle around the accessed location within which your actual location will be. With this accuracy of %1$d meters, the app knows you were in %2$s</string>
     <string name="info_bearing">Bearing, measured in degrees, indicates the direction of travel. It represents an angle between 0 and 360 degrees, measured clockwise from true north.</string>
 
-    <!--
-    <string name="info_latitude">Latitude is the north-south position on the Earth\'s surface.</string>
-    <string name="info_longitude">Longitude is the east-west position on the Earth\'s surface.</string>
-    <string name="info_speed">Speed is measured in meters per second (m/s) and represents the velocity at which the device is moving.</string>
-    <string name="info_altitude">Altitude, measured in meters. It indicates how high the location is from sea level.</string>
-    -->
-
-
     <string name="location_access_by">Location access by</string>
-
-    <!-- Simulation page descriptions -->
-    <string name="description_1">Datastream 1, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was often in Leuven and north of Leuven.</string>
-    <string name="description_2">Datastream 2, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person is all around Leuven but stays close.</string>
-    <string name="description_3">Datastream 3, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around and in Leuven. This person had a high frequency of location accesses done.</string>>
-    <string name="description_simu_data_tutor">You are a tutor of 22 years old based in Leuven. You don\'t really care about privacy and are very active on social media. You have a car and also tutor in the municipalities around Leuven, but most sessions happen in Leuven itself. You study Law, go to classes and enjoy the Leuven nightlife a bit, but you always go to sleep on time and turn on airplane mode. \n\n This is simulated data! Do not make any conclusions based on the amount of accesses or the apps doing them.</string>
-    <string name="description_4">Datastream 4, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. </string>
-    <string name="description_5">Datastream 5, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
-    <string name="description_6">Datastream 6, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was active all around Flanders.</string>
-    <string name="description_7">Datastream 7, this is a real datastream from an anonymous person that lives in Belgium. While all the accessed locations and timestamps are real, the apps and all other extra information is simulated. Do not make conclusions about the apps featured. \n\n This person was often around Rotselaar.</string>
 
     <!-- Top apps page -->
     <string name="top_apps_title">Apps ordered by</string>

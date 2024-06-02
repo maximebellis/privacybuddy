@@ -5,7 +5,11 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+=======
+        <option name="gradleJvm" value="jbr-17" />
+>>>>>>> c4e2020c857a059336355c95a17c91373195bd5e
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
