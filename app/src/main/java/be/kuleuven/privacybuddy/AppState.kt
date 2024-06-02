@@ -4,7 +4,7 @@ import be.kuleuven.privacybuddy.data.AppAccessStats
 import be.kuleuven.privacybuddy.data.LocationData
 
 object AppState {
-    var selectedGeoJsonFile: String = "location_data.geojson"
+    var selectedGeoJsonFile: String = "my_geojson_file.geojson"
     var topAccessedAppsCache: List<AppAccessStats>? = null
     var globalData: List<LocationData> = emptyList()
 
