@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -25,12 +24,24 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import java.util.Locale
-
-
+import kotlin.math.*
 
 class LocSingleAccessActivity : BaseActivity() {
 
     private lateinit var mapView: MapView
+
+    // Define home coordinates
+    private val homeLatitude = 50.85800
+    private val homeLongitude = 4.78472
+    private val homeAddressText = "Larestraat 3 Bierbeek"
+
+    // Define work coordinates
+    private val workLatitude = 50.87333
+    private val workLongitude = 4.71381
+    private val workAddressText = "Geldenaaksevest 2, Leuven"
+
+    private val addressNotFoundText = "Address not found"
+    private val maxDistance = 0.2 // Maximum distance in kilometers (200 meters)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +57,35 @@ class LocSingleAccessActivity : BaseActivity() {
 
         mapView = findViewById(R.id.mapView)
         initializeMap(locationData?.latitude ?: 0.0, locationData?.longitude ?: 0.0)
+
         val textViewAddress = findViewById<TextView>(R.id.textViewAdress)
-        textViewAddress.text = "Nonnenhoefstraat 7 Aarschot"
+        textViewAddress.text = when {
+            locationData != null && locationData.latitude?.let { locationData.longitude?.let { it1 ->
+                isWithinRange(it,
+                    it1, homeLatitude, homeLongitude)
+            } } == true -> homeAddressText
+            locationData != null && locationData.latitude?.let { locationData.longitude?.let { it1 ->
+                isWithinRange(it,
+                    it1, workLatitude, workLongitude)
+            } } == true -> workAddressText
+            else -> addressNotFoundText
+        }
+    }
+
+    private fun isWithinRange(latitude: Double, longitude: Double, targetLatitude: Double, targetLongitude: Double): Boolean {
+        val earthRadius = 6371.0 // Radius of the earth in kilometers
+
+        val dLat = Math.toRadians(latitude - targetLatitude)
+        val dLon = Math.toRadians(longitude - targetLongitude)
+
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(targetLatitude)) * cos(Math.toRadians(latitude)) *
+                sin(dLon / 2) * sin(dLon / 2)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = earthRadius * c
+
+        return distance <= maxDistance
     }
 
     private fun setupDataEntries(data: LocationData) {
@@ -94,34 +132,33 @@ class LocSingleAccessActivity : BaseActivity() {
         return if (value != null) String.format(Locale.US, "%.2f %s", value, unit) else "N/A"
     }
 
-
     private fun initializeMap(latitude: Double, longitude: Double) {
-    mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-        mapView.mapboxMap.setCamera(
-            cameraOptions {
-                center(Point.fromLngLat(longitude, latitude))
-                zoom(14.0)
-            }
-        )
+        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+            mapView.mapboxMap.setCamera(
+                cameraOptions {
+                    center(Point.fromLngLat(longitude, latitude))
+                    zoom(14.0)
+                }
+            )
 
-        val resizedBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_red_marker)
-            .let { originalBitmap ->
-                val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height.toFloat()
-                Bitmap.createScaledBitmap(originalBitmap, 75, Math.round(75 / aspectRatio), false)
-            }
+            val resizedBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_red_marker)
+                .let { originalBitmap ->
+                    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height.toFloat()
+                    Bitmap.createScaledBitmap(originalBitmap, 75, Math.round(75 / aspectRatio), false)
+                }
 
-        style.addImage("red", resizedBitmap)
+            style.addImage("red", resizedBitmap)
 
-        mapView.annotations.createPointAnnotationManager().create(
-            PointAnnotationOptions()
-                .withIconImage("red")
-                .withIconAnchor(IconAnchor.BOTTOM)
-                .withPoint(Point.fromLngLat(longitude, latitude))
-        )
+            mapView.annotations.createPointAnnotationManager().create(
+                PointAnnotationOptions()
+                    .withIconImage("red")
+                    .withIconAnchor(IconAnchor.BOTTOM)
+                    .withPoint(Point.fromLngLat(longitude, latitude))
+            )
+        }
+
+        disableMapGestures(mapView)
     }
-
-    disableMapGestures(mapView)
-}
 
     private fun setDataEntry(viewId: Int, dataName: String, dataValue: String) {
         val dataEntryView = findViewById<View>(viewId)
@@ -132,19 +169,14 @@ class LocSingleAccessActivity : BaseActivity() {
     }
 
     private fun getAccuracyDescription(accuracy: Double): String {
-        return if (accuracy <= 5) {
-            "a very precise location, such as which part of a room you are in."
-        } else if (accuracy <= 10) {
-            "a precise location, such as the specific area of a small building."
-        } else if (accuracy <= 50) {
-            "a general area, such as the building you are in."
-        } else if (accuracy <= 100) {
-            "an area covering several buildings, making it possible to estimate your location within a small cluster."
-        } else {
-            "a broad area, making it difficult to determine your exact location, but approximating it within a larger cluster of buildings."
+        return when {
+            accuracy <= 5 -> "a very precise location, such as which part of a room you are in."
+            accuracy <= 10 -> "a precise location, such as the specific area of a small building."
+            accuracy <= 50 -> "a general area, such as the building you are in."
+            accuracy <= 100 -> "an area covering several buildings, making it possible to estimate your location within a small cluster."
+            else -> "a broad area, making it difficult to determine your exact location, but approximating it within a larger cluster of buildings."
         }
     }
-
 
     private fun showInfoPopup(anchor: View, text: String) {
         val inflater = LayoutInflater.from(anchor.context)
@@ -182,7 +214,5 @@ class LocSingleAccessActivity : BaseActivity() {
         // Show the popup
         popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, xOff, yOff)
     }
-
-
 
 }
