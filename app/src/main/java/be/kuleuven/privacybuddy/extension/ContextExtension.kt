@@ -15,3 +15,8 @@ fun Context.getAppIconByName(appName: String): Drawable? {
     }?.loadIcon(packageManager)
     return appIcon ?: ContextCompat.getDrawable(this, R.mipmap.ic_launcher)
 }
+
+fun Context.getAppNameByPackageName(packageName: String): String {
+    val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+    return packageManager.getApplicationLabel(applicationInfo).toString()
+}

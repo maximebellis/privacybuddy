@@ -1,5 +1,6 @@
 package be.kuleuven.privacybuddy
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -273,6 +274,10 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             R.id.action_one_day, R.id.action_seven_days, R.id.action_twenty_one_days -> {
                 days?.let { filterData(it) }
+                true
+            }
+            R.id.action_live_data -> {
+                startActivity(Intent(this, LiveActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)

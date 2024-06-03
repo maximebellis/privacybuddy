@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/locationAccessTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1:15 PM"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/text"
+            android:layout_centerVertical="true"
+            android:textSize="12sp"
+            android:layout_marginEnd="8dp" />
+
+        <ImageView
+            android:id="@+id/locationIcon"
+            android:layout_toEndOf="@id/locationAccessTime"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_location"/>
+
+
+        <TextView
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/locationIcon"
+            android:textColor="@color/title_prim"
+            android:text="YouTube"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/verticalLineView"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:background="@color/text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="61dp"
+
+
+        />
+
+
+</LinearLayout>

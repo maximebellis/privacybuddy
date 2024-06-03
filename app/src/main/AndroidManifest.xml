@@ -78,6 +78,12 @@
             android:theme="@style/Theme.PrivacyBuddy" >
         </activity>
 
+        <activity
+            android:name=".LiveActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PrivacyBuddy" >
+        </activity>
+
     </application>
 
 </manifest>
